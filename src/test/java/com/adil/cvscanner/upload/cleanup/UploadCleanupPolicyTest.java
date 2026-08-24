@@ -1,0 +1,280 @@
+package com.adil.cvscanner.upload.cleanup;
+
+import com.adil.cvscanner.upload.domain.CvUpload;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneOffset;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+class UploadCleanupPolicyTest {
+
+    /*
+     * ============================================================
+     * FIXED TIME
+     * ============================================================
+     *
+     * Test real wall-clock-a bağlı deyil.
+     */
+
+    private static final Instant NOW =
+            Instant.parse(
+                    "2026-08-21T12:00:00Z"
+            );
+
+    private UploadCleanupProperties properties;
+
+    private UploadCleanupPolicy policy;
+
+    @BeforeEach
+    void setUp() {
+
+        properties =
+                new UploadCleanupProperties();
+
+        properties.setEnabled(
+                true
+        );
+
+        properties.setCompletedRetention(
+                Duration.ofDays(
+                        7
+                )
+        );
+
+        properties.setBatchSize(
+                100
+        );
+
+        Clock clock =
+                Clock.fixed(
+                        NOW,
+                        ZoneOffset.UTC
+                );
+
+        policy =
+                new UploadCleanupPolicy(
+                        properties,
+                        clock
+                );
+    }
+
+    /*
+     * ============================================================
+     * TEST 1
+     * RECENT COMPLETED
+     * ============================================================
+     */
+
+    @Test
+    void shouldNotCleanupRecentlyCompletedUpload() {
+
+        CvUpload upload =
+                completedUpload();
+
+        /*
+         * complete() indi çağırıldığı üçün
+         * test fixed clock-dan fərqli real time
+         * istifadə edir.
+         *
+         * Ona görə burada əsas expectation:
+         *
+         * recent completion retention daxilindədir.
+         */
+
+        assertThat(
+                upload.getCompletedAt()
+        ).isNotNull();
+
+        /*
+         * Test runtime 2026-08-21 ətrafındadır,
+         * 7 günlük cutoff-dan yenidir.
+         */
+        assertThat(
+                policy.isEligibleForCleanup(
+                        upload
+                )
+        ).isFalse();
+    }
+
+    /*
+     * ============================================================
+     * TEST 2
+     * UPLOADED MUST NEVER BE CLEANED
+     * ============================================================
+     */
+
+    @Test
+    void shouldNotCleanupUploadedState() {
+
+        CvUpload upload =
+                new CvUpload(
+                        "uploaded.zip"
+                );
+
+        upload.registerDiscoveredFiles(
+                1
+        );
+
+        assertThat(
+                policy.isEligibleForCleanup(
+                        upload
+                )
+        ).isFalse();
+    }
+
+    /*
+     * ============================================================
+     * TEST 3
+     * PROCESSING MUST NEVER BE CLEANED
+     * ============================================================
+     */
+
+    @Test
+    void shouldNotCleanupProcessingState() {
+
+        CvUpload upload =
+                new CvUpload(
+                        "processing.zip"
+                );
+
+        upload.registerDiscoveredFiles(
+                1
+        );
+
+        upload.markProcessing();
+
+        assertThat(
+                policy.isEligibleForCleanup(
+                        upload
+                )
+        ).isFalse();
+    }
+
+    /*
+     * ============================================================
+     * TEST 4
+     * FAILED MUST NEVER BE AUTO-CLEANED
+     * ============================================================
+     *
+     * Restart/debug üçün əsas safety rule.
+     */
+
+    @Test
+    void shouldNotCleanupFailedUpload() {
+
+        CvUpload upload =
+                new CvUpload(
+                        "failed.zip"
+                );
+
+        upload.registerDiscoveredFiles(
+                1
+        );
+
+        upload.markProcessing();
+
+        upload.fail();
+
+        assertThat(
+                policy.isEligibleForCleanup(
+                        upload
+                )
+        ).isFalse();
+    }
+
+    /*
+     * ============================================================
+     * TEST 5
+     * COMPLETED_WITH_ERRORS IS TERMINAL
+     * ============================================================
+     *
+     * Status cleanup üçün prinsipcə icazəlidir,
+     * amma retention müddəti keçməyibsə silinməməlidir.
+     */
+
+    @Test
+    void shouldRespectRetentionForCompletedWithErrors() {
+
+        CvUpload upload =
+                new CvUpload(
+                        "partial.zip"
+                );
+
+        upload.registerDiscoveredFiles(
+                2
+        );
+
+        upload.markProcessing();
+
+        upload.synchronizeProcessingResult(
+                1,
+                1
+        );
+
+        upload.complete();
+
+        assertThat(
+                policy.isEligibleForCleanup(
+                        upload
+                )
+        ).isFalse();
+    }
+
+    /*
+     * ============================================================
+     * TEST 6
+     * GLOBAL DISABLE
+     * ============================================================
+     */
+
+    @Test
+    void shouldNotCleanupAnythingWhenDisabled() {
+
+        properties.setEnabled(
+                false
+        );
+
+        CvUpload upload =
+                completedUpload();
+
+        assertThat(
+                policy.isEligibleForCleanup(
+                        upload
+                )
+        ).isFalse();
+    }
+
+    /*
+     * ============================================================
+     * FACTORY
+     * ============================================================
+     */
+
+    private CvUpload completedUpload() {
+
+        CvUpload upload =
+                new CvUpload(
+                        "completed.zip"
+                );
+
+        upload.registerDiscoveredFiles(
+                1
+        );
+
+        upload.markProcessing();
+
+        upload.synchronizeProcessingResult(
+                1,
+                0
+        );
+
+        upload.complete();
+
+        return upload;
+    }
+}

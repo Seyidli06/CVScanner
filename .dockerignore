@@ -1,0 +1,38 @@
+# VERSION CONTROL
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.iml
+
+# MAVEN BUILD OUTPUT
+target
+
+# LOCAL RUNTIME DATA
+storage
+logs
+*.log
+
+# ENVIRONMENT / SECRETS
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+secrets
+secret
+
+# OPERATING SYSTEM
+.DS_Store
+Thumbs.db
+
+# TEMPORARY FILES
+*.tmp
+*.temp
+
+# JVM CRASH DIAGNOSTICS
+hs_err_pid*.log
+replay_pid*.log

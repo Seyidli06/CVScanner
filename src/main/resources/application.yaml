@@ -1,0 +1,134 @@
+spring:
+  application:
+    name: cvscanner
+
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+  batch:
+    job:
+      enabled: false
+
+server:
+  shutdown: graceful
+
+
+app:
+  # ============================================================
+  # UPLOAD
+  # ============================================================
+  upload:
+    storage-root: ${CVSCANNER_STORAGE_ROOT:./storage/uploads}
+    max-entries: 5000
+    max-extracted-size: 1GB
+    max-single-file-size: 25MB
+
+  # ============================================================
+  # DOCUMENT PARSING
+  # ============================================================
+  parsing:
+    max-text-length: 1000000
+
+  # ============================================================
+  # BATCH PROCESSING
+  # ============================================================
+  batch:
+    core-pool-size: 2
+    max-pool-size: 4
+    queue-capacity: 100
+    await-termination-seconds: 30
+
+    retry:
+      max-retries: 2
+      delay: 500ms
+
+  # ============================================================
+  # UPLOAD STORAGE CLEANUP
+  # ============================================================
+  cleanup:
+    enabled: ${CVSCANNER_CLEANUP_ENABLED:true}
+
+    completed-retention: ${CVSCANNER_COMPLETED_RETENTION:7d}
+
+    batch-size: ${CVSCANNER_CLEANUP_BATCH_SIZE:100}
+
+    scheduler-enabled: ${CVSCANNER_CLEANUP_SCHEDULER_ENABLED:false}
+
+    schedule-delay: ${CVSCANNER_CLEANUP_SCHEDULE_DELAY:PT1H}
+
+    initial-delay: ${CVSCANNER_CLEANUP_INITIAL_DELAY:PT1M}
+
+  # ============================================================
+  # DISTRIBUTED RATE LIMITING
+  # ============================================================
+  rate-limit:
+    enabled: ${CVSCANNER_RATE_LIMIT_ENABLED:true}
+
+    redis-timeout: ${CVSCANNER_RATE_LIMIT_REDIS_TIMEOUT:500ms}
+
+    key-prefix: ${CVSCANNER_RATE_LIMIT_KEY_PREFIX:cvscanner:rate-limit}
+
+    fail-open: ${CVSCANNER_RATE_LIMIT_FAIL_OPEN:false}
+
+    upload:
+      capacity: ${CVSCANNER_RATE_LIMIT_UPLOAD_CAPACITY:5}
+
+      refill-tokens: ${CVSCANNER_RATE_LIMIT_UPLOAD_REFILL_TOKENS:5}
+
+      refill-period: ${CVSCANNER_RATE_LIMIT_UPLOAD_REFILL_PERIOD:10m}
+
+    read:
+      capacity: ${CVSCANNER_RATE_LIMIT_READ_CAPACITY:60}
+
+      refill-tokens: ${CVSCANNER_RATE_LIMIT_READ_REFILL_TOKENS:60}
+
+      refill-period: ${CVSCANNER_RATE_LIMIT_READ_REFILL_PERIOD:1m}
+
+    export:
+      capacity: ${CVSCANNER_RATE_LIMIT_EXPORT_CAPACITY:10}
+
+      refill-tokens: ${CVSCANNER_RATE_LIMIT_EXPORT_REFILL_TOKENS:10}
+
+      refill-period: ${CVSCANNER_RATE_LIMIT_EXPORT_REFILL_PERIOD:1m}
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - metrics
+
+  endpoint:
+    health:
+      show-details: never
+      show-components: never
+
+      probes:
+        enabled: true
+        add-additional-paths: true
+
+      group:
+        liveness:
+          include:
+            - livenessState
+
+        readiness:
+          include:
+            - readinessState
+            - db
+            - rateLimitRedis
+
+logging:
+  level:
+    org.springframework.batch.core.step.item.ChunkOrientedStep: OFF

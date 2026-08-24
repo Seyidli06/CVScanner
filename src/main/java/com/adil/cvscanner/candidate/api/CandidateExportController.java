@@ -1,0 +1,181 @@
+package com.adil.cvscanner.candidate.api;
+
+import com.adil.cvscanner.candidate.application.CandidateCsvExportService;
+import com.adil.cvscanner.candidate.application.CandidateSearchCriteria;
+import com.adil.cvscanner.candidate.domain.JobType;
+import org.springframework.http.CacheControl;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
+
+@RestController
+@RequestMapping(
+        "/api/v1/candidates"
+)
+public class CandidateExportController {
+
+    private static final MediaType CSV_MEDIA_TYPE =
+            new MediaType(
+                    "text",
+                    "csv",
+                    StandardCharsets.UTF_8
+            );
+
+    private final CandidateCsvExportService
+            candidateCsvExportService;
+
+    public CandidateExportController(
+            CandidateCsvExportService candidateCsvExportService
+    ) {
+
+        this.candidateCsvExportService =
+                candidateCsvExportService;
+    }
+
+    /*
+     * ============================================================
+     * CSV EXPORT
+     * ============================================================
+     *
+     * Example:
+     *
+     * GET
+     * /api/v1/candidates/export.csv
+     * ?skill=Java
+     * &jobType=REMOTE
+     * &sortBy=yearsOfExperience
+     * &direction=desc
+     *
+     *
+     * page/size yoxdur.
+     *
+     * Çünki bu endpoint filtered result-un
+     * hamısını export edir.
+     */
+    @GetMapping(
+            value = "/export.csv",
+            produces = "text/csv"
+    )
+    public ResponseEntity<StreamingResponseBody> exportCsv(
+            @RequestParam(
+                    required = false
+            )
+            UUID uploadId,
+
+            @RequestParam(
+                    required = false
+            )
+            String skill,
+
+            @RequestParam(
+                    required = false
+            )
+            String location,
+
+            @RequestParam(
+                    required = false
+            )
+            JobType jobType,
+
+            @RequestParam(
+                    required = false
+            )
+            Integer minExperience,
+
+            @RequestParam(
+                    required = false
+            )
+            Integer maxExperience,
+
+            @RequestParam(
+                    defaultValue = "fullName"
+            )
+            String sortBy,
+
+            @RequestParam(
+                    defaultValue = "asc"
+            )
+            String direction
+    ) {
+
+        /*
+         * ========================================================
+         * SAME SEARCH CRITERIA
+         * ========================================================
+         */
+        CandidateSearchCriteria criteria =
+                new CandidateSearchCriteria(
+                        uploadId,
+                        skill,
+                        location,
+                        jobType,
+                        minExperience,
+                        maxExperience
+                );
+
+        /*
+         * ========================================================
+         * PRE-FLIGHT VALIDATION
+         * ========================================================
+         *
+         * Streaming başlamamışdan əvvəl validation.
+         *
+         * Beləliklə:
+         *
+         * sortBy=hack
+         *
+         * kimi request normal JSON 400 error contract
+         * ala bilir.
+         */
+        candidateCsvExportService
+                .validateRequest(
+                        criteria,
+                        sortBy,
+                        direction
+                );
+
+        StreamingResponseBody body =
+                outputStream ->
+                        candidateCsvExportService
+                                .writeCsv(
+                                        outputStream,
+                                        criteria,
+                                        sortBy,
+                                        direction
+                                );
+
+        /*
+         * Candidate export potentially personal/business
+         * məlumatdır.
+         *
+         * Browser/proxy cache etməsin.
+         */
+        return ResponseEntity
+                .ok()
+                .contentType(
+                        CSV_MEDIA_TYPE
+                )
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"candidates.csv\""
+                )
+                .header(
+                        "X-Content-Type-Options",
+                        "nosniff"
+                )
+                .cacheControl(
+                        CacheControl.noStore()
+                )
+                .body(
+                        body
+                );
+    }
+}

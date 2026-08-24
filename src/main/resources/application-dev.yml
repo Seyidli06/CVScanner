@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5435/cvscanner
+    username: cvscanner
+    password: cvscanner
+
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+      connection-timeout: 5000
+      validation-timeout: 3000
+
+security:
+  jwt:
+    issuer-uri: http://localhost:8180/realms/cvscanner
+    jwk-set-uri: http://localhost:8180/realms/cvscanner/protocol/openid-connect/certs
+    roles-claim: roles
+
+app:
+  rate-limit:
+    redis-uri: redis://localhost:6385
+
+server:
+  port: ${SERVER_PORT:8080}
