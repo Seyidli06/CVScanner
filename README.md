@@ -33,9 +33,15 @@ CVScanner accepts ZIP archives containing PDF/DOCX resumes, processes them async
 - [Environment Variables](#environment-variables)
 - [Database Migrations](#database-migrations)
 - [Release Gate](#release-gate)
+- [Production Smoke Test](#production-smoke-test)
+- [Graceful Shutdown](#graceful-shutdown)
 - [Rollback](#rollback)
 - [Known Architectural Limitations](#known-architectural-limitations)
+- [Production Readiness](#production-readiness)
 - [Development Principles](#development-principles)
+- [Quick Start](#quick-start)
+- [Build](#build)
+- [Release](#release)
 
 ---
 
@@ -47,6 +53,9 @@ The core workflow is:
 
 ```text
 ZIP Upload
+    |
+    v
+HTTP Multipart Validation
     |
     v
 Upload Validation
@@ -77,7 +86,7 @@ Candidate Search       Processing Failures
  CSV Export             XLSX Export
 ```
 
-The project goes beyond the basic functional requirements and includes infrastructure and production-hardening concerns such as JWT authentication, distributed Redis-backed rate limiting, health checks, graceful shutdown, production profiles, persistent cleanup, Docker hardening, automated testing and GitHub Actions CI.
+The project goes beyond the basic functional requirements and includes infrastructure and production-hardening concerns such as JWT authentication, distributed Redis-backed rate limiting, health checks, graceful shutdown, production profiles, persistent cleanup, defensive archive extraction, Docker hardening, automated testing and GitHub Actions CI.
 
 ---
 
@@ -91,7 +100,9 @@ The project goes beyond the basic functional requirements and includes infrastru
 - Rule-based candidate information extraction
 - Spring Batch processing pipeline
 - Asynchronous job execution
+- Configurable chunk processing
 - Retry and skip handling
+- Configurable skip limit
 - Failed document tracking
 - Restartable batch jobs
 - Upload progress tracking
@@ -101,13 +112,13 @@ The project goes beyond the basic functional requirements and includes infrastru
 - Candidate persistence in PostgreSQL
 - Candidate skills
 - Years of experience
-- Job type
-- Location
+- Preferred job type
+- Preferred location
 - Search and filtering
 - Pagination
 - Sorting
-- CSV export
-- XLSX export
+- CSV streaming export
+- XLSX streaming export
 
 ## Security
 
@@ -120,11 +131,12 @@ The project goes beyond the basic functional requirements and includes infrastru
 - `ROLE_ADMIN`
 - Explicit endpoint allowlisting
 - Default deny-all security policy
+- OpenAPI Bearer security metadata
 
 ## Infrastructure
 
-- PostgreSQL
-- Redis
+- PostgreSQL 16
+- Redis 7
 - Flyway
 - HikariCP
 - Docker Compose
@@ -145,6 +157,7 @@ The project goes beyond the basic functional requirements and includes infrastru
 - Non-root Docker container
 - Read-only production filesystem
 - Linux capability dropping
+- HTTP multipart request limits
 - Production smoke test
 - Automated release gate
 - GitHub Actions CI
@@ -153,7 +166,8 @@ The project goes beyond the basic functional requirements and includes infrastru
 
 - OpenAPI 3
 - Swagger UI
-- Bearer JWT documentation
+- Bearer JWT security scheme
+- Protected endpoint security metadata
 - Swagger enabled for development/staging
 - Swagger disabled in production
 
@@ -353,7 +367,9 @@ A recruiter or administrator submits a ZIP archive:
 POST /api/v1/uploads
 ```
 
-The upload is validated before processing starts.
+Spring first applies the configured multipart request limits.
+
+The application then validates the uploaded file before processing starts.
 
 ---
 
@@ -368,9 +384,10 @@ Maximum archive entries
 Maximum total extracted size
 Maximum single file size
 Controlled extraction root
+Supported document types
 ```
 
-Default limits:
+Default extraction limits:
 
 ```yaml
 app:
@@ -380,6 +397,10 @@ app:
     max-extracted-size: 1GB
     max-single-file-size: 25MB
 ```
+
+Temporary staging storage is cleaned after the upload operation.
+
+Cleanup failures do not override the primary business result or mask the original processing exception.
 
 ---
 
@@ -418,7 +439,7 @@ spring:
 
 ## 4. Document Parsing
 
-Apache Tika extracts text from supported documents such as:
+Apache Tika extracts text from supported documents:
 
 ```text
 PDF
@@ -448,6 +469,8 @@ Preferred job type
 Candidate information is persisted using PostgreSQL and Spring Data JPA.
 
 Database schema changes are managed exclusively through Flyway migrations.
+
+Candidate persistence also protects against duplicate source files for the same upload through a database uniqueness constraint.
 
 ---
 
@@ -489,6 +512,8 @@ Swagger includes an HTTP Bearer security scheme:
 ```text
 bearerAuth
 ```
+
+Protected business operations are documented with the same Bearer authentication requirement used by runtime security.
 
 A JWT can be supplied through the Swagger **Authorize** button when testing protected API operations.
 
@@ -718,26 +743,28 @@ requests continue when the Redis rate-limit backend is unavailable.
 
 # Batch Processing
 
-Default executor configuration:
+Default executor and processing configuration:
 
 ```yaml
 app:
   batch:
+    chunk-size: 10
+    skip-limit: 50
     core-pool-size: 2
     max-pool-size: 4
     queue-capacity: 100
     await-termination-seconds: 30
-```
 
-Retry configuration:
-
-```yaml
-app:
-  batch:
     retry:
       max-retries: 2
       delay: 500ms
 ```
+
+`chunk-size` controls how many items are processed within each Spring Batch chunk transaction.
+
+`skip-limit` limits how many supported processing failures may be skipped before the step is considered failed.
+
+Both values can be overridden through environment configuration without rebuilding the application.
 
 The batch implementation includes coverage for:
 
@@ -755,14 +782,32 @@ Candidate persistence
 
 # Upload Safety
 
-Processing arbitrary ZIP archives requires defensive extraction.
+Processing arbitrary ZIP archives requires multiple defensive boundaries.
 
-CVScanner limits:
+## HTTP Request Boundary
+
+Spring multipart handling limits incoming request size:
+
+```yaml
+spring:
+  servlet:
+    multipart:
+      max-file-size: 256MB
+      max-request-size: 260MB
+```
+
+These values can be overridden through environment variables.
+
+---
+
+## Archive Extraction Boundary
+
+CVScanner additionally limits:
 
 ```text
 Archive entry count
 Total extracted size
-Individual file size
+Individual extracted file size
 Extraction location
 ```
 
@@ -774,7 +819,13 @@ Maximum extracted size:     1 GB
 Maximum single file size:   25 MB
 ```
 
-Document parsing additionally limits extracted text length:
+This means HTTP request limits and extracted archive limits protect different layers of the upload flow.
+
+---
+
+## Parsing Boundary
+
+Document parsing also limits extracted text length:
 
 ```yaml
 app:
@@ -947,12 +998,17 @@ prod
 
 ## Shared Runtime Configuration
 
-Important shared settings:
+Important shared settings include:
 
 ```yaml
 spring:
   lifecycle:
     timeout-per-shutdown-phase: 30s
+
+  servlet:
+    multipart:
+      max-file-size: 256MB
+      max-request-size: 260MB
 
   jpa:
     open-in-view: false
@@ -1125,7 +1181,7 @@ mvn clean verify
 Current validated baseline:
 
 ```text
-Tests run: 119
+Tests run: 121
 Failures: 0
 Errors: 0
 Skipped: 0
@@ -1167,18 +1223,22 @@ Distributed rate-limit state
 Redis failure behavior
 Liveness/readiness
 Upload handling
+Upload cleanup consistency
 ZIP extraction
 Spring Batch
 Retry
+Skip
 Restart
 Candidate persistence
 Candidate search
+Query performance
 CSV export
 XLSX export
 Cleanup
 Metrics
 OpenAPI
 Swagger
+Bearer security metadata
 Error contracts
 ```
 
@@ -1188,7 +1248,7 @@ Error contracts
 
 Infrastructure-dependent tests use real disposable containers.
 
-For example:
+Examples include:
 
 ```text
 PostgreSQLContainer
@@ -1321,10 +1381,22 @@ The Maven build environment is not included in the final runtime image.
 
 ---
 
+## Stable JAR Name
+
+Maven produces the executable application artifact as:
+
+```text
+target/cvscanner.jar
+```
+
+The Docker build therefore does not depend on a version-specific JAR filename.
+
+---
+
 ## Build
 
 ```powershell
-docker build -t cvscanner:0.0.1 .
+docker build -t cvscanner:1.0.0 .
 ```
 
 ---
@@ -1341,7 +1413,7 @@ Verify:
 
 ```powershell
 docker image inspect `
-    cvscanner:0.0.1 `
+    cvscanner:1.0.0 `
     --format '{{.Config.User}}'
 ```
 
@@ -1425,7 +1497,7 @@ security_opt:
   - no-new-privileges:true
 ```
 
-It also runs as a dedicated non-root user.
+It also runs as a dedicated non-root operating-system user.
 
 ---
 
@@ -1504,6 +1576,8 @@ docker compose `
 ## Start
 
 ```powershell
+$env:CVSCANNER_IMAGE_TAG="1.0.0"
+
 docker compose `
     --env-file .\.env.prod `
     -f .\docker-compose.prod.yml `
@@ -1555,16 +1629,42 @@ Important production variables:
 |---|---|
 | `CVSCANNER_IMAGE_TAG` | Docker image version |
 | `CVSCANNER_HTTP_PORT` | Host HTTP port |
-| `CVSCANNER_DB_NAME` | PostgreSQL database |
-| `CVSCANNER_DB_URL` | JDBC URL when configuring the app directly |
+| `CVSCANNER_DB_NAME` | PostgreSQL database name |
+| `CVSCANNER_DB_URL` | JDBC URL when configuring the application directly |
 | `CVSCANNER_DB_USERNAME` | PostgreSQL username |
 | `CVSCANNER_DB_PASSWORD` | PostgreSQL password |
 | `CVSCANNER_JWT_ISSUER_URI` | OAuth2/OIDC issuer |
 | `CVSCANNER_JWT_JWK_SET_URI` | JWT JWK endpoint |
 | `CVSCANNER_JWT_ROLES_CLAIM` | JWT role claim |
+| `CVSCANNER_STORAGE_ROOT` | Persistent CV storage path |
+| `CVSCANNER_MULTIPART_MAX_FILE_SIZE` | Maximum uploaded multipart file size |
+| `CVSCANNER_MULTIPART_MAX_REQUEST_SIZE` | Maximum multipart HTTP request size |
+| `CVSCANNER_BATCH_CHUNK_SIZE` | Spring Batch chunk size |
+| `CVSCANNER_BATCH_SKIP_LIMIT` | Maximum supported skipped items before step failure |
 | `CVSCANNER_RATE_LIMIT_REDIS_URI` | Redis connection URI |
-| `CVSCANNER_RATE_LIMIT_FAIL_OPEN` | Rate-limit Redis failure behavior |
-| `CVSCANNER_STORAGE_ROOT` | CV storage path |
+| `CVSCANNER_RATE_LIMIT_FAIL_OPEN` | Redis failure behavior for rate limiting |
+
+---
+
+## Multipart Upload
+
+Defaults:
+
+```text
+CVSCANNER_MULTIPART_MAX_FILE_SIZE=256MB
+CVSCANNER_MULTIPART_MAX_REQUEST_SIZE=260MB
+```
+
+---
+
+## Batch
+
+Defaults:
+
+```text
+CVSCANNER_BATCH_CHUNK_SIZE=10
+CVSCANNER_BATCH_SKIP_LIMIT=50
+```
 
 ---
 
@@ -1709,8 +1809,10 @@ powershell `
     -NoProfile `
     -ExecutionPolicy Bypass `
     -File .\scripts\release-gate.ps1 `
-    -ImageTag "0.0.1" `
-    -Port 8080
+    -ImageTag 1.0.0 `
+    -Port 8080 `
+    -EnvFile .\.env.prod `
+    -ComposeFile .\docker-compose.prod.yml
 ```
 
 Successful output:
@@ -1720,6 +1822,10 @@ Successful output:
  RELEASE GATE PASSED
 ===============================================
 ```
+
+The production environment file must contain credentials that match the persisted PostgreSQL instance.
+
+When using a previously initialized Docker volume, changing `CVSCANNER_DB_PASSWORD` does not automatically change the password stored inside PostgreSQL.
 
 ---
 
@@ -1741,6 +1847,8 @@ It checks:
 /livez
 /readyz
 ```
+
+Both endpoints should return HTTP `200` when the production-like environment is healthy.
 
 ---
 
@@ -1775,16 +1883,16 @@ Example:
 
 ```text
 Current:
-cvscanner:0.0.2
+cvscanner:1.0.0
 
 Previous:
-cvscanner:0.0.1
+cvscanner:0.9.0
 ```
 
 Update:
 
 ```dotenv
-CVSCANNER_IMAGE_TAG=0.0.1
+CVSCANNER_IMAGE_TAG=0.9.0
 ```
 
 Then:
@@ -1849,11 +1957,12 @@ It is not enough for unrestricted multi-host horizontal scaling.
 
 ## Horizontal Scaling
 
-These parts already support distributed deployment:
+These components already support distributed deployment:
 
 ```text
 PostgreSQL
 Redis-backed rate limiting
+PostgreSQL-backed cleanup coordination
 ```
 
 Uploaded CV storage does not yet provide shared multi-node storage.
@@ -1881,7 +1990,7 @@ Keycloak
 Auth0
 Okta
 Azure Entra ID
-other OIDC-compatible providers
+Other OIDC-compatible providers
 ```
 
 ---
@@ -1896,7 +2005,7 @@ It can be added later without changing the core processing architecture.
 
 # Production Readiness
 
-The current release baseline has been validated with:
+The `1.0.0` release baseline has been validated with:
 
 ```text
 Java 21
@@ -1910,22 +2019,27 @@ Docker Compose
 GitHub Actions
 ```
 
-Verification status:
+Current validation baseline:
 
 ```text
-Maven verification       PASS
-119 tests                PASS
-OpenAPI integration      PASS
-GitHub Actions CI        PASS
-Docker image build       PASS
-Non-root runtime         PASS
-Production profile       PASS
-Compose validation       PASS
-Container health         PASS
-Liveness                 PASS
-Readiness                PASS
-Release gate             PASS
+Maven verification             PASS
+121 tests                      PASS
+OpenAPI integration            PASS
+Swagger security metadata      PASS
+Docker image build             PASS
+Stable executable JAR          PASS
+Non-root runtime               PASS
+Production profile             PASS
+Compose validation             PASS
+PostgreSQL connectivity        PASS
+Redis connectivity             PASS
+Container startup              PASS
+Liveness                       PASS
+Readiness                      PASS
+Production smoke test          PASS
 ```
+
+Before publishing a release tag, the complete release gate should be run with a valid production-like `.env.prod`.
 
 ---
 
@@ -1941,26 +2055,25 @@ When extending CVScanner:
 6. Add integration tests for infrastructure-dependent behavior.
 7. Preserve liveness/readiness semantics.
 8. Keep archive extraction bounded and defensive.
-9. Do not store permanent business data in Redis without an explicit design decision.
-10. Prefer backward-compatible database migrations.
-11. Run `mvn clean verify` before release.
-12. Keep CI green.
-13. Run the production release gate before deploying.
+9. Keep HTTP upload size explicitly bounded.
+10. Do not store permanent business data in Redis without an explicit design decision.
+11. Prefer backward-compatible database migrations.
+12. Keep batch operational limits externally configurable.
+13. Run `mvn clean verify` before release.
+14. Keep CI green.
+15. Run the production release gate before publishing a release.
 
 ---
 
 # Quick Start
 
 ```powershell
-# Clone
 git clone https://github.com/Seyidli06/CVScanner.git
 
 cd CVScanner
 
-# Start development infrastructure
 docker compose up -d
 
-# Run application
 .\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=dev"
 ```
 
@@ -1998,10 +2111,46 @@ Full verification:
 .\mvnw.cmd clean verify
 ```
 
+Generated application artifact:
+
+```text
+target/cvscanner.jar
+```
+
 Production Docker image:
 
 ```powershell
-docker build -t cvscanner:0.0.1 .
+docker build -t cvscanner:1.0.0 .
+```
+
+---
+
+# Release
+
+After the complete test suite, Docker validation, production runtime verification and CI succeed:
+
+```powershell
+git status
+```
+
+The working tree should be clean before tagging.
+
+Create the release tag:
+
+```powershell
+git tag -a v1.0.0 -m "CVScanner v1.0.0"
+```
+
+Push the tag:
+
+```powershell
+git push origin v1.0.0
+```
+
+The corresponding production Docker image is:
+
+```text
+cvscanner:1.0.0
 ```
 
 ---
@@ -2013,8 +2162,10 @@ powershell `
     -NoProfile `
     -ExecutionPolicy Bypass `
     -File .\scripts\release-gate.ps1 `
-    -ImageTag "0.0.1" `
-    -Port 8080
+    -ImageTag 1.0.0 `
+    -Port 8080 `
+    -EnvFile .\.env.prod `
+    -ComposeFile .\docker-compose.prod.yml
 ```
 
 Expected:
