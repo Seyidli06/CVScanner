@@ -52,11 +52,11 @@ public class CandidateExportQueryService {
                 candidateRepository;
     }
 
-    /*
-     * ============================================================
-     * VALIDATION
-     * ============================================================
-     */
+    
+
+
+
+
 
     public void validateRequest(
             CandidateSearchCriteria criteria,
@@ -64,10 +64,10 @@ public class CandidateExportQueryService {
             String direction
     ) {
 
-        /*
-         * CandidateSearchCriteria öz business
-         * validation-ını constructor daxilində edir.
-         */
+        
+
+
+
 
         validateSortField(
                 sortBy
@@ -78,11 +78,11 @@ public class CandidateExportQueryService {
         );
     }
 
-    /*
-     * ============================================================
-     * READ ONE EXPORT BATCH
-     * ============================================================
-     */
+    
+
+
+
+
 
     public List<CandidateExportRow> readBatch(
             CandidateSearchCriteria criteria,
@@ -136,11 +136,11 @@ public class CandidateExportQueryService {
                         Candidate.class
                 );
 
-        /*
-         * ========================================================
-         * SAME FILTERING LOGIC AS CANDIDATE JSON API
-         * ========================================================
-         */
+        
+
+
+
+
 
         Specification<Candidate> specification =
                 CandidateSpecifications.from(
@@ -167,19 +167,19 @@ public class CandidateExportQueryService {
                 root
         );
 
-        /*
-         * ========================================================
-         * DETERMINISTIC SORT
-         * ========================================================
-         *
-         * Primary:
-         *
-         * requested sort
-         *
-         * Secondary:
-         *
-         * id ASC
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
+
 
         List<Order> orders =
                 new ArrayList<>();
@@ -242,19 +242,19 @@ public class CandidateExportQueryService {
             return List.of();
         }
 
-        /*
-         * ========================================================
-         * TWO-PHASE HYDRATION
-         * ========================================================
-         *
-         * Pagination query-də collection fetch join etmirik.
-         *
-         * Sonra həmin batch üçün:
-         *
-         * upload + skills
-         *
-         * hydrate edirik.
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
+
 
         List<UUID> candidateIds =
                 candidates
@@ -283,13 +283,13 @@ public class CandidateExportQueryService {
             );
         }
 
-        /*
-         * Hydration IN query nəticə sırasını
-         * guarantee etmir.
-         *
-         * Original ordered candidateIds üzrə
-         * response-u yenidən qururuq.
-         */
+        
+
+
+
+
+
+
 
         List<CandidateExportRow> result =
                 new ArrayList<>(
@@ -326,25 +326,25 @@ public class CandidateExportQueryService {
         );
     }
 
-    /*
-     * ============================================================
-     * CLEAR PERSISTENCE CONTEXT
-     * ============================================================
-     *
-     * Long export zamanı əvvəlki batch entity-ləri
-     * Hibernate first-level cache-də qalmasın.
-     */
+    
+
+
+
+
+
+
+
 
     public void clearPersistenceContext() {
 
         entityManager.clear();
     }
 
-    /*
-     * ============================================================
-     * ENTITY -> EXPORT DTO
-     * ============================================================
-     */
+    
+
+
+
+
 
     private CandidateExportRow toExportRow(
             Candidate candidate
@@ -373,11 +373,11 @@ public class CandidateExportQueryService {
         );
     }
 
-    /*
-     * ============================================================
-     * SORT VALIDATION
-     * ============================================================
-     */
+    
+
+
+
+
 
     private void validateSortField(
             String sortBy

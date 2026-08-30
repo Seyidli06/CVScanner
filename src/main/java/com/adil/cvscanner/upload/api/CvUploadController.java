@@ -39,21 +39,21 @@ public class CvUploadController {
                 uploadQueryService;
     }
 
-    /*
-     * ============================================================
-     * CREATE UPLOAD
-     * ============================================================
-     *
-     * POST /api/v1/uploads
-     *
-     * multipart:
-     *
-     * file = candidates.zip
-     *
-     * Response:
-     *
-     * 202 Accepted
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @PostMapping(
             consumes =

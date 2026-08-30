@@ -18,54 +18,54 @@ import java.util.regex.Pattern;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class CorrelationIdFilter extends OncePerRequestFilter {
 
-    /*
-     * ============================================================
-     * PUBLIC CONTRACT
-     * ============================================================
-     *
-     * Client bu header-i göndərə bilər:
-     *
-     * X-Correlation-ID: checkout-123
-     *
-     * Eyni value response-da geri qaytarılır.
-     */
+    
+
+
+
+
+
+
+
+
+
+
     public static final String CORRELATION_ID_HEADER =
             "X-Correlation-ID";
 
-    /*
-     * ============================================================
-     * MDC KEY
-     * ============================================================
-     *
-     * Log pattern daxilində:
-     *
-     * %X{correlationId}
-     *
-     * ilə istifadə edə biləcəyik.
-     */
+    
+
+
+
+
+
+
+
+
+
+
     public static final String MDC_CORRELATION_ID_KEY =
             "correlationId";
 
-    /*
-     * ============================================================
-     * CORRELATION ID VALIDATION
-     * ============================================================
-     *
-     * Qəbul edirik:
-     *
-     * letters
-     * digits
-     * -
-     * _
-     * .
-     * :
-     *
-     * maksimum 128 character.
-     *
-     * Bunun məqsədi client-in arbitrary text,
-     * newline və s. log context-ə daxil etməsinin
-     * qarşısını almaqdır.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     private static final Pattern VALID_CORRELATION_ID =
             Pattern.compile(
                     "^[A-Za-z0-9._:-]{1,128}$"
@@ -85,27 +85,27 @@ public class CorrelationIdFilter extends OncePerRequestFilter {
                         )
                 );
 
-        /*
-         * ========================================================
-         * RESPONSE PROPAGATION
-         * ========================================================
-         *
-         * Client öz request-inin server-side correlation
-         * ID-sini həmişə görə bilir.
-         */
+        
+
+
+
+
+
+
+
         response.setHeader(
                 CORRELATION_ID_HEADER,
                 correlationId
         );
 
-        /*
-         * ========================================================
-         * MDC
-         * ========================================================
-         *
-         * Bu request thread-də yazılan logların
-         * hamısı həmin correlation ID-ni görə bilər.
-         */
+        
+
+
+
+
+
+
+
         MDC.put(
                 MDC_CORRELATION_ID_KEY,
                 correlationId
@@ -120,25 +120,25 @@ public class CorrelationIdFilter extends OncePerRequestFilter {
 
         } finally {
 
-            /*
-             * ====================================================
-             * ÇOX VACİB
-             * ====================================================
-             *
-             * Servlet thread pool thread-ləri reuse olunur.
-             *
-             * MDC təmizlənməsə:
-             *
-             * Request A
-             * correlationId = A
-             *
-             * həmin thread sonra
-             *
-             * Request B
-             *
-             * üçün istifadə ediləndə A-nın ID-si
-             * B-yə leak edə bilər.
-             */
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             MDC.remove(
                     MDC_CORRELATION_ID_KEY
             );

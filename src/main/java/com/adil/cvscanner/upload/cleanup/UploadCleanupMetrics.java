@@ -14,11 +14,11 @@ import java.util.concurrent.atomic.AtomicLong;
 @Component
 public class UploadCleanupMetrics {
 
-    /*
-     * ============================================================
-     * CLEANUP RUN METRICS
-     * ============================================================
-     */
+    
+
+
+
+
 
     public static final String RUNS =
             "cvscanner.cleanup.runs";
@@ -44,11 +44,11 @@ public class UploadCleanupMetrics {
     public static final String LAST_SUCCESS =
             "cvscanner.cleanup.last_success_epoch_seconds";
 
-    /*
-     * ============================================================
-     * DISTRIBUTED LOCK METRICS
-     * ============================================================
-     */
+    
+
+
+
+
 
     public static final String LOCK_ACQUIRED =
             "cvscanner.cleanup.lock.acquired";
@@ -56,11 +56,11 @@ public class UploadCleanupMetrics {
     public static final String LOCK_CONTENDED =
             "cvscanner.cleanup.lock.contended";
 
-    /*
-     * ============================================================
-     * SCHEDULER METRICS
-     * ============================================================
-     */
+    
+
+
+
+
 
     public static final String SCHEDULER_ATTEMPTS =
             "cvscanner.cleanup.scheduler.attempts";
@@ -71,11 +71,11 @@ public class UploadCleanupMetrics {
     public static final String SCHEDULER_FAILURES =
             "cvscanner.cleanup.scheduler.failures";
 
-    /*
-     * ============================================================
-     * METERS
-     * ============================================================
-     */
+    
+
+
+
+
 
     private final Counter runs;
 
@@ -101,12 +101,12 @@ public class UploadCleanupMetrics {
 
     private final Timer duration;
 
-    /*
-     * 0:
-     *
-     * application start-dan sonra hələ tam uğurlu
-     * cleanup execution olmayıb.
-     */
+    
+
+
+
+
+
     private final AtomicLong lastSuccessEpochSeconds =
             new AtomicLong(
                     0
@@ -121,11 +121,11 @@ public class UploadCleanupMetrics {
                 "meterRegistry must not be null"
         );
 
-        /*
-         * ========================================================
-         * CLEANUP RUN
-         * ========================================================
-         */
+        
+
+
+
+
 
         this.runs =
                 Counter.builder(
@@ -216,11 +216,11 @@ public class UploadCleanupMetrics {
                         meterRegistry
                 );
 
-        /*
-         * ========================================================
-         * DISTRIBUTED LOCK
-         * ========================================================
-         */
+        
+
+
+
+
 
         this.lockAcquired =
                 Counter.builder(
@@ -244,11 +244,11 @@ public class UploadCleanupMetrics {
                                 meterRegistry
                         );
 
-        /*
-         * ========================================================
-         * SCHEDULER
-         * ========================================================
-         */
+        
+
+
+
+
 
         this.schedulerAttempts =
                 Counter.builder(
@@ -284,11 +284,11 @@ public class UploadCleanupMetrics {
                         );
     }
 
-    /*
-     * ============================================================
-     * CLEANUP RUN COMPLETED
-     * ============================================================
-     */
+    
+
+
+
+
 
     public void recordCompletedRun(
             UploadCleanupRunResult result,
@@ -330,10 +330,10 @@ public class UploadCleanupMetrics {
                 executionDuration
         );
 
-        /*
-         * Yalnız heç bir item failure yoxdursa
-         * "last successful cleanup" yenilənir.
-         */
+        
+
+
+
 
         if (
                 result.failed() == 0
@@ -346,11 +346,11 @@ public class UploadCleanupMetrics {
         }
     }
 
-    /*
-     * ============================================================
-     * WHOLE CLEANUP RUN FAILURE
-     * ============================================================
-     */
+    
+
+
+
+
 
     public void recordRunFailure(
             Duration executionDuration
@@ -367,11 +367,11 @@ public class UploadCleanupMetrics {
         );
     }
 
-    /*
-     * ============================================================
-     * DISTRIBUTED LOCK
-     * ============================================================
-     */
+    
+
+
+
+
 
     public void recordDistributedLockAcquired() {
 
@@ -383,11 +383,11 @@ public class UploadCleanupMetrics {
         lockContended.increment();
     }
 
-    /*
-     * ============================================================
-     * SCHEDULER
-     * ============================================================
-     */
+    
+
+
+
+
 
     public void recordSchedulerAttempt() {
 
@@ -404,11 +404,11 @@ public class UploadCleanupMetrics {
         schedulerFailures.increment();
     }
 
-    /*
-     * ============================================================
-     * COUNTER HELPER
-     * ============================================================
-     */
+    
+
+
+
+
 
     private void increment(
             Counter counter,
@@ -434,11 +434,11 @@ public class UploadCleanupMetrics {
         }
     }
 
-    /*
-     * ============================================================
-     * DURATION VALIDATION
-     * ============================================================
-     */
+    
+
+
+
+
 
     private void validateDuration(
             Duration executionDuration

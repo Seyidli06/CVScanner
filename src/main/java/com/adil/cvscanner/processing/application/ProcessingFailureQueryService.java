@@ -39,11 +39,11 @@ public class ProcessingFailureQueryService {
                 cvUploadRepository;
     }
 
-    /*
-     * ============================================================
-     * SEARCH FAILURES
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Transactional(
             readOnly = true
@@ -64,20 +64,20 @@ public class ProcessingFailureQueryService {
                 size
         );
 
-        /*
-         * =====================================================
-         * UPLOAD EXISTENCE
-         * =====================================================
-         *
-         * Bunları ayırmaq istəyirik:
-         *
-         * upload mövcuddur,
-         * amma failure yoxdur
-         *
-         *              VS
-         *
-         * upload ümumiyyətlə yoxdur
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         if (
                 !cvUploadRepository.existsById(
@@ -90,16 +90,16 @@ public class ProcessingFailureQueryService {
             );
         }
 
-        /*
-         * =====================================================
-         * SORT
-         * =====================================================
-         *
-         * Ən yeni failure yuxarıda.
-         *
-         * createdAt eyni olsa filename
-         * secondary deterministic sort-dur.
-         */
+        
+
+
+
+
+
+
+
+
+
 
         Sort sort =
                 Sort.by(
@@ -132,11 +132,11 @@ public class ProcessingFailureQueryService {
         );
     }
 
-    /*
-     * ============================================================
-     * PAGINATION VALIDATION
-     * ============================================================
-     */
+    
+
+
+
+
 
     private void validatePagination(
             int page,

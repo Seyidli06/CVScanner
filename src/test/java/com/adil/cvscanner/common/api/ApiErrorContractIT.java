@@ -42,20 +42,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Testcontainers
 class ApiErrorContractIT {
 
-    /*
-     * ============================================================
-     * TEMP STORAGE
-     * ============================================================
-     */
+    
+
+
+
+
 
     private static final Path STORAGE_ROOT =
             createStorageRoot();
 
-    /*
-     * ============================================================
-     * REAL POSTGRESQL
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Container
     @ServiceConnection
@@ -79,19 +79,19 @@ class ApiErrorContractIT {
     @Autowired
     private CvUploadRepository cvUploadRepository;
 
-    /*
-     * Upload launch-failure error contract üçün
-     * yalnız Batch launcher mock olunur.
-     */
+    
+
+
+
 
     @MockitoBean
     private CvProcessingJobLauncher cvProcessingJobLauncher;
 
-    /*
-     * ============================================================
-     * TEST PROPERTIES
-     * ============================================================
-     */
+    
+
+
+
+
 
     @DynamicPropertySource
     static void properties(
@@ -153,10 +153,10 @@ class ApiErrorContractIT {
                 () -> "0ms"
         );
 
-        /*
-         * Default Spring Boot error response
-         * internal məlumat expose etməsin.
-         */
+        
+
+
+
 
         registry.add(
                 "server.error.include-message",
@@ -174,11 +174,11 @@ class ApiErrorContractIT {
         );
     }
 
-    /*
-     * ============================================================
-     * CLEAN
-     * ============================================================
-     */
+    
+
+
+
+
 
     @BeforeEach
     void setUp() {
@@ -190,12 +190,12 @@ class ApiErrorContractIT {
         cvUploadRepository.deleteAll();
     }
 
-    /*
-     * ============================================================
-     * TEST 1
-     * INVALID CANDIDATE BUSINESS QUERY
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldReturnStandardErrorForInvalidCandidateQuery()
@@ -279,12 +279,12 @@ class ApiErrorContractIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 2
-     * INVALID REQUEST PARAMETER TYPE
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldReturnStandardErrorForMalformedUuid()
@@ -359,12 +359,12 @@ class ApiErrorContractIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 3
-     * INVALID ENUM PARAMETER
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldReturnStandardErrorForInvalidJobType()
@@ -428,12 +428,12 @@ class ApiErrorContractIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 4
-     * UNKNOWN UPLOAD
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldReturnStandard404ForUnknownUpload()
@@ -509,12 +509,12 @@ class ApiErrorContractIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 5
-     * INVALID PROCESSING FAILURE QUERY
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldReturnStandardErrorForInvalidFailureQuery()
@@ -589,20 +589,20 @@ class ApiErrorContractIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 6
-     * INTERNAL BATCH LAUNCH FAILURE
-     * ============================================================
-     *
-     * Internal exception:
-     *
-     * CvProcessingLaunchException
-     *
-     * client-ə implementation detail,
-     * stack trace, Batch internals və
-     * exception class çıxmamalıdır.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldHideInternalDetailsForProcessingLaunchFailure()
@@ -716,11 +716,7 @@ class ApiErrorContractIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * ZIP HELPER
-     * ============================================================
-     */
+
 
     private static byte[] createZip(
             String entryName,
@@ -756,11 +752,7 @@ class ApiErrorContractIT {
         return output.toByteArray();
     }
 
-    /*
-     * ============================================================
-     * SMALL PDF CONTENT
-     * ============================================================
-     */
+
 
     private static byte[] minimalPdfBytes() {
 
@@ -783,11 +775,11 @@ class ApiErrorContractIT {
         );
     }
 
-    /*
-     * ============================================================
-     * STORAGE ROOT
-     * ============================================================
-     */
+    
+
+
+
+
 
     private static Path createStorageRoot() {
 
@@ -805,5 +797,73 @@ class ApiErrorContractIT {
                     exception
             );
         }
+    }
+
+    @Test
+    void shouldReturnStandardErrorForInvalidUpload()
+            throws Exception {
+
+        MockMultipartFile file =
+                new MockMultipartFile(
+                        "file",
+                        "candidates.txt",
+                        "text/plain",
+                        "not-a-zip".getBytes(
+                                StandardCharsets.UTF_8
+                        )
+                );
+
+        mockMvc.perform(
+                        multipart("/api/v1/uploads")
+                                .file(file)
+                                .with(
+                                        SecurityTestUsers.recruiter()
+                                )
+                )
+                .andExpect(
+                        status().isBadRequest()
+                )
+                .andExpect(
+                        jsonPath("$.timestamp")
+                                .isNotEmpty()
+                )
+                .andExpect(
+                        jsonPath("$.status")
+                                .value(400)
+                )
+                .andExpect(
+                        jsonPath("$.error")
+                                .value("Bad Request")
+                )
+                .andExpect(
+                        jsonPath("$.code")
+                                .value("INVALID_UPLOAD")
+                )
+                .andExpect(
+                        jsonPath("$.message")
+                                .value(
+                                        "Only ZIP archives are supported"
+                                )
+                )
+                .andExpect(
+                        jsonPath("$.path")
+                                .value("/api/v1/uploads")
+                )
+                .andExpect(
+                        jsonPath("$.trace")
+                                .doesNotExist()
+                )
+                .andExpect(
+                        jsonPath("$.stackTrace")
+                                .doesNotExist()
+                )
+                .andExpect(
+                        jsonPath("$.exception")
+                                .doesNotExist()
+                )
+                .andExpect(
+                        jsonPath("$.cause")
+                                .doesNotExist()
+                );
     }
 }

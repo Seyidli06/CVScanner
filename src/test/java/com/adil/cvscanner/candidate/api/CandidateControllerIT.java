@@ -914,11 +914,11 @@ class CandidateControllerIT {
                 );
     }
 
-    /*
-     * Bütün CandidateController API request-ləri
-     * final RBAC modelinə uyğun olaraq RECRUITER
-     * authority ilə göndərilir.
-     */
+    
+
+
+
+
     private MockHttpServletRequestBuilder recruiterGet(
             String url
     ) {

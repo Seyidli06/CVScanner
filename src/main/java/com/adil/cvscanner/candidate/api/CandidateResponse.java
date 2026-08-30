@@ -31,10 +31,10 @@ public record CandidateResponse(
             Candidate candidate
     ) {
 
-        /*
-         * API response deterministic olsun deyə
-         * skills-i sorted Set kimi qaytarırıq.
-         */
+        
+
+
+
         Set<String> sortedSkills =
                 new TreeSet<>(
                         String.CASE_INSENSITIVE_ORDER

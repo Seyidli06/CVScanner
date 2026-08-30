@@ -67,11 +67,11 @@ class DistributedRateLimitStateIT {
                         REDIS_PORT
                 );
 
-        /*
-         * ========================================================
-         * INSTANCE A
-         * ========================================================
-         */
+        
+
+
+
+
 
         RedisURI uriA =
                 RedisURI.create(
@@ -112,11 +112,11 @@ class DistributedRateLimitStateIT {
                         )
                         .build();
 
-        /*
-         * ========================================================
-         * INSTANCE B
-         * ========================================================
-         */
+        
+
+
+
+
 
         RedisURI uriB =
                 RedisURI.create(
@@ -190,11 +190,11 @@ class DistributedRateLimitStateIT {
         }
     }
 
-    /*
-     * ============================================================
-     * SHARED DISTRIBUTED STATE
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Test
     void shouldShareBucketStateAcrossIndependentInstances() {
@@ -206,9 +206,9 @@ class DistributedRateLimitStateIT {
         BucketConfiguration configuration =
                 createConfiguration();
 
-        /*
-         * Instance A öz proxy manager-i ilə bucket götürür.
-         */
+        
+
+
         Bucket bucketFromInstanceA =
                 proxyManagerA.getProxy(
                         key,
@@ -216,10 +216,10 @@ class DistributedRateLimitStateIT {
                                 configuration
                 );
 
-        /*
-         * Instance B tamam ayrı Lettuce client və
-         * connection ilə eyni Redis key-i götürür.
-         */
+        
+
+
+
         Bucket bucketFromInstanceB =
                 proxyManagerB.getProxy(
                         key,
@@ -227,13 +227,13 @@ class DistributedRateLimitStateIT {
                                 configuration
                 );
 
-        /*
-         * Capacity = 2
-         *
-         * Instance A:
-         *
-         * 2 -> 1
-         */
+        
+
+
+
+
+
+
         boolean firstRequest =
                 bucketFromInstanceA.tryConsume(
                         1
@@ -243,11 +243,11 @@ class DistributedRateLimitStateIT {
                 firstRequest
         ).isTrue();
 
-        /*
-         * Instance B həmin shared bucket-i görməlidir:
-         *
-         * 1 -> 0
-         */
+        
+
+
+
+
         boolean secondRequest =
                 bucketFromInstanceB.tryConsume(
                         1
@@ -257,17 +257,17 @@ class DistributedRateLimitStateIT {
                 secondRequest
         ).isTrue();
 
-        /*
-         * Instance A yenidən request edir.
-         *
-         * Əgər state local olsaydı, burada token qalardı.
-         *
-         * Amma state Redis-də shared olduğu üçün:
-         *
-         * 0 token
-         *
-         * request rejected.
-         */
+        
+
+
+
+
+
+
+
+
+
+
         boolean thirdRequest =
                 bucketFromInstanceA.tryConsume(
                         1
@@ -278,11 +278,11 @@ class DistributedRateLimitStateIT {
         ).isFalse();
     }
 
-    /*
-     * ============================================================
-     * DIFFERENT KEYS MUST REMAIN INDEPENDENT
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Test
     void shouldKeepDifferentDistributedKeysIndependent() {
@@ -312,11 +312,11 @@ class DistributedRateLimitStateIT {
                                 configuration
                 );
 
-        /*
-         * Bucket A:
-         *
-         * 2 -> 1 -> 0
-         */
+        
+
+
+
+
         assertThat(
                 bucketA.tryConsume(
                         1
@@ -335,11 +335,11 @@ class DistributedRateLimitStateIT {
                 )
         ).isFalse();
 
-        /*
-         * Bucket B tamam başqa Redis key-dir.
-         *
-         * Ona görə hələ full capacity ilə başlamalıdır.
-         */
+        
+
+
+
+
         assertThat(
                 bucketB.tryConsume(
                         1
@@ -359,11 +359,11 @@ class DistributedRateLimitStateIT {
         ).isFalse();
     }
 
-    /*
-     * ============================================================
-     * TEST CONFIGURATION
-     * ============================================================
-     */
+    
+
+
+
+
 
     private BucketConfiguration createConfiguration() {
 

@@ -65,17 +65,17 @@ public class RateLimitingFilter
                         path
                 );
 
-        /*
-         * Rate-limit policy-si olmayan request.
-         *
-         * Misal:
-         *
-         * /actuator/health
-         * /livez
-         * /readyz
-         * /actuator/metrics
-         * unknown route
-         */
+        
+
+
+
+
+
+
+
+
+
+
         if (
                 policy.isEmpty()
         ) {
@@ -93,14 +93,14 @@ public class RateLimitingFilter
                         .getContext()
                         .getAuthentication();
 
-        /*
-         * Filter AuthorizationFilter-dən sonra yerləşir.
-         *
-         * Protected endpoint üçün normal halda burada
-         * authenticated principal olmalıdır.
-         *
-         * Defensive check olaraq yenə saxlayırıq.
-         */
+        
+
+
+
+
+
+
+
         if (
                 authentication == null
                         ||
@@ -141,19 +141,19 @@ public class RateLimitingFilter
                         principal
                 );
 
-        /*
-         * ========================================================
-         * BACKEND UNAVAILABLE
-         * ========================================================
-         */
+        
+
+
+
+
 
         if (
                 !decision.backendAvailable()
         ) {
 
-            /*
-             * fail-open=true
-             */
+            
+
+
             if (
                     decision.allowed()
             ) {
@@ -166,9 +166,9 @@ public class RateLimitingFilter
                 return;
             }
 
-            /*
-             * fail-open=false
-             */
+            
+
+
             responseWriter.writeBackendUnavailable(
                     request,
                     response
@@ -177,11 +177,11 @@ public class RateLimitingFilter
             return;
         }
 
-        /*
-         * ========================================================
-         * RATE LIMIT EXCEEDED
-         * ========================================================
-         */
+        
+
+
+
+
 
         if (
                 !decision.allowed()
@@ -196,11 +196,11 @@ public class RateLimitingFilter
             return;
         }
 
-        /*
-         * ========================================================
-         * REQUEST ALLOWED
-         * ========================================================
-         */
+        
+
+
+
+
 
         response.setHeader(
                 RateLimitResponseWriter
@@ -216,23 +216,23 @@ public class RateLimitingFilter
         );
     }
 
-    /*
-     * ============================================================
-     * APPLICATION PATH
-     * ============================================================
-     *
-     * requestURI query string ehtiva etmir.
-     *
-     * Əgər gələcəkdə context-path istifadə etsək:
-     *
-     * /cvscanner/api/v1/candidates
-     *
-     * resolver-ə yalnız:
-     *
-     * /api/v1/candidates
-     *
-     * ötürüləcək.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private String resolveApplicationPath(
             HttpServletRequest request

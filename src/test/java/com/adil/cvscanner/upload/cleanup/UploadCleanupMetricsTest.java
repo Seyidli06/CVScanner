@@ -28,12 +28,12 @@ class UploadCleanupMetricsTest {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 1
-     * SUCCESSFUL CLEANUP
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldRecordSuccessfulCleanupRun() {
@@ -97,11 +97,11 @@ class UploadCleanupMetricsTest {
                 )
         ).isZero();
 
-        /*
-         * Timer:
-         *
-         * 1 recorded execution.
-         */
+        
+
+
+
+
 
         assertThat(
                 meterRegistry
@@ -127,10 +127,7 @@ class UploadCleanupMetricsTest {
                 250.0
         );
 
-        /*
-         * Zero item failure olduğuna görə
-         * last-success timestamp set olunmalıdır.
-         */
+
 
         assertThat(
                 gauge(
@@ -141,15 +138,7 @@ class UploadCleanupMetricsTest {
         );
     }
 
-    /*
-     * ============================================================
-     * TEST 2
-     * PARTIAL CLEANUP
-     * ============================================================
-     *
-     * run itself completed,
-     * amma bəzi item-lər failed-dir.
-     */
+
 
     @Test
     void shouldRecordPartialRunWithoutUpdatingLastSuccess() {
@@ -209,11 +198,7 @@ class UploadCleanupMetricsTest {
                 1.0
         );
 
-        /*
-         * Partial run:
-         *
-         * last successful timestamp dəyişmir.
-         */
+
 
         assertThat(
                 gauge(
@@ -222,12 +207,12 @@ class UploadCleanupMetricsTest {
         ).isZero();
     }
 
-    /*
-     * ============================================================
-     * TEST 3
-     * WHOLE RUN FAILURE
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldRecordWholeRunFailure() {
@@ -246,10 +231,7 @@ class UploadCleanupMetricsTest {
                 1.0
         );
 
-        /*
-         * Failed run normal completed-runs counter-a
-         * daxil edilmir.
-         */
+
 
         assertThat(
                 counter(
@@ -275,12 +257,12 @@ class UploadCleanupMetricsTest {
         ).isZero();
     }
 
-    /*
-     * ============================================================
-     * TEST 4
-     * METRICS ACCUMULATE
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldAccumulateMetricsAcrossRuns() {
@@ -361,11 +343,11 @@ class UploadCleanupMetricsTest {
         );
     }
 
-    /*
-     * ============================================================
-     * HELPERS
-     * ============================================================
-     */
+    
+
+
+
+
 
     private double counter(
             String metricName

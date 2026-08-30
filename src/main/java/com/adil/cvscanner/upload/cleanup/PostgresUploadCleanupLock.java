@@ -14,11 +14,11 @@ import java.util.function.Supplier;
 @Component
 public class PostgresUploadCleanupLock {
 
-    /*
-     * ============================================================
-     * GLOBAL ADVISORY LOCK KEY
-     * ============================================================
-     */
+    
+
+
+
+
 
     private static final long LOCK_KEY =
             0x435653434C45414EL;
@@ -55,11 +55,11 @@ public class PostgresUploadCleanupLock {
                 );
     }
 
-    /*
-     * ============================================================
-     * EXECUTE UNDER DISTRIBUTED LOCK
-     * ============================================================
-     */
+    
+
+
+
+
 
     public <T> Optional<T> tryExecute(
             Supplier<T> action
@@ -80,11 +80,11 @@ public class PostgresUploadCleanupLock {
                             connection
                     );
 
-            /*
-             * ====================================================
-             * ANOTHER INSTANCE OWNS THE LOCK
-             * ====================================================
-             */
+            
+
+
+
+
 
             if (
                     !acquired
@@ -147,10 +147,10 @@ public class PostgresUploadCleanupLock {
                         RuntimeException releaseFailure
                 ) {
 
-                    /*
-                     * Action özü fail olubsa unlock failure
-                     * original exception-ı mask etməməlidir.
-                     */
+                    
+
+
+
 
                     if (
                             actionRuntimeFailure != null
@@ -188,11 +188,11 @@ public class PostgresUploadCleanupLock {
         }
     }
 
-    /*
-     * ============================================================
-     * ACQUIRE
-     * ============================================================
-     */
+    
+
+
+
+
 
     private boolean tryAcquire(
             Connection connection
@@ -240,11 +240,11 @@ public class PostgresUploadCleanupLock {
         }
     }
 
-    /*
-     * ============================================================
-     * RELEASE
-     * ============================================================
-     */
+    
+
+
+
+
 
     private void release(
             Connection connection

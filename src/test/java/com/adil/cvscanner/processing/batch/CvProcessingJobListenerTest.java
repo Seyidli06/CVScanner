@@ -53,12 +53,12 @@ class CvProcessingJobListenerTest {
         );
     }
 
-    /*
-     * ============================================================
-     * TEST 1
-     * START
-     * ============================================================
-     */
+    
+
+
+
+
+
     @Test
     void shouldMarkProcessingAndLogSafeStartMetadata(
             CapturedOutput output
@@ -115,12 +115,12 @@ class CvProcessingJobListenerTest {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 2
-     * COMPLETED
-     * ============================================================
-     */
+    
+
+
+
+
+
     @Test
     void shouldCompleteUploadAndLogSuccessfulJob(
             CapturedOutput output
@@ -193,20 +193,20 @@ class CvProcessingJobListenerTest {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 3
-     * FAILURE
-     * ============================================================
-     *
-     * Əsas privacy/security testi.
-     *
-     * ExitStatus daxilinə qəsdən sensitive
-     * description yerləşdiririk.
-     *
-     * Bizim custom log həmin description-u
-     * çıxarmamalıdır.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
     @Test
     void shouldFailUploadWithoutLoggingExitDescription(
             CapturedOutput output
@@ -289,10 +289,10 @@ class CvProcessingJobListenerTest {
                         "exitCode=FAILED"
                 )
 
-                /*
-                 * Sensitive description
-                 * custom application log-a düşməməlidir.
-                 */
+                
+
+
+
                 .doesNotContain(
                         "VERY_SECRET_PERSON"
                 )
@@ -304,12 +304,12 @@ class CvProcessingJobListenerTest {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 4
-     * MISSING UPLOAD ID
-     * ============================================================
-     */
+    
+
+
+
+
+
     @Test
     void shouldRejectJobWithoutUploadId() {
 
@@ -336,12 +336,12 @@ class CvProcessingJobListenerTest {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 5
-     * INVALID UPLOAD ID
-     * ============================================================
-     */
+    
+
+
+
+
+
     @Test
     void shouldRejectInvalidUploadIdWithoutEchoingValue() {
 

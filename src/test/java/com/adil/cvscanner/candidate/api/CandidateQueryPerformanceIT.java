@@ -40,11 +40,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 )
 class CandidateQueryPerformanceIT {
 
-    /*
-     * ============================================================
-     * REAL POSTGRESQL
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Container
     @ServiceConnection
@@ -76,26 +76,26 @@ class CandidateQueryPerformanceIT {
 
     private Statistics statistics;
 
-    /*
-     * ============================================================
-     * DATASET
-     * ============================================================
-     *
-     * 30 candidate yaradırıq.
-     *
-     * Request:
-     *
-     * page=0
-     * size=20
-     *
-     * Beləliklə:
-     *
-     * - page full olacaq
-     * - database-də əlavə 10 nəticə qalacaq
-     *
-     * və Spring Data totalElements-i tapmaq
-     * üçün count query işlətməli olacaq.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @BeforeEach
     void setUp() {
@@ -104,9 +104,9 @@ class CandidateQueryPerformanceIT {
 
         cvUploadRepository.deleteAll();
 
-        /*
-         * Hibernate native SessionFactory.
-         */
+        
+
+
 
         SessionFactory sessionFactory =
                 entityManagerFactory.unwrap(
@@ -116,19 +116,19 @@ class CandidateQueryPerformanceIT {
         statistics =
                 sessionFactory.getStatistics();
 
-        /*
-         * Statistics property həqiqətən aktivdir.
-         */
+        
+
+
 
         assertThat(
                 statistics.isStatisticsEnabled()
         ).isTrue();
 
-        /*
-         * =====================================================
-         * UPLOAD
-         * =====================================================
-         */
+        
+
+
+
+
 
         CvUpload upload =
                 new CvUpload(
@@ -144,11 +144,11 @@ class CandidateQueryPerformanceIT {
                         upload
                 );
 
-        /*
-         * =====================================================
-         * 30 CANDIDATES
-         * =====================================================
-         */
+        
+
+
+
+
 
         List<Candidate> candidates =
                 new ArrayList<>();
@@ -163,15 +163,15 @@ class CandidateQueryPerformanceIT {
                     new Candidate(
                             upload,
 
-                            /*
-                             * Zero padding sort-u
-                             * deterministic edir:
-                             *
-                             * Candidate 01
-                             * Candidate 02
-                             * ...
-                             * Candidate 30
-                             */
+                            
+
+
+
+
+
+
+
+
                             "Candidate %02d".formatted(
                                     index
                             ),
@@ -186,12 +186,12 @@ class CandidateQueryPerformanceIT {
                                     index
                             ),
 
-                            /*
-                             * Hər Candidate bir neçə skill daşıyır.
-                             *
-                             * N+1 varsa bu dataset
-                             * onu çox aydın göstərəcək.
-                             */
+                            
+
+
+
+
+
                             Set.of(
                                     "Java",
                                     "Spring Boot",
@@ -216,20 +216,20 @@ class CandidateQueryPerformanceIT {
                 30
         );
 
-        /*
-         * =====================================================
-         * CRITICAL
-         * =====================================================
-         *
-         * Setup zamanı çoxlu INSERT/SELECT
-         * statement işlətdik.
-         *
-         * Performance measurement yalnız
-         * HTTP request-i ölçməlidir.
-         *
-         * Ona görə bütün əvvəlki statistics-i
-         * burada sıfırlayırıq.
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         statistics.clear();
 
@@ -238,25 +238,25 @@ class CandidateQueryPerformanceIT {
         ).isZero();
     }
 
-    /*
-     * ============================================================
-     * MAIN PERFORMANCE TEST
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Test
     void shouldLoadCandidatePageWithoutNPlusOneQueries()
             throws Exception {
 
-        /*
-         * =====================================================
-         * REQUEST
-         * =====================================================
-         *
-         * 30 candidate var.
-         *
-         * İlk 20-ni istəyirik.
-         */
+        
+
+
+
+
+
+
+
+
 
         mockMvc.perform(
                         get(
@@ -287,10 +287,10 @@ class CandidateQueryPerformanceIT {
                                 .isOk()
                 )
 
-                /*
-                 * API business result də
-                 * düzgün qalmalıdır.
-                 */
+                
+
+
+
                 .andExpect(
                         jsonPath(
                                 "$.content.length()"
@@ -339,23 +339,23 @@ class CandidateQueryPerformanceIT {
                         )
                 );
 
-        /*
-         * =====================================================
-         * SQL QUERY COUNT
-         * =====================================================
-         */
+        
+
+
+
+
 
         long preparedStatements =
                 statistics
                         .getPrepareStatementCount();
 
-        /*
-         * Candidate page çoxlu SQL query
-         * yaratmamalıdır.
-         *
-         * N+1 regression olsa bu say
-         * candidate sayı ilə birlikdə artacaq.
-         */
+        
+
+
+
+
+
+
 
         assertThat(
                 preparedStatements
@@ -367,15 +367,15 @@ class CandidateQueryPerformanceIT {
                         4
                 );
 
-        /*
-         * Ən az:
-         *
-         * page/select query
-         * +
-         * count və ya əlaqəli query
-         *
-         * gözləyirik.
-         */
+        
+
+
+
+
+
+
+
+
 
         assertThat(
                 preparedStatements

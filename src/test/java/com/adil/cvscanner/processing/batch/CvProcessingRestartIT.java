@@ -87,57 +87,57 @@ class CvProcessingRestartIT {
         restartProbeWriter.reset();
     }
 
-    /*
-     * ============================================================
-     * MAIN TEST
-     * ============================================================
-     *
-     * Chunk size = 2
-     *
-     * Files:
-     *
-     * 01.pdf
-     * 02.pdf
-     * 03.pdf
-     * 04.pdf
-     * 05.pdf
-     *
-     *
-     * First execution:
-     *
-     * chunk 1
-     * 01 + 02
-     *      ↓
-     * COMMIT
-     *
-     * chunk 2
-     * 03 + 04
-     *      ↓
-     * FAIL
-     *
-     *
-     * Restart:
-     *
-     * reader checkpoint = index 2
-     *
-     * 03 + 04
-     *      ↓
-     * SUCCESS
-     *
-     * 05
-     *      ↓
-     * SUCCESS
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldRestartFailedJobFromLastCommittedCheckpoint()
             throws Exception {
 
-        /*
-         * =====================================================
-         * 1. FIRST EXECUTION
-         * =====================================================
-         */
+        
+
+
+
+
 
         JobExecution launchedExecution =
                 jobOperator.start(
@@ -150,11 +150,11 @@ class CvProcessingRestartIT {
                         launchedExecution.getId()
                 );
 
-        /*
-         * Writer ikinci chunk-da intentional
-         * exception atdığı üçün job fail
-         * olmalıdır.
-         */
+        
+
+
+
+
         assertThat(
                 failedExecution.getStatus()
         ).isEqualTo(
@@ -172,17 +172,17 @@ class CvProcessingRestartIT {
                 BatchStatus.FAILED
         );
 
-        /*
-         * İlk chunk commit olub.
-         *
-         * Ona görə writer-in real successful
-         * business side-effect-i:
-         *
-         * 01.pdf
-         * 02.pdf
-         *
-         * olmalıdır.
-         */
+        
+
+
+
+
+
+
+
+
+
+
         assertThat(
                 restartProbeWriter
                         .getSuccessfullyWrittenFiles()
@@ -191,12 +191,12 @@ class CvProcessingRestartIT {
                 "02.pdf"
         );
 
-        /*
-         * Writer invocation history:
-         *
-         * chunk #1 → success
-         * chunk #2 → fail
-         */
+        
+
+
+
+
+
         assertThat(
                 restartProbeWriter
                         .getInvokedChunks()
@@ -211,45 +211,45 @@ class CvProcessingRestartIT {
                 )
         );
 
-        /*
-         * =====================================================
-         * 2. RESTART
-         * =====================================================
-         *
-         * ÇOX VACİB:
-         *
-         * bunu etmirik:
-         *
-         * jobOperator.start(...)
-         *
-         *
-         * Failed execution-u restart edirik.
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         JobExecution restartedExecution =
                 jobOperator.restart(
                         failedExecution
                 );
 
-        /*
-         * Restart yeni JobExecution yaradır.
-         */
+        
+
+
         assertThat(
                 restartedExecution.getId()
         ).isNotEqualTo(
                 failedExecution.getId()
         );
 
-        /*
-         * Amma JobInstance eyni qalmalıdır.
-         *
-         * Yəni:
-         *
-         * Execution #1 FAILED
-         * Execution #2 COMPLETED
-         *
-         * eyni logical job instance üçündür.
-         */
+        
+
+
+
+
+
+
+
+
+
         assertThat(
                 restartedExecution
                         .getJobInstance()
@@ -260,10 +260,10 @@ class CvProcessingRestartIT {
                         .getId()
         );
 
-        /*
-         * Parameters də həmin logical
-         * JobInstance üçündür.
-         */
+        
+
+
+
         assertThat(
                 restartedExecution
                         .getJobParameters()
@@ -272,11 +272,11 @@ class CvProcessingRestartIT {
                         .getJobParameters()
         );
 
-        /*
-         * =====================================================
-         * 3. WAIT FOR RESTART
-         * =====================================================
-         */
+        
+
+
+
+
 
         JobExecution completedExecution =
                 waitForJobCompletion(
@@ -300,18 +300,18 @@ class CvProcessingRestartIT {
                 BatchStatus.COMPLETED
         );
 
-        /*
-         * Restart execution yalnız qalan:
-         *
-         * 03
-         * 04
-         * 05
-         *
-         * item-lərini oxumalıdır.
-         *
-         * 01 və 02 artıq əvvəlki committed
-         * checkpoint-dən əvvəldədir.
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
         assertThat(
                 restartedStepExecution
                         .getReadCount()
@@ -326,11 +326,11 @@ class CvProcessingRestartIT {
                 3
         );
 
-        /*
-         * =====================================================
-         * 4. FINAL BUSINESS RESULT
-         * =====================================================
-         */
+        
+
+
+
+
 
         assertThat(
                 restartProbeWriter
@@ -343,17 +343,17 @@ class CvProcessingRestartIT {
                 "05.pdf"
         );
 
-        /*
-         * Əgər reader restart zamanı index=0-dan
-         * başlasaydı:
-         *
-         * 01.pdf
-         * 02.pdf
-         *
-         * ikinci dəfə writer-a gələcəkdi.
-         *
-         * Amma gəlməməlidir.
-         */
+        
+
+
+
+
+
+
+
+
+
+
         assertThat(
                 countOccurrences(
                         restartProbeWriter
@@ -374,21 +374,21 @@ class CvProcessingRestartIT {
                 1
         );
 
-        /*
-         * =====================================================
-         * 5. COMPLETE WRITER HISTORY
-         * =====================================================
-         *
-         * First execution:
-         *
-         * [01, 02] SUCCESS
-         * [03, 04] FAIL
-         *
-         * Restart:
-         *
-         * [03, 04] SUCCESS
-         * [05]     SUCCESS
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         assertThat(
                 restartProbeWriter
@@ -412,21 +412,21 @@ class CvProcessingRestartIT {
         );
     }
 
-    /*
-     * ============================================================
-     * JOB PARAMETERS
-     * ============================================================
-     */
+    
+
+
+
+
 
     private JobParameters uniqueJobParameters() {
 
-        /*
-         * Bu yalnız dedicated test job üçündür.
-         *
-         * Production cvProcessingJob-da
-         * identifying parameter uploadId-dir
-         * və random run.id istifadə etmirik.
-         */
+        
+
+
+
+
+
+
         return new JobParametersBuilder()
                 .addString(
                         "testRunId",
@@ -436,11 +436,11 @@ class CvProcessingRestartIT {
                 .toJobParameters();
     }
 
-    /*
-     * ============================================================
-     * ASYNC WAIT
-     * ============================================================
-     */
+    
+
+
+
+
 
     private JobExecution waitForJobCompletion(
             long executionId
@@ -488,11 +488,11 @@ class CvProcessingRestartIT {
         );
     }
 
-    /*
-     * ============================================================
-     * STEP LOOKUP
-     * ============================================================
-     */
+    
+
+
+
+
 
     private StepExecution findStepExecution(
             JobExecution jobExecution
@@ -518,11 +518,11 @@ class CvProcessingRestartIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * OCCURRENCE COUNT
-     * ============================================================
-     */
+    
+
+
+
+
 
     private long countOccurrences(
             List<String> files,
@@ -537,28 +537,28 @@ class CvProcessingRestartIT {
                 .count();
     }
 
-    /*
-     * ============================================================
-     * TEST CONFIGURATION
-     * ============================================================
-     */
+    
+
+
+
+
 
     @TestConfiguration(
             proxyBeanMethods = false
     )
     static class RestartTestConfiguration {
 
-        /*
-         * ========================================================
-         * READER
-         * ========================================================
-         *
-         * Burada real production
-         * CvFileItemReader-dən istifadə edirik.
-         *
-         * Əsas məqsəd onun ExecutionContext
-         * restart state-ni test etməkdir.
-         */
+        
+
+
+
+
+
+
+
+
+
+
 
         @Bean("cvProcessingRestartTestReader")
         @StepScope
@@ -585,16 +585,16 @@ class CvProcessingRestartIT {
             );
         }
 
-        /*
-         * ========================================================
-         * PROCESSOR
-         * ========================================================
-         *
-         * Restart testində parsing/extraction
-         * business logic lazım deyil.
-         *
-         * Path olduğu kimi keçir.
-         */
+        
+
+
+
+
+
+
+
+
+
 
         @Bean("cvProcessingRestartTestProcessor")
         ItemProcessor<Path, Path>
@@ -603,11 +603,11 @@ class CvProcessingRestartIT {
             return path -> path;
         }
 
-        /*
-         * ========================================================
-         * WRITER
-         * ========================================================
-         */
+        
+
+
+
+
 
         @Bean
         RestartProbeWriter restartProbeWriter() {
@@ -615,11 +615,11 @@ class CvProcessingRestartIT {
             return new RestartProbeWriter();
         }
 
-        /*
-         * ========================================================
-         * STEP
-         * ========================================================
-         */
+        
+
+
+
+
 
         @Bean("cvProcessingRestartTestStep")
         Step cvProcessingRestartTestStep(
@@ -660,22 +660,22 @@ class CvProcessingRestartIT {
                             writer
                     )
 
-                    /*
-                     * Qəsdən faultTolerant()
-                     * əlavə etmirik.
-                     *
-                     * Writer exception atanda
-                     * həmin execution dərhal
-                     * FAILED olsun.
-                     */
+                    
+
+
+
+
+
+
+
                     .build();
         }
 
-        /*
-         * ========================================================
-         * JOB
-         * ========================================================
-         */
+        
+
+
+
+
 
         @Bean("cvProcessingRestartTestJob")
         Job cvProcessingRestartTestJob(
@@ -697,46 +697,46 @@ class CvProcessingRestartIT {
         }
     }
 
-    /*
-     * ============================================================
-     * RESTART PROBE WRITER
-     * ============================================================
-     *
-     * Məqsəd:
-     *
-     * [01, 02] → success
-     * [03, 04] → yalnız İLK DƏFƏ fail
-     *
-     * restart-dan sonra:
-     *
-     * [03, 04] → success
-     * [05]     → success
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     static class RestartProbeWriter
             implements ItemWriter<Path> {
 
-        /*
-         * Yalnız bir dəfə failure yaradırıq.
-         */
+        
+
+
         private final AtomicBoolean failOnce =
                 new AtomicBoolean(
                         true
                 );
 
-        /*
-         * Writer-a daxil olmuş bütün chunk-lar.
-         *
-         * Failed chunk da burada görünür.
-         */
+        
+
+
+
+
         private final List<List<String>>
                 invokedChunks =
                 new ArrayList<>();
 
-        /*
-         * Yalnız həqiqətən uğurlu writer
-         * invocation-larının item-ləri.
-         */
+        
+
+
+
         private final List<String>
                 successfullyWrittenFiles =
                 new ArrayList<>();
@@ -758,21 +758,21 @@ class CvProcessingRestartIT {
                             )
                             .toList();
 
-            /*
-             * Invocation history-yə failed
-             * chunk da daxil edilir.
-             */
+            
+
+
+
             invokedChunks.add(
                     List.copyOf(
                             filenames
                     )
             );
 
-            /*
-             * İlk dəfə chunk daxilində
-             * 03.pdf görəndə job-u
-             * intentionally fail edirik.
-             */
+            
+
+
+
+
             if (
                     filenames.contains(
                             "03.pdf"
@@ -788,10 +788,10 @@ class CvProcessingRestartIT {
                 );
             }
 
-            /*
-             * Exception yoxdursa business
-             * write uğurludur.
-             */
+            
+
+
+
             successfullyWrittenFiles
                     .addAll(
                             filenames

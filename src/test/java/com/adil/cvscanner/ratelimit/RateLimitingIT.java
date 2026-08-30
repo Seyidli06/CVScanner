@@ -117,11 +117,11 @@ class RateLimitingIT {
         );
     }
 
-    /*
-     * ============================================================
-     * 429 CONTRACT
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Test
     void shouldReturn429WhenReadLimitIsExceeded()
@@ -244,11 +244,11 @@ class RateLimitingIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * PRINCIPAL ISOLATION
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Test
     void shouldMaintainIndependentBucketsForDifferentUsers()
@@ -320,11 +320,11 @@ class RateLimitingIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * POLICY ISOLATION
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Test
     void shouldKeepReadAndExportBucketsIndependent()
@@ -403,11 +403,11 @@ class RateLimitingIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * FORBIDDEN MUST NOT CONSUME
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Test
     void shouldNotConsumeRateLimitTokensForForbiddenRequest()
@@ -460,11 +460,11 @@ class RateLimitingIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * HEALTH MUST NOT BE RATE LIMITED
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Test
     void shouldNotRateLimitHealthEndpoint()

@@ -76,11 +76,11 @@ class CvUploadLiveProgressIT {
     private static final Path STORAGE_ROOT =
             createStorageRoot();
 
-    /*
-     * ============================================================
-     * REAL POSTGRESQL
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Container
     @ServiceConnection
@@ -118,11 +118,11 @@ class CvUploadLiveProgressIT {
     private BlockingProgressProcessor
             blockingProgressProcessor;
 
-    /*
-     * ============================================================
-     * CONFIG
-     * ============================================================
-     */
+    
+
+
+
+
 
     @DynamicPropertySource
     static void properties(
@@ -193,32 +193,32 @@ class CvUploadLiveProgressIT {
         blockingProgressProcessor.reset();
     }
 
-    /*
-     * ============================================================
-     * MAIN TEST
-     * ============================================================
-     *
-     * 4 item
-     *
-     * chunk-size = 2
-     *
-     * İlk chunk commit olduqdan sonra
-     * ikinci chunk-un ilk item-ində
-     * processor bloklanır.
-     *
-     * Həmin anda HTTP status endpoint-ə
-     * request göndəririk.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldExposeCommittedProgressWhileJobIsStillRunning()
             throws Exception {
 
-        /*
-         * =====================================================
-         * 1. CREATE UPLOAD
-         * =====================================================
-         */
+        
+
+
+
+
 
         CvUpload upload =
                 new CvUpload(
@@ -242,11 +242,11 @@ class CvUploadLiveProgressIT {
                 UploadStatus.UPLOADED
         );
 
-        /*
-         * =====================================================
-         * 2. START ASYNC TEST JOB
-         * =====================================================
-         */
+        
+
+
+
+
 
         JobExecution launchedExecution =
                 jobOperator.start(
@@ -260,18 +260,18 @@ class CvUploadLiveProgressIT {
                 launchedExecution.getId()
         ).isPositive();
 
-        /*
-         * =====================================================
-         * 3. WAIT UNTIL SECOND CHUNK STARTS
-         * =====================================================
-         *
-         * Processor item #3-ə çatanda:
-         *
-         * item #1 + #2 olan ilk chunk
-         * artıq tamamlanıb və commit olub.
-         *
-         * Amma ikinci chunk hələ bitməyib.
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
 
         boolean secondChunkStarted =
                 blockingProgressProcessor
@@ -288,11 +288,11 @@ class CvUploadLiveProgressIT {
                 )
                 .isTrue();
 
-        /*
-         * =====================================================
-         * 4. VERIFY DATABASE MID-JOB
-         * =====================================================
-         */
+        
+
+
+
+
 
         CvUpload processingUpload =
                 cvUploadRepository
@@ -313,9 +313,9 @@ class CvUploadLiveProgressIT {
                 4
         );
 
-        /*
-         * İlk chunk = 2 item.
-         */
+        
+
+
 
         assertThat(
                 processingUpload.getProcessedFiles()
@@ -331,11 +331,11 @@ class CvUploadLiveProgressIT {
                 processingUpload.getCompletedAt()
         ).isNull();
 
-        /*
-         * =====================================================
-         * 5. REAL HTTP REQUEST WHILE JOB IS RUNNING
-         * =====================================================
-         */
+        
+
+
+
+
 
         mockMvc.perform(
                         get(
@@ -393,25 +393,25 @@ class CvUploadLiveProgressIT {
                         )
                 );
 
-        /*
-         * =====================================================
-         * 6. RELEASE SECOND CHUNK
-         * =====================================================
-         *
-         * try/finally vacibdir.
-         *
-         * Assertion fail olsa belə job thread-i
-         * bloklanmış vəziyyətdə qoymuruq.
-         */
+        
+
+
+
+
+
+
+
+
+
 
         blockingProgressProcessor
                 .release();
 
-        /*
-         * =====================================================
-         * 7. WAIT FOR FINAL COMPLETION
-         * =====================================================
-         */
+        
+
+
+
+
 
         JobExecution completedExecution =
                 waitForJobCompletion(
@@ -447,11 +447,11 @@ class CvUploadLiveProgressIT {
                 4
         );
 
-        /*
-         * =====================================================
-         * 8. FINAL DATABASE RESULT
-         * =====================================================
-         */
+        
+
+
+
+
 
         CvUpload completedUpload =
                 cvUploadRepository
@@ -486,11 +486,11 @@ class CvUploadLiveProgressIT {
                 completedUpload.getCompletedAt()
         ).isNotNull();
 
-        /*
-         * =====================================================
-         * 9. FINAL HTTP RESULT
-         * =====================================================
-         */
+        
+
+
+
+
 
         mockMvc.perform(
                         get(
@@ -540,11 +540,11 @@ class CvUploadLiveProgressIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * PARAMETERS
-     * ============================================================
-     */
+    
+
+
+
+
 
     private JobParameters createJobParameters(
             UUID uploadId
@@ -558,11 +558,11 @@ class CvUploadLiveProgressIT {
                 .toJobParameters();
     }
 
-    /*
-     * ============================================================
-     * WAIT
-     * ============================================================
-     */
+    
+
+
+
+
 
     private JobExecution waitForJobCompletion(
             long executionId
@@ -603,9 +603,9 @@ class CvUploadLiveProgressIT {
             );
         }
 
-        /*
-         * Timeout olsa test JVM-ni bloklamayaq.
-         */
+        
+
+
 
         blockingProgressProcessor
                 .release();
@@ -616,11 +616,11 @@ class CvUploadLiveProgressIT {
         );
     }
 
-    /*
-     * ============================================================
-     * STEP LOOKUP
-     * ============================================================
-     */
+    
+
+
+
+
 
     private StepExecution findStepExecution(
             JobExecution jobExecution
@@ -646,11 +646,11 @@ class CvUploadLiveProgressIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEMP STORAGE
-     * ============================================================
-     */
+    
+
+
+
+
 
     private static Path createStorageRoot() {
 
@@ -670,28 +670,28 @@ class CvUploadLiveProgressIT {
         }
     }
 
-    /*
-     * ============================================================
-     * TEST CONFIGURATION
-     * ============================================================
-     */
+    
+
+
+
+
 
     @TestConfiguration(
             proxyBeanMethods = false
     )
     static class LiveProgressTestConfiguration {
 
-        /*
-         * ========================================================
-         * READER
-         * ========================================================
-         *
-         * Production CvFileItemReader-dən
-         * istifadə edirik.
-         *
-         * Real filesystem parse etmək bu testin
-         * məqsədi deyil.
-         */
+        
+
+
+
+
+
+
+
+
+
+
 
         @Bean("liveProgressTestReader")
         @StepScope
@@ -715,11 +715,11 @@ class CvUploadLiveProgressIT {
             );
         }
 
-        /*
-         * ========================================================
-         * BLOCKING PROCESSOR
-         * ========================================================
-         */
+        
+
+
+
+
 
         @Bean
         BlockingProgressProcessor
@@ -728,39 +728,39 @@ class CvUploadLiveProgressIT {
             return new BlockingProgressProcessor();
         }
 
-        /*
-         * ========================================================
-         * WRITER
-         * ========================================================
-         *
-         * Bu dedicated testdə Candidate DB-yə
-         * yazmaq lazım deyil.
-         *
-         * Writer uğurlu hesab olunur və
-         * ChunkListener progress-i update edir.
-         */
+        
+
+
+
+
+
+
+
+
+
+
 
         @Bean("liveProgressTestWriter")
         ItemWriter<CandidateDraft>
         liveProgressTestWriter() {
 
             return chunk -> {
-                // intentional no-op
+                
             };
         }
 
-        /*
-         * ========================================================
-         * PRODUCTION PROGRESS LISTENER
-         * ========================================================
-         *
-         * Test üçün yeni implementation
-         * yazmırıq.
-         *
-         * Məhz production
-         * CvProcessingProgressListener-i
-         * istifadə edirik.
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
 
         @Bean("liveProgressTestListener")
         @StepScope
@@ -780,13 +780,13 @@ class CvUploadLiveProgressIT {
             );
         }
 
-        /*
-         * ========================================================
-         * STEP
-         * ========================================================
-         *
-         * chunk-size = 2
-         */
+        
+
+
+
+
+
+
 
         @Bean("liveProgressTestStep")
         Step liveProgressTestStep(
@@ -827,17 +827,17 @@ class CvUploadLiveProgressIT {
                     .build();
         }
 
-        /*
-         * ========================================================
-         * JOB
-         * ========================================================
-         *
-         * Production CvProcessingJobListener
-         * istifadə olunur:
-         *
-         * beforeJob → PROCESSING
-         * afterJob  → COMPLETED
-         */
+        
+
+
+
+
+
+
+
+
+
+
 
         @Bean("liveProgressTestJob")
         Job liveProgressTestJob(
@@ -862,18 +862,18 @@ class CvUploadLiveProgressIT {
         }
     }
 
-    /*
-     * ============================================================
-     * BLOCKING PROCESSOR
-     * ============================================================
-     *
-     * #1 → normal
-     * #2 → normal
-     *
-     * ilk chunk commit
-     *
-     * #3 → test burada block edilir
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
 
     static class BlockingProgressProcessor
             implements ItemProcessor<Path, CandidateDraft> {
@@ -902,10 +902,10 @@ class CvUploadLiveProgressIT {
                     processedInvocations
                             .incrementAndGet();
 
-            /*
-             * Item #3 ikinci chunk-un
-             * ilk item-idir.
-             */
+            
+
+
+
 
             if (
                     invocation == 3

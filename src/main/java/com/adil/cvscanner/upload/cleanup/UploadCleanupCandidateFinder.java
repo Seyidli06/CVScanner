@@ -15,16 +15,16 @@ import java.util.Set;
 @Service
 public class UploadCleanupCandidateFinder {
 
-    /*
-     * ============================================================
-     * CLEANABLE STATUSES
-     * ============================================================
-     *
-     * FAILED burada QƏSDƏN yoxdur.
-     *
-     * Failed job restart/debug üçün storage-a
-     * ehtiyac duya bilər.
-     */
+    
+
+
+
+
+
+
+
+
+
     private static final Set<UploadStatus> CLEANUP_STATUSES =
             EnumSet.of(
                     UploadStatus.COMPLETED,
@@ -61,20 +61,20 @@ public class UploadCleanupCandidateFinder {
                 Clock.systemUTC();
     }
 
-    /*
-     * ============================================================
-     * FIND NEXT CLEANUP BATCH
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Transactional(
             readOnly = true
     )
     public List<CvUpload> findNextBatch() {
 
-        /*
-         * Global kill switch.
-         */
+        
+
+
         if (
                 !properties.isEnabled()
         ) {
@@ -82,18 +82,18 @@ public class UploadCleanupCandidateFinder {
             return List.of();
         }
 
-        /*
-         * Example:
-         *
-         * now = 21 Aug
-         * retention = 7d
-         *
-         * cutoff = 14 Aug
-         *
-         * completedAt <= 14 Aug
-         *
-         * cleanup candidate.
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
         OffsetDateTime cutoff =
                 OffsetDateTime
                         .now(
@@ -116,20 +116,20 @@ public class UploadCleanupCandidateFinder {
                                 )
                         );
 
-        /*
-         * ========================================================
-         * DEFENCE IN DEPTH
-         * ========================================================
-         *
-         * DB query artıq status + cutoff yoxlayır.
-         *
-         * Buna baxmayaraq domain cleanup policy-ni də
-         * ikinci safety gate kimi istifadə edirik.
-         *
-         * Gələcəkdə repository query dəyişdirilərsə belə
-         * FAILED/PROCESSING kimi state-lər burada
-         * yenidən bloklana bilər.
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
         return databaseCandidates
                 .stream()
                 .filter(

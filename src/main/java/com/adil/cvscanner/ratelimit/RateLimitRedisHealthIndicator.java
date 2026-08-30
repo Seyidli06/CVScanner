@@ -51,14 +51,14 @@ public class RateLimitRedisHealthIndicator
     @Override
     public Health health() {
 
-        /*
-         * ========================================================
-         * RATE LIMITING DISABLED
-         * ========================================================
-         *
-         * Rate limiter söndürülübsə Redis application üçün
-         * critical dependency deyil.
-         */
+        
+
+
+
+
+
+
+
 
         if (
                 !properties.isEnabled()
@@ -69,14 +69,14 @@ public class RateLimitRedisHealthIndicator
                     .build();
         }
 
-        /*
-         * ========================================================
-         * FAIL OPEN
-         * ========================================================
-         *
-         * Redis unavailable olsa belə business request-lər
-         * davam edə bildiyi üçün pod READY qala bilər.
-         */
+        
+
+
+
+
+
+
+
 
         if (
                 properties.isFailOpen()
@@ -87,20 +87,20 @@ public class RateLimitRedisHealthIndicator
                     .build();
         }
 
-        /*
-         * ========================================================
-         * FAIL CLOSED
-         * ========================================================
-         *
-         * fail-open=false olduqda Redis rate-limited business
-         * request-lər üçün critical dependency-dir.
-         *
-         * Health check üçün Bucket4j-in shared binary
-         * StatefulRedisConnection bean-indən istifadə etmirik.
-         *
-         * RedisClient vasitəsilə ayrıca qısa connection açıb
-         * PING göndəririk.
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         try {
 
@@ -142,10 +142,10 @@ public class RateLimitRedisHealthIndicator
                 RuntimeException exception
         ) {
 
-            /*
-             * Redis URI, host, credentials və başqa infrastructure
-             * detalları health response və log-a yazılmır.
-             */
+            
+
+
+
 
             LOGGER.warn(
                     "RATE_LIMIT_REDIS_HEALTH_CHECK_FAILED errorType={}",

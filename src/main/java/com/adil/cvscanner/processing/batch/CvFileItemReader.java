@@ -76,6 +76,6 @@ public class CvFileItemReader
 
     @Override
     public void close() {
-        // No external resource is kept open.
+        
     }
 }

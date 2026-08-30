@@ -25,10 +25,10 @@ public class CandidateQueryService {
     private static final int MAX_PAGE_SIZE =
             100;
 
-    /*
-     * Arbitrary entity property-ni request-dən
-     * sort field kimi qəbul etmirik.
-     */
+    
+
+
+
     private static final Set<String> ALLOWED_SORT_FIELDS =
             Set.of(
                     "fullName",
@@ -49,11 +49,11 @@ public class CandidateQueryService {
                 candidateRepository;
     }
 
-    /*
-     * ============================================================
-     * SEARCH
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Transactional(
             readOnly = true
@@ -66,11 +66,11 @@ public class CandidateQueryService {
             String direction
     ) {
 
-        /*
-         * =====================================================
-         * 1. VALIDATION
-         * =====================================================
-         */
+        
+
+
+
+
 
         validatePagination(
                 page,
@@ -87,26 +87,26 @@ public class CandidateQueryService {
                         direction
                 );
 
-        /*
-         * =====================================================
-         * 2. DETERMINISTIC SORT
-         * =====================================================
-         *
-         * Primary:
-         *
-         * requested field
-         *
-         * Secondary:
-         *
-         * id ASC
-         *
-         *
-         * Məsələn iki candidate-in:
-         *
-         * yearsOfExperience = 5
-         *
-         * olsa belə pagination stabil qalır.
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         Sort sort =
                 Sort.by(
@@ -127,17 +127,17 @@ public class CandidateQueryService {
                         sort
                 );
 
-        /*
-         * =====================================================
-         * 3. PHASE ONE
-         * PAGINATED QUERY
-         * =====================================================
-         *
-         * Burada collection fetch etmirik.
-         *
-         * PostgreSQL LIMIT/OFFSET düzgün
-         * işləyir.
-         */
+        
+
+
+
+
+
+
+
+
+
+
 
         Page<Candidate> candidatePage =
                 candidateRepository
@@ -148,10 +148,10 @@ public class CandidateQueryService {
                                 pageable
                         );
 
-        /*
-         * Empty page-dirsə ikinci DB query
-         * etməyin mənası yoxdur.
-         */
+        
+
+
+
         if (
                 candidatePage.isEmpty()
         ) {
@@ -162,11 +162,11 @@ public class CandidateQueryService {
             );
         }
 
-        /*
-         * =====================================================
-         * 4. PAGE IDS
-         * =====================================================
-         */
+        
+
+
+
+
 
         List<UUID> candidateIds =
                 candidatePage
@@ -177,23 +177,23 @@ public class CandidateQueryService {
                         )
                         .toList();
 
-        /*
-         * =====================================================
-         * 5. PHASE TWO
-         * BATCH HYDRATION
-         * =====================================================
-         *
-         * Bir SQL:
-         *
-         * WHERE candidate.id IN (...)
-         *
-         * +
-         *
-         * upload
-         * skills
-         *
-         * fetch edilir.
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         List<Candidate> hydratedCandidates =
                 candidateRepository
@@ -201,31 +201,31 @@ public class CandidateQueryService {
                                 candidateIds
                         );
 
-        /*
-         * Hydration query nəticəsinin order-i
-         * page order-i olmaq məcburiyyətində
-         * deyil.
-         *
-         * Buna görə id -> Candidate map
-         * qururuq.
-         */
+        
+
+
+
+
+
+
+
 
         Map<UUID, Candidate> hydratedById =
                 indexById(
                         hydratedCandidates
                 );
 
-        /*
-         * =====================================================
-         * 6. DTO MAPPING
-         * =====================================================
-         *
-         * PageResponse original page order-i
-         * qoruyur.
-         *
-         * Mapper isə həmin ID-nin fully
-         * hydrated entity-sini istifadə edir.
-         */
+        
+
+
+
+
+
+
+
+
+
+
 
         return PageResponse.from(
                 candidatePage,
@@ -239,11 +239,11 @@ public class CandidateQueryService {
         );
     }
 
-    /*
-     * ============================================================
-     * HYDRATED INDEX
-     * ============================================================
-     */
+    
+
+
+
+
 
     private Map<UUID, Candidate> indexById(
             Collection<Candidate> candidates
@@ -263,12 +263,12 @@ public class CandidateQueryService {
                             candidate
                     );
 
-            /*
-             * JPQL distinct səbəbilə normal
-             * halda duplicate olmamalıdır.
-             *
-             * Yenə də invariant-i qoruyuruq.
-             */
+            
+
+
+
+
+
             if (
                     previous != null
             ) {
@@ -283,18 +283,18 @@ public class CandidateQueryService {
         return result;
     }
 
-    /*
-     * ============================================================
-     * HYDRATION INVARIANT
-     * ============================================================
-     *
-     * Phase one-da Candidate tapılıbsa,
-     * həmin transaction daxilində phase two
-     * query-də də tapılmalıdır.
-     *
-     * Əks halda response-u səssiz şəkildə
-     * yarımçıq qaytarmırıq.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
 
     private Candidate requireHydratedCandidate(
             UUID candidateId,
@@ -319,11 +319,11 @@ public class CandidateQueryService {
         return candidate;
     }
 
-    /*
-     * ============================================================
-     * PAGINATION VALIDATION
-     * ============================================================
-     */
+    
+
+
+
+
 
     private void validatePagination(
             int page,
@@ -359,11 +359,11 @@ public class CandidateQueryService {
         }
     }
 
-    /*
-     * ============================================================
-     * SORT VALIDATION
-     * ============================================================
-     */
+    
+
+
+
+
 
     private String validateSortField(
             String sortBy
@@ -392,11 +392,11 @@ public class CandidateQueryService {
         return effectiveSortBy;
     }
 
-    /*
-     * ============================================================
-     * DIRECTION
-     * ============================================================
-     */
+    
+
+
+
+
 
     private Sort.Direction parseDirection(
             String direction

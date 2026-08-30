@@ -22,11 +22,11 @@ public class UploadCleanupScheduler {
 
     private final UploadCleanupMetrics cleanupMetrics;
 
-    /*
-     * ============================================================
-     * LOCAL JVM OVERLAP GUARD
-     * ============================================================
-     */
+    
+
+
+
+
 
     private final AtomicBoolean running =
             new AtomicBoolean(
@@ -49,11 +49,11 @@ public class UploadCleanupScheduler {
                 cleanupMetrics;
     }
 
-    /*
-     * ============================================================
-     * SCHEDULED CLEANUP
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Scheduled(
             initialDelayString =
@@ -64,10 +64,10 @@ public class UploadCleanupScheduler {
     )
     public void runScheduledCleanup() {
 
-        /*
-         * Disabled scheduler invocation-ları operational
-         * attempt saymırıq.
-         */
+        
+
+
+
 
         if (
                 !properties.isSchedulerEnabled()
@@ -83,18 +83,18 @@ public class UploadCleanupScheduler {
             return;
         }
 
-        /*
-         * Scheduler həqiqətən cleanup etməyə çalışır.
-         */
+        
+
+
 
         cleanupMetrics
                 .recordSchedulerAttempt();
 
-        /*
-         * ========================================================
-         * LOCAL JVM OVERLAP
-         * ========================================================
-         */
+        
+
+
+
+
 
         if (
                 !running.compareAndSet(
@@ -121,10 +121,10 @@ public class UploadCleanupScheduler {
                     executionCoordinator
                             .tryRunOnce();
 
-            /*
-             * Distributed lock contention metric
-             * PostgresUploadCleanupLock tərəfindən yazılır.
-             */
+            
+
+
+
 
             if (
                     !executionResult.executed()

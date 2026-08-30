@@ -28,24 +28,24 @@ public class SecurityConfiguration {
     ) throws Exception {
 
         http
-                /*
-                 * ============================================================
-                 * CSRF
-                 * ============================================================
-                 *
-                 * API stateless Bearer JWT authentication istifadə edir.
-                 */
+                
+
+
+
+
+
+
 
                 .csrf(
                         csrf ->
                                 csrf.disable()
                 )
 
-                /*
-                 * ============================================================
-                 * SESSION
-                 * ============================================================
-                 */
+                
+
+
+
+
 
                 .sessionManagement(
                         session ->
@@ -54,24 +54,24 @@ public class SecurityConfiguration {
                                 )
                 )
 
-                /*
-                 * ============================================================
-                 * AUTHORIZATION
-                 * ============================================================
-                 */
+                
+
+
+
+
 
                 .authorizeHttpRequests(
                         authorization ->
                                 authorization
 
-                                        /*
-                                         * =================================================
-                                         * PUBLIC HEALTH
-                                         * =================================================
-                                         *
-                                         * Kubernetes / platform health probes
-                                         * authentication tələb etməməlidir.
-                                         */
+                                        
+
+
+
+
+
+
+
 
                                         .requestMatchers(
                                                 "/actuator/health",
@@ -81,14 +81,14 @@ public class SecurityConfiguration {
                                         )
                                         .permitAll()
 
-                                        /*
-                                         * =================================================
-                                         * ADMIN-ONLY METRICS
-                                         * =================================================
-                                         *
-                                         * Runtime/application metrics yalnız ADMIN
-                                         * authority üçün açıqdır.
-                                         */
+                                        
+
+
+
+
+
+
+
 
                                         .requestMatchers(
                                                 "/actuator/metrics",
@@ -106,15 +106,15 @@ public class SecurityConfiguration {
                                         )
                                         .permitAll()
 
-                                        /*
-                                         * =================================================
-                                         * CV UPLOAD
-                                         * =================================================
-                                         *
-                                         * POST /api/v1/uploads
-                                         *
-                                         * ZIP upload başlanğıc endpoint-i.
-                                         */
+                                        
+
+
+
+
+
+
+
+
 
                                         .requestMatchers(
                                                 HttpMethod.POST,
@@ -125,13 +125,13 @@ public class SecurityConfiguration {
                                                 SecurityRoles.ROLE_ADMIN
                                         )
 
-                                        /*
-                                         * =================================================
-                                         * UPLOAD STATUS
-                                         * =================================================
-                                         *
-                                         * GET /api/v1/uploads/{uploadId}
-                                         */
+                                        
+
+
+
+
+
+
 
                                         .requestMatchers(
                                                 HttpMethod.GET,
@@ -142,14 +142,14 @@ public class SecurityConfiguration {
                                                 SecurityRoles.ROLE_ADMIN
                                         )
 
-                                        /*
-                                         * =================================================
-                                         * PROCESSING FAILURES
-                                         * =================================================
-                                         *
-                                         * GET
-                                         * /api/v1/uploads/{uploadId}/failures
-                                         */
+                                        
+
+
+
+
+
+
+
 
                                         .requestMatchers(
                                                 HttpMethod.GET,
@@ -160,13 +160,13 @@ public class SecurityConfiguration {
                                                 SecurityRoles.ROLE_ADMIN
                                         )
 
-                                        /*
-                                         * =================================================
-                                         * CANDIDATE SEARCH
-                                         * =================================================
-                                         *
-                                         * GET /api/v1/candidates
-                                         */
+                                        
+
+
+
+
+
+
 
                                         .requestMatchers(
                                                 HttpMethod.GET,
@@ -177,11 +177,11 @@ public class SecurityConfiguration {
                                                 SecurityRoles.ROLE_ADMIN
                                         )
 
-                                        /*
-                                         * =================================================
-                                         * CSV EXPORT
-                                         * =================================================
-                                         */
+                                        
+
+
+
+
 
                                         .requestMatchers(
                                                 HttpMethod.GET,
@@ -192,11 +192,11 @@ public class SecurityConfiguration {
                                                 SecurityRoles.ROLE_ADMIN
                                         )
 
-                                        /*
-                                         * =================================================
-                                         * XLSX EXPORT
-                                         * =================================================
-                                         */
+                                        
+
+
+
+
 
                                         .requestMatchers(
                                                 HttpMethod.GET,
@@ -207,31 +207,31 @@ public class SecurityConfiguration {
                                                 SecurityRoles.ROLE_ADMIN
                                         )
 
-                                        /*
-                                         * =================================================
-                                         * DEFAULT DENY
-                                         * =================================================
-                                         *
-                                         * Buraya düşən hər şey qadağandır.
-                                         *
-                                         * Nümunə:
-                                         *
-                                         * GET    /api/v1/unknown
-                                         * POST   /api/v1/candidates
-                                         * DELETE /api/v1/uploads/{id}
-                                         * GET    /internal/...
-                                         * GET    /actuator/env
-                                         */
+                                        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                                         .anyRequest()
                                         .denyAll()
                 )
 
-                /*
-                 * ============================================================
-                 * OAUTH2 RESOURCE SERVER
-                 * ============================================================
-                 */
+                
+
+
+
+
 
                 .oauth2ResourceServer(
                         resourceServer ->
@@ -248,26 +248,26 @@ public class SecurityConfiguration {
                                         )
                 );
 
-        /*
-         * ============================================================
-         * DISTRIBUTED RATE LIMITING
-         * ============================================================
-         *
-         * Filter AuthorizationFilter-dən SONRA işləyir.
-         *
-         * Beləliklə request əvvəlcə:
-         *
-         * 1. JWT authentication
-         * 2. RBAC authorization
-         * 3. Rate limiting
-         * 4. Controller
-         *
-         * mərhələlərindən keçir.
-         *
-         * app.rate-limit.enabled=false olduqda bean yoxdur.
-         * ObjectProvider səbəbindən security chain yenə problemsiz
-         * qurulur.
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         rateLimitingFilterProvider.ifAvailable(
                 rateLimitingFilter ->
@@ -280,11 +280,11 @@ public class SecurityConfiguration {
         return http.build();
     }
 
-    /*
-     * ============================================================
-     * JWT DECODER
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Bean
     JwtDecoder jwtDecoder(
@@ -311,11 +311,11 @@ public class SecurityConfiguration {
         return decoder;
     }
 
-    /*
-     * ============================================================
-     * JWT AUTHENTICATION CONVERTER
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Bean
     JwtAuthenticationConverter jwtAuthenticationConverter(

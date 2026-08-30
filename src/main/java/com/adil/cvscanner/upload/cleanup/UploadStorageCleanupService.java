@@ -52,23 +52,23 @@ public class UploadStorageCleanupService {
                 cleanupMetrics;
     }
 
-    /*
-     * ============================================================
-     * ONE CLEANUP EXECUTION
-     * ============================================================
-     */
+    
+
+
+
+
 
     public UploadCleanupRunResult runOnce() {
 
-        /*
-         * System.currentTimeMillis() duration ölçmək üçün
-         * ideal deyil.
-         *
-         * Wall clock dəyişə bilər.
-         *
-         * Duration üçün monotonic System.nanoTime()
-         * istifadə edirik.
-         */
+        
+
+
+
+
+
+
+
+
 
         long startedAtNanos =
                 System.nanoTime();
@@ -97,11 +97,11 @@ public class UploadStorageCleanupService {
 
                 try {
 
-                    /*
-                     * =============================================
-                     * FILESYSTEM
-                     * =============================================
-                     */
+                    
+
+
+
+
 
                     boolean storageExisted =
                             uploadStorage
@@ -109,11 +109,11 @@ public class UploadStorageCleanupService {
                                             uploadId
                                     );
 
-                    /*
-                     * =============================================
-                     * CLEANUP AUDIT MARKER
-                     * =============================================
-                     */
+                    
+
+
+
+
 
                     UploadStorageCleanupRecord record =
                             new UploadStorageCleanupRecord(
@@ -155,14 +155,14 @@ public class UploadStorageCleanupService {
 
                     failed++;
 
-                    /*
-                     * Full filesystem path,
-                     * filename,
-                     * CV text,
-                     * exception message
-                     *
-                     * log edilmir.
-                     */
+                    
+
+
+
+
+
+
+
 
                     LOGGER.warn(
                             "UPLOAD_STORAGE_CLEANUP_FAILED "
@@ -186,11 +186,11 @@ public class UploadStorageCleanupService {
                             failed
                     );
 
-            /*
-             * =============================================
-             * METRICS
-             * =============================================
-             */
+            
+
+
+
+
 
             cleanupMetrics
                     .recordCompletedRun(
@@ -206,9 +206,9 @@ public class UploadStorageCleanupService {
                 RuntimeException exception
         ) {
 
-            /*
-             * Whole run result yarada bilmədi.
-             */
+            
+
+
 
             cleanupMetrics
                     .recordRunFailure(
@@ -221,11 +221,11 @@ public class UploadStorageCleanupService {
         }
     }
 
-    /*
-     * ============================================================
-     * MONOTONIC EXECUTION DURATION
-     * ============================================================
-     */
+    
+
+
+
+
 
     private Duration elapsedSince(
             long startedAtNanos
@@ -235,12 +235,12 @@ public class UploadStorageCleanupService {
                 System.nanoTime()
                         - startedAtNanos;
 
-        /*
-         * System.nanoTime monotonic olduğuna görə normalda
-         * negative mümkün deyil.
-         *
-         * Defensive clamp saxlayırıq.
-         */
+        
+
+
+
+
+
 
         if (
                 elapsedNanos < 0

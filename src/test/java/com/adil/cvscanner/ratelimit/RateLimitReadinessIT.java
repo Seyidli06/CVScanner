@@ -22,17 +22,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                 "app.rate-limit.enabled=true",
                 "app.rate-limit.fail-open=false",
 
-                /*
-                 * Redis failure testini sürətli saxlamaq üçün.
-                 */
+                
+
+
                 "app.rate-limit.redis-timeout=500ms",
 
                 "app.rate-limit.key-prefix=cvscanner:test:readiness",
 
-                /*
-                 * RateLimitProperties validation üçün
-                 * policy-lər valid qalmalıdır.
-                 */
+                
+
+
+
                 "app.rate-limit.upload.capacity=5",
                 "app.rate-limit.upload.refill-tokens=5",
                 "app.rate-limit.upload.refill-period=10m",
@@ -45,12 +45,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                 "app.rate-limit.export.refill-tokens=10",
                 "app.rate-limit.export.refill-period=1m",
 
-                /*
-                 * Bu test JWT request göndərmir.
-                 *
-                 * Amma SecurityConfiguration JwtDecoder bean-i
-                 * üçün valid config saxlayırıq.
-                 */
+                
+
+
+
+
+
                 "security.jwt.issuer-uri=http://localhost/test-issuer",
                 "security.jwt.jwk-set-uri=http://localhost/test-jwks",
                 "security.jwt.roles-claim=roles"
@@ -131,15 +131,15 @@ class RateLimitReadinessIT {
     void shouldReflectRedisAvailabilityInReadinessWhenFailClosed()
             throws Exception {
 
-        /*
-         * ========================================================
-         * REDIS UP
-         * ========================================================
-         *
-         * DB də UP, Redis də UP.
-         *
-         * Application traffic qəbul etməyə hazırdır.
-         */
+        
+
+
+
+
+
+
+
+
 
         mockMvc.perform(
                         get(
@@ -159,20 +159,20 @@ class RateLimitReadinessIT {
                         status().isOk()
                 );
 
-        /*
-         * ========================================================
-         * REDIS DOWN
-         * ========================================================
-         */
+        
+
+
+
+
 
         REDIS.stop();
 
-        /*
-         * fail-open=false olduğuna görə Redis business API üçün
-         * critical dependency-dir.
-         *
-         * Pod artıq READY sayılmamalıdır.
-         */
+        
+
+
+
+
+
 
         mockMvc.perform(
                         get(

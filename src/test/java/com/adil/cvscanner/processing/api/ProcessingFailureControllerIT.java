@@ -37,11 +37,11 @@ class ProcessingFailureControllerIT {
     private static final Path STORAGE_ROOT =
             createStorageRoot();
 
-    /*
-     * ============================================================
-     * REAL POSTGRESQL
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Container
     @ServiceConnection
@@ -69,11 +69,11 @@ class ProcessingFailureControllerIT {
     private ProcessingFailureRepository
             processingFailureRepository;
 
-    /*
-     * ============================================================
-     * TEST CONFIG
-     * ============================================================
-     */
+    
+
+
+
+
 
     @DynamicPropertySource
     static void properties(
@@ -91,35 +91,35 @@ class ProcessingFailureControllerIT {
         );
     }
 
-    /*
-     * ============================================================
-     * CLEAN DATABASE
-     * ============================================================
-     */
+    
+
+
+
+
 
     @BeforeEach
     void cleanDatabase() {
 
-        /*
-         * processing_failure.upload_id
-         *
-         * FK ilə cv_upload-a bağlıdır.
-         *
-         * Ona görə əvvəl child table,
-         * sonra parent table silinir.
-         */
+        
+
+
+
+
+
+
+
 
         processingFailureRepository.deleteAll();
 
         cvUploadRepository.deleteAll();
     }
 
-    /*
-     * ============================================================
-     * TEST 1
-     * EXISTING UPLOAD + FAILURES
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldReturnFailuresForExistingUploadNewestFirst()
@@ -143,10 +143,10 @@ class ProcessingFailureControllerIT {
                 oldFailure
         );
 
-        /*
-         * createdAt dəyərlərinin fərqli
-         * olmasını təmin edirik.
-         */
+        
+
+
+
 
         Thread.sleep(
                 30
@@ -276,12 +276,12 @@ class ProcessingFailureControllerIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 2
-     * PAGINATION
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldPaginateProcessingFailures()
@@ -422,12 +422,12 @@ class ProcessingFailureControllerIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 3
-     * EXISTING UPLOAD + ZERO FAILURES
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldReturnEmptyPageWhenUploadHasNoFailures()
@@ -507,12 +507,12 @@ class ProcessingFailureControllerIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 4
-     * UNKNOWN UPLOAD
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldReturn404WhenUploadDoesNotExist()
@@ -539,12 +539,12 @@ class ProcessingFailureControllerIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 5
-     * NEGATIVE PAGE
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldReturn400WhenPageIsNegative()
@@ -572,12 +572,12 @@ class ProcessingFailureControllerIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 6
-     * PAGE SIZE TOO LARGE
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldReturn400WhenPageSizeExceedsMaximum()
@@ -605,17 +605,17 @@ class ProcessingFailureControllerIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * AUTHENTICATED GET
-     * ============================================================
-     *
-     * Processing failure endpoint final RBAC
-     * modelində RECRUITER və ADMIN üçündür.
-     *
-     * Bu business/controller IT-lərdə
-     * RECRUITER context istifadə edirik.
-     */
+    
+
+
+
+
+
+
+
+
+
+
 
     private MockHttpServletRequestBuilder recruiterGet(
             String url,
@@ -631,11 +631,11 @@ class ProcessingFailureControllerIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * UPLOAD FACTORY
-     * ============================================================
-     */
+    
+
+
+
+
 
     private CvUpload createUpload(
             String filename,
@@ -656,11 +656,11 @@ class ProcessingFailureControllerIT {
         );
     }
 
-    /*
-     * ============================================================
-     * FAILURE FACTORY
-     * ============================================================
-     */
+    
+
+
+
+
 
     private ProcessingFailure saveFailure(
             CvUpload upload,
@@ -683,11 +683,11 @@ class ProcessingFailureControllerIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEMP STORAGE ROOT
-     * ============================================================
-     */
+    
+
+
+
+
 
     private static Path createStorageRoot() {
 

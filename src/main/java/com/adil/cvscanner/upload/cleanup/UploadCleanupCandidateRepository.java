@@ -15,25 +15,25 @@ import java.util.UUID;
 public interface UploadCleanupCandidateRepository
         extends Repository<CvUpload, UUID> {
 
-    /*
-     * ============================================================
-     * FIND CLEANUP CANDIDATES
-     * ============================================================
-     *
-     * Conditions:
-     *
-     * 1. COMPLETED / COMPLETED_WITH_ERRORS
-     *
-     * 2. retention cutoff keçib
-     *
-     * 3. storage əvvəl cleanup edilməyib
-     *
-     *
-     * NOT EXISTS hissəsi çox vacibdir.
-     *
-     * Əks halda artıq silinmiş ən köhnə upload-lar
-     * hər run-da yenidən batch-i doldura bilər.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Query("""
             select upload

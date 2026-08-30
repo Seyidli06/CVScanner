@@ -31,20 +31,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Testcontainers
 class UploadCleanupMetricsActuatorIT {
 
-    /*
-     * ============================================================
-     * TEMP STORAGE ROOT
-     * ============================================================
-     */
+
 
     private static final Path STORAGE_ROOT =
             createStorageRoot();
 
-    /*
-     * ============================================================
-     * REAL POSTGRESQL
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Container
     @ServiceConnection
@@ -62,11 +58,11 @@ class UploadCleanupMetricsActuatorIT {
                             "test"
                     );
 
-    /*
-     * ============================================================
-     * DEPENDENCIES
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Autowired
     private MockMvc mockMvc;
@@ -74,11 +70,11 @@ class UploadCleanupMetricsActuatorIT {
     @Autowired
     private UploadCleanupMetrics cleanupMetrics;
 
-    /*
-     * ============================================================
-     * TEST CONFIGURATION
-     * ============================================================
-     */
+    
+
+
+
+
 
     @DynamicPropertySource
     static void properties(
@@ -90,10 +86,7 @@ class UploadCleanupMetricsActuatorIT {
                 () -> STORAGE_ROOT.toString()
         );
 
-        /*
-         * Background scheduler test zamanı
-         * metric values-i özbaşına dəyişməsin.
-         */
+
         registry.add(
                 "app.cleanup.scheduler-enabled",
                 () -> "false"
@@ -104,31 +97,23 @@ class UploadCleanupMetricsActuatorIT {
                 () -> "0ms"
         );
 
-        /*
-         * Actuator endpoint-ləri test context-də
-         * expose edilir.
-         */
         registry.add(
                 "management.endpoints.web.exposure.include",
                 () -> "health,metrics"
         );
     }
 
-    /*
-     * ============================================================
-     * CLEANUP METRICS THROUGH REAL HTTP CONTRACT
-     * ============================================================
-     */
+
 
     @Test
     void shouldExposeCleanupOperationalMetricsThroughActuator()
             throws Exception {
 
-        /*
-         * ========================================================
-         * ARRANGE METRICS
-         * ========================================================
-         */
+        
+
+
+
+
 
         cleanupMetrics.recordCompletedRun(
                 new UploadCleanupRunResult(
@@ -152,16 +137,6 @@ class UploadCleanupMetricsActuatorIT {
 
         cleanupMetrics.recordSchedulerFailure();
 
-        /*
-         * ========================================================
-         * METRIC LIST
-         * ========================================================
-         *
-         * /actuator/metrics artıq ADMIN-only-dir.
-         *
-         * Buna görə authentication birbaşa request
-         * üzərində verilir.
-         */
 
         mockMvc.perform(
                         get(
@@ -192,11 +167,11 @@ class UploadCleanupMetricsActuatorIT {
                         )
                 );
 
-        /*
-         * ========================================================
-         * CLEANUP METRICS
-         * ========================================================
-         */
+        
+
+
+
+
 
         assertCounter(
                 UploadCleanupMetrics.RUNS,
@@ -218,11 +193,11 @@ class UploadCleanupMetricsActuatorIT {
                 1.0
         );
 
-        /*
-         * ========================================================
-         * DISTRIBUTED LOCK
-         * ========================================================
-         */
+        
+
+
+
+
 
         assertCounter(
                 UploadCleanupMetrics.LOCK_ACQUIRED,
@@ -234,11 +209,11 @@ class UploadCleanupMetricsActuatorIT {
                 1.0
         );
 
-        /*
-         * ========================================================
-         * SCHEDULER
-         * ========================================================
-         */
+        
+
+
+
+
 
         assertCounter(
                 UploadCleanupMetrics.SCHEDULER_ATTEMPTS,
@@ -256,20 +231,6 @@ class UploadCleanupMetricsActuatorIT {
         );
     }
 
-    /*
-     * ============================================================
-     * REAL HTTP COUNTER ASSERTION
-     * ============================================================
-     *
-     * Burada da hər request ADMIN authentication almalıdır.
-     *
-     * Əks halda ilk /actuator/metrics request düzəlsə belə
-     * individual:
-     *
-     * /actuator/metrics/{metricName}
-     *
-     * request-ləri 401 qaytarardı.
-     */
 
     private void assertCounter(
             String metricName,
@@ -311,21 +272,21 @@ class UploadCleanupMetricsActuatorIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * ADMIN AUTHENTICATION
-     * ============================================================
-     *
-     * SecurityConfiguration:
-     *
-     * hasAuthority("ROLE_ADMIN")
-     *
-     * Test:
-     *
-     * ROLE_ADMIN
-     *
-     * Explicit match.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private RequestPostProcessor adminUser() {
 
@@ -339,11 +300,11 @@ class UploadCleanupMetricsActuatorIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEMP STORAGE FACTORY
-     * ============================================================
-     */
+    
+
+
+
+
 
     private static Path createStorageRoot() {
 

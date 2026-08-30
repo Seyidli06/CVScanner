@@ -40,26 +40,26 @@ public class CandidateExportController {
                 candidateCsvExportService;
     }
 
-    /*
-     * ============================================================
-     * CSV EXPORT
-     * ============================================================
-     *
-     * Example:
-     *
-     * GET
-     * /api/v1/candidates/export.csv
-     * ?skill=Java
-     * &jobType=REMOTE
-     * &sortBy=yearsOfExperience
-     * &direction=desc
-     *
-     *
-     * page/size yoxdur.
-     *
-     * Çünki bu endpoint filtered result-un
-     * hamısını export edir.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     @GetMapping(
             value = "/export.csv",
             produces = "text/csv"
@@ -106,11 +106,11 @@ public class CandidateExportController {
             String direction
     ) {
 
-        /*
-         * ========================================================
-         * SAME SEARCH CRITERIA
-         * ========================================================
-         */
+        
+
+
+
+
         CandidateSearchCriteria criteria =
                 new CandidateSearchCriteria(
                         uploadId,
@@ -121,20 +121,20 @@ public class CandidateExportController {
                         maxExperience
                 );
 
-        /*
-         * ========================================================
-         * PRE-FLIGHT VALIDATION
-         * ========================================================
-         *
-         * Streaming başlamamışdan əvvəl validation.
-         *
-         * Beləliklə:
-         *
-         * sortBy=hack
-         *
-         * kimi request normal JSON 400 error contract
-         * ala bilir.
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
         candidateCsvExportService
                 .validateRequest(
                         criteria,
@@ -152,12 +152,12 @@ public class CandidateExportController {
                                         direction
                                 );
 
-        /*
-         * Candidate export potentially personal/business
-         * məlumatdır.
-         *
-         * Browser/proxy cache etməsin.
-         */
+        
+
+
+
+
+
         return ResponseEntity
                 .ok()
                 .contentType(

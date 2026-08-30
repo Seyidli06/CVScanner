@@ -121,11 +121,11 @@ class RateLimitBackendUnavailableIT {
     void shouldReturn503WhenRedisIsUnavailableAndFailOpenIsFalse()
             throws Exception {
 
-        /*
-         * Spring context artıq qalxıb.
-         *
-         * Redis-i request-dən əvvəl söndürürük.
-         */
+        
+
+
+
+
         REDIS.stop();
 
         mockMvc.perform(

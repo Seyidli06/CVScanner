@@ -37,11 +37,11 @@ public class CvProcessingJobConfig {
     private static final long SKIP_LIMIT =
             50;
 
-    /*
-     * ============================================================
-     * READER
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Bean
     @StepScope
@@ -63,11 +63,11 @@ public class CvProcessingJobConfig {
         );
     }
 
-    /*
-     * ============================================================
-     * PROCESSOR
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Bean
     public ItemProcessor<Path, CandidateDraft>
@@ -89,11 +89,11 @@ public class CvProcessingJobConfig {
         };
     }
 
-    /*
-     * ============================================================
-     * WRITER
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Bean
     @StepScope
@@ -116,11 +116,11 @@ public class CvProcessingJobConfig {
         );
     }
 
-    /*
-     * ============================================================
-     * LIVE PROGRESS LISTENER
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Bean
     @StepScope
@@ -142,11 +142,11 @@ public class CvProcessingJobConfig {
         );
     }
 
-    /*
-     * ============================================================
-     * SKIP LISTENER
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Bean
     @StepScope
@@ -173,11 +173,11 @@ public class CvProcessingJobConfig {
         );
     }
 
-    /*
-     * ============================================================
-     * STEP
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Bean
     public Step processCvFilesStep(
@@ -202,21 +202,21 @@ public class CvProcessingJobConfig {
                 CHUNK_SIZE
         )
 
-                /*
-                 * =================================================
-                 * TRANSACTION
-                 * =================================================
-                 */
+                
+
+
+
+
 
                 .transactionManager(
                         transactionManager
                 )
 
-                /*
-                 * =================================================
-                 * PIPELINE
-                 * =================================================
-                 */
+                
+
+
+
+
 
                 .reader(
                         cvFileReader
@@ -230,32 +230,32 @@ public class CvProcessingJobConfig {
                         candidateWriter
                 )
 
-                /*
-                 * =================================================
-                 * LIVE PROGRESS
-                 * =================================================
-                 *
-                 * after successful chunk:
-                 *
-                 * processedFiles += chunk.size()
-                 */
+                
+
+
+
+
+
+
+
+
                 .listener(
                         cvProcessingProgressListener
                 )
 
-                /*
-                 * =================================================
-                 * FAULT TOLERANCE
-                 * =================================================
-                 */
+                
+
+
+
+
 
                 .faultTolerant()
 
-                /*
-                 * Deterministic document/business
-                 * problemləri retry edilmir,
-                 * skip olunur.
-                 */
+                
+
+
+
+
                 .skip(
                         DocumentParsingException.class,
                         CandidateExtractionException.class
@@ -265,21 +265,21 @@ public class CvProcessingJobConfig {
                         SKIP_LIMIT
                 )
 
-                /*
-                 * Real skip:
-                 *
-                 * processing_failure
-                 * +
-                 * failedFiles++
-                 */
+                
+
+
+
+
+
+
                 .skipListener(
                         cvProcessingSkipListener
                 )
 
-                /*
-                 * Yalnız transient DB
-                 * exception-ları retry.
-                 */
+                
+
+
+
                 .retryPolicy(
                         cvProcessingRetryPolicy
                 )
@@ -287,11 +287,11 @@ public class CvProcessingJobConfig {
                 .build();
     }
 
-    /*
-     * ============================================================
-     * JOB
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Bean
     public Job cvProcessingJob(
@@ -314,11 +314,11 @@ public class CvProcessingJobConfig {
                 .build();
     }
 
-    /*
-     * ============================================================
-     * COMMON
-     * ============================================================
-     */
+    
+
+
+
+
 
     private UUID parseUploadId(
             String uploadId

@@ -21,10 +21,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         properties = {
                 "app.rate-limit.enabled=true",
 
-                /*
-                 * Redis unavailable olsa business traffic
-                 * davam edə bilər.
-                 */
+                
+
+
+
                 "app.rate-limit.fail-open=true",
 
                 "app.rate-limit.redis-timeout=100ms",
@@ -122,9 +122,9 @@ class RateLimitFailOpenReadinessIT {
     void shouldRemainReadyWhenRedisIsUnavailableAndFailOpenIsTrue()
             throws Exception {
 
-        /*
-         * Redis işləyərkən readiness normaldır.
-         */
+        
+
+
 
         mockMvc.perform(
                         get(
@@ -135,16 +135,16 @@ class RateLimitFailOpenReadinessIT {
                         status().isOk()
                 );
 
-        /*
-         * Redis-i dayandırırıq.
-         */
+        
+
+
 
         REDIS.stop();
 
-        /*
-         * fail-open=true olduğuna görə Redis artıq
-         * traffic qəbul etmək üçün critical dependency deyil.
-         */
+        
+
+
+
 
         mockMvc.perform(
                         get(

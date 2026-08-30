@@ -37,11 +37,11 @@ public class CandidateXlsxExportController {
                 candidateXlsxExportService;
     }
 
-    /*
-     * ============================================================
-     * XLSX EXPORT
-     * ============================================================
-     */
+    
+
+
+
+
 
     @GetMapping(
             value = "/export.xlsx",
@@ -100,12 +100,12 @@ public class CandidateXlsxExportController {
                         maxExperience
                 );
 
-        /*
-         * Stream başlamamışdan əvvəl validation.
-         *
-         * Invalid request normal JSON 400 contract
-         * qaytara bilsin.
-         */
+        
+
+
+
+
+
         candidateXlsxExportService
                 .validateRequest(
                         criteria,

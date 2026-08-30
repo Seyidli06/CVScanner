@@ -58,12 +58,12 @@ class CandidateItemWriterIT {
     @BeforeEach
     void cleanDatabase() {
 
-        /*
-         * Candidate upload-a FK ilə bağlıdır.
-         *
-         * Ona görə əvvəl candidate,
-         * sonra upload silinir.
-         */
+        
+
+
+
+
+
         candidateRepository.deleteAll();
 
         cvUploadRepository.deleteAll();
@@ -73,11 +73,11 @@ class CandidateItemWriterIT {
     void shouldSkipCandidateThatAlreadyExistsForSameUpload()
             throws Exception {
 
-        /*
-         * =====================================================
-         * 1. UPLOAD
-         * =====================================================
-         */
+        
+
+
+
+
 
         CvUpload upload =
                 createUpload(
@@ -88,21 +88,21 @@ class CandidateItemWriterIT {
         UUID uploadId =
                 upload.getId();
 
-        /*
-         * =====================================================
-         * 2. JOHN ARTİQ DB-DƏ MÖVCUDDUR
-         * =====================================================
-         *
-         * Təsəvvür et ki:
-         *
-         * əvvəlki Batch execution-da
-         * john.pdf uğurla commit olunub,
-         *
-         * sonra job başqa CV-də fail olub.
-         *
-         * Restart zamanı john.pdf yenidən
-         * writer-a gəlib.
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         Candidate existingJohn =
                 new Candidate(
@@ -126,11 +126,11 @@ class CandidateItemWriterIT {
                 candidateRepository.count()
         ).isEqualTo(1);
 
-        /*
-         * =====================================================
-         * 3. WRITER
-         * =====================================================
-         */
+        
+
+
+
+
 
         CandidateItemWriter writer =
                 new CandidateItemWriter(
@@ -139,15 +139,15 @@ class CandidateItemWriterIT {
                         candidateRepository
                 );
 
-        /*
-         * john.pdf duplicate-dir.
-         *
-         * Qəsdən başqa məlumatlar veririk ki,
-         * sonradan yoxlaya bilək:
-         *
-         * existing John update də
-         * edilməməlidir.
-         */
+        
+
+
+
+
+
+
+
+
         CandidateDraft duplicateJohn =
                 new CandidateDraft(
                         "John Changed",
@@ -181,14 +181,14 @@ class CandidateItemWriterIT {
                         newJane
                 );
 
-        /*
-         * Production-da writer Batch chunk
-         * transaction daxilində işləyir.
-         *
-         * Integration testdə də bunu
-         * TransactionTemplate ilə simulyasiya
-         * edirik.
-         */
+        
+
+
+
+
+
+
+
         TransactionTemplate transactionTemplate =
                 new TransactionTemplate(
                         transactionManager
@@ -212,18 +212,18 @@ class CandidateItemWriterIT {
                 }
         );
 
-        /*
-         * =====================================================
-         * 4. ASSERT
-         * =====================================================
-         *
-         * DB-də:
-         *
-         * john.pdf → əvvəlki 1 row
-         * jane.docx → yeni 1 row
-         *
-         * TOTAL = 2
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
 
         List<Candidate> candidates =
                 candidateRepository
@@ -246,9 +246,9 @@ class CandidateItemWriterIT {
                         "jane.docx"
                 );
 
-        /*
-         * Existing John update edilməməlidir.
-         */
+        
+
+
         Candidate john =
                 candidates
                         .stream()
@@ -273,14 +273,14 @@ class CandidateItemWriterIT {
                 5
         );
 
-        /*
-         * Duplicate draft-dakı:
-         *
-         * John Changed
-         * 10 years
-         *
-         * DB-yə düşməməlidir.
-         */
+        
+
+
+
+
+
+
+
         assertThat(
                 candidates
         )
@@ -319,13 +319,13 @@ class CandidateItemWriterIT {
                         candidateRepository
                 );
 
-        /*
-         * Eyni source filename iki dəfə
-         * writer-a gəlir.
-         *
-         * Normal reader bunu yaratmamalıdır,
-         * amma writer defensive olmalıdır.
-         */
+        
+
+
+
+
+
+
         CandidateDraft first =
                 new CandidateDraft(
                         "John Smith",
@@ -385,10 +385,10 @@ class CandidateItemWriterIT {
                                 upload.getId()
                         );
 
-        /*
-         * İki draft gəlsə də
-         * yalnız bir Candidate yazılmalıdır.
-         */
+        
+
+
+
         assertThat(
                 candidates
         ).hasSize(1);
@@ -400,9 +400,9 @@ class CandidateItemWriterIT {
                 "john.pdf"
         );
 
-        /*
-         * Writer ilk olanı saxlayır.
-         */
+        
+
+
         assertThat(
                 candidates.getFirst()
                         .getFullName()
@@ -414,14 +414,14 @@ class CandidateItemWriterIT {
     @Test
     void shouldAllowSameSourceFilenameForDifferentUploads() {
 
-        /*
-         * Business identity:
-         *
-         * upload_id + source_filename
-         *
-         * Ona görə iki ayrı ZIP-də
-         * john.pdf olması normaldır.
-         */
+        
+
+
+
+
+
+
+
 
         CvUpload firstUpload =
                 createUpload(
@@ -491,16 +491,16 @@ class CandidateItemWriterIT {
     @Test
     void shouldRejectDuplicateAtDatabaseLevel() {
 
-        /*
-         * Application-level protection-u
-         * bypass edib repository-yə
-         * birbaşa iki duplicate Candidate
-         * göndəririk.
-         *
-         * Bu test V5 UNIQUE constraint-in
-         * həqiqətən PostgreSQL-də işlədiyini
-         * sübut edir.
-         */
+        
+
+
+
+
+
+
+
+
+
 
         CvUpload upload =
                 createUpload(
@@ -538,14 +538,14 @@ class CandidateItemWriterIT {
                         )
                 );
 
-        /*
-         * Writer protection-u yoxdur.
-         *
-         * Birbaşa DB-yə gedirik.
-         *
-         * UNIQUE(upload_id, source_filename)
-         * bunu reject etməlidir.
-         */
+        
+
+
+
+
+
+
+
         assertThatThrownBy(
                 () ->
                         candidateRepository

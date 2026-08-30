@@ -3,6 +3,7 @@ package com.adil.cvscanner.common.api;
 import com.adil.cvscanner.candidate.application.InvalidCandidateQueryException;
 import com.adil.cvscanner.processing.application.CvProcessingLaunchException;
 import com.adil.cvscanner.processing.application.InvalidProcessingFailureQueryException;
+import com.adil.cvscanner.upload.application.InvalidUploadException;
 import com.adil.cvscanner.upload.application.UploadNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -14,21 +15,24 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @RestControllerAdvice
 public class GlobalApiExceptionHandler {
 
-    /*
-     * ============================================================
-     * UPLOAD NOT FOUND
-     * ============================================================
-     */
+    @ExceptionHandler(InvalidUploadException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidUpload(
+            InvalidUploadException exception,
+            HttpServletRequest request
+    ) {
+        return build(
+                HttpStatus.BAD_REQUEST,
+                ApiErrorCode.INVALID_UPLOAD,
+                exception.getMessage(),
+                request
+        );
+    }
 
-    @ExceptionHandler(
-            UploadNotFoundException.class
-    )
-    public ResponseEntity<ApiErrorResponse>
-    handleUploadNotFound(
+    @ExceptionHandler(UploadNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleUploadNotFound(
             UploadNotFoundException exception,
             HttpServletRequest request
     ) {
-
         return build(
                 HttpStatus.NOT_FOUND,
                 ApiErrorCode.UPLOAD_NOT_FOUND,
@@ -37,21 +41,11 @@ public class GlobalApiExceptionHandler {
         );
     }
 
-    /*
-     * ============================================================
-     * INVALID CANDIDATE QUERY
-     * ============================================================
-     */
-
-    @ExceptionHandler(
-            InvalidCandidateQueryException.class
-    )
-    public ResponseEntity<ApiErrorResponse>
-    handleInvalidCandidateQuery(
+    @ExceptionHandler(InvalidCandidateQueryException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidCandidateQuery(
             InvalidCandidateQueryException exception,
             HttpServletRequest request
     ) {
-
         return build(
                 HttpStatus.BAD_REQUEST,
                 ApiErrorCode.INVALID_CANDIDATE_QUERY,
@@ -60,21 +54,11 @@ public class GlobalApiExceptionHandler {
         );
     }
 
-    /*
-     * ============================================================
-     * INVALID FAILURE/AUDIT QUERY
-     * ============================================================
-     */
-
-    @ExceptionHandler(
-            InvalidProcessingFailureQueryException.class
-    )
-    public ResponseEntity<ApiErrorResponse>
-    handleInvalidProcessingFailureQuery(
+    @ExceptionHandler(InvalidProcessingFailureQueryException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidProcessingFailureQuery(
             InvalidProcessingFailureQueryException exception,
             HttpServletRequest request
     ) {
-
         return build(
                 HttpStatus.BAD_REQUEST,
                 ApiErrorCode.INVALID_PROCESSING_FAILURE_QUERY,
@@ -83,27 +67,14 @@ public class GlobalApiExceptionHandler {
         );
     }
 
-    /*
-     * ============================================================
-     * BATCH LAUNCH FAILURE
-     * ============================================================
-     *
-     * ÇOX VACİB:
-     *
-     * exception.getMessage() client-ə qaytarmırıq.
-     *
-     * Orada internal Batch/infrastructure
-     * məlumatı ola bilər.
-     */
-
-    @ExceptionHandler(
-            CvProcessingLaunchException.class
-    )
-    public ResponseEntity<ApiErrorResponse>
-    handleProcessingLaunchFailure(
+    @ExceptionHandler(CvProcessingLaunchException.class)
+    public ResponseEntity<ApiErrorResponse> handleProcessingLaunchFailure(
             CvProcessingLaunchException exception,
             HttpServletRequest request
     ) {
+        
+
+
 
         return build(
                 HttpStatus.INTERNAL_SERVER_ERROR,
@@ -113,29 +84,11 @@ public class GlobalApiExceptionHandler {
         );
     }
 
-    /*
-     * ============================================================
-     * REQUEST PARAMETER TYPE MISMATCH
-     * ============================================================
-     *
-     * Misallar:
-     *
-     * uploadId=abc
-     *
-     * jobType=SPACE
-     *
-     * minExperience=hello
-     */
-
-    @ExceptionHandler(
-            MethodArgumentTypeMismatchException.class
-    )
-    public ResponseEntity<ApiErrorResponse>
-    handleMethodArgumentTypeMismatch(
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiErrorResponse> handleMethodArgumentTypeMismatch(
             MethodArgumentTypeMismatchException exception,
             HttpServletRequest request
     ) {
-
         String message =
                 "Invalid value for parameter '"
                         + exception.getName()
@@ -149,19 +102,12 @@ public class GlobalApiExceptionHandler {
         );
     }
 
-    /*
-     * ============================================================
-     * RESPONSE FACTORY
-     * ============================================================
-     */
-
     private ResponseEntity<ApiErrorResponse> build(
             HttpStatus status,
             ApiErrorCode code,
             String message,
             HttpServletRequest request
     ) {
-
         ApiErrorResponse body =
                 ApiErrorResponse.of(
                         status,
@@ -171,11 +117,7 @@ public class GlobalApiExceptionHandler {
                 );
 
         return ResponseEntity
-                .status(
-                        status
-                )
-                .body(
-                        body
-                );
+                .status(status)
+                .body(body);
     }
 }

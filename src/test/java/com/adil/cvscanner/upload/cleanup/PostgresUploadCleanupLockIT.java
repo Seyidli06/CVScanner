@@ -70,13 +70,7 @@ class PostgresUploadCleanupLockIT {
         );
     }
 
-    /*
-     * ============================================================
-     * TEST 1
-     *
-     * ACQUIRED + CONTENTION METRICS
-     * ============================================================
-     */
+
 
     @Test
     void shouldRecordDistributedLockAcquisitionAndContention()
@@ -192,9 +186,9 @@ class PostgresUploadCleanupLockIT {
                         )
         ).isTrue();
 
-        /*
-         * First acquired.
-         */
+        
+
+
 
         assertThat(
                 counter(
@@ -239,9 +233,6 @@ class PostgresUploadCleanupLockIT {
                 firstThreadFailure.get()
         ).isNull();
 
-        /*
-         * Lock release-dən sonra second instance alır.
-         */
 
         Optional<String> secondAfterRelease =
                 secondInstance
@@ -274,13 +265,13 @@ class PostgresUploadCleanupLockIT {
         );
     }
 
-    /*
-     * ============================================================
-     * TEST 2
-     *
-     * FAILURE STILL RELEASES LOCK
-     * ============================================================
-     */
+    
+
+
+
+
+
+
 
     @Test
     void shouldReleaseLockAfterActionFailureAndRecordAcquisition() {
@@ -324,11 +315,6 @@ class PostgresUploadCleanupLockIT {
                         "simulated cleanup failure"
                 );
 
-        /*
-         * Failure olsa belə first instance lock-u
-         * həqiqətən acquire etmişdi.
-         */
-
         assertThat(
                 counter(
                         meterRegistry,
@@ -367,11 +353,11 @@ class PostgresUploadCleanupLockIT {
         ).isZero();
     }
 
-    /*
-     * ============================================================
-     * HELPER
-     * ============================================================
-     */
+    
+
+
+
+
 
     private double counter(
             SimpleMeterRegistry meterRegistry,

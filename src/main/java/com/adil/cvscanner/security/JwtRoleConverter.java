@@ -66,11 +66,11 @@ public class JwtRoleConverter
                                         Locale.ROOT
                                 )
                 )
-                /*
-                 * JWT-dən arbitrary authority qəbul etmirik.
-                 *
-                 * Yalnız tətbiqin tanıdığı rollar.
-                 */
+                
+
+
+
+
                 .filter(
                         role ->
                                 role.equals(

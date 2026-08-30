@@ -34,25 +34,25 @@ public class CvProcessingJobListener
                 cvUploadStatusService;
     }
 
-    /*
-     * ============================================================
-     * BEFORE JOB
-     * ============================================================
-     *
-     * Business status:
-     *
-     * UPLOADED
-     *      ↓
-     * PROCESSING
-     *
-     *
-     * Log:
-     *
-     * yalnız operational metadata.
-     *
-     * CV content, filename, candidate data və
-     * request body burada yoxdur.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     @Override
     public void beforeJob(
             JobExecution jobExecution
@@ -75,11 +75,11 @@ public class CvProcessingJobListener
         );
     }
 
-    /*
-     * ============================================================
-     * AFTER JOB
-     * ============================================================
-     */
+    
+
+
+
+
     @Override
     public void afterJob(
             JobExecution jobExecution
@@ -98,21 +98,21 @@ public class CvProcessingJobListener
                         jobExecution
                 );
 
-        /*
-         * ========================================================
-         * SUCCESS
-         * ========================================================
-         *
-         * Business status-u CvUpload domain özü müəyyən edir:
-         *
-         * failedFiles == 0
-         *      → COMPLETED
-         *
-         * failedFiles > 0
-         *      → COMPLETED_WITH_ERRORS
-         *
-         * Biz burada counter-ları yenidən hesablamırıq.
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         if (
                 batchStatus
                         == BatchStatus.COMPLETED
@@ -133,36 +133,36 @@ public class CvProcessingJobListener
             return;
         }
 
-        /*
-         * ========================================================
-         * FAILURE
-         * ========================================================
-         *
-         * FAILED
-         * STOPPED
-         * ABANDONED
-         * və s.
-         *
-         * normal successful terminal state deyil.
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
         cvUploadStatusService.markFailed(
                 uploadId
         );
 
-        /*
-         * QƏSDƏN bunları etmirik:
-         *
-         * jobExecution.getExitStatus()
-         *             .getExitDescription()
-         *
-         * jobExecution.getAllFailureExceptions()
-         *
-         * exception.getMessage()
-         *
-         * Çünki həmin string-lərdə filename,
-         * parser detail-i və gələcəkdə hətta
-         * document-derived data ola bilər.
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
         log.warn(
                 "CV_PROCESSING_JOB_FAILED uploadId={} jobExecutionId={} batchStatus={} exitCode={}",
                 uploadId,
@@ -172,11 +172,11 @@ public class CvProcessingJobListener
         );
     }
 
-    /*
-     * ============================================================
-     * SAFE UPLOAD ID EXTRACTION
-     * ============================================================
-     */
+    
+
+
+
+
     private UUID requireUploadId(
             JobExecution jobExecution
     ) {
@@ -208,31 +208,31 @@ public class CvProcessingJobListener
                 IllegalArgumentException exception
         ) {
 
-            /*
-             * rawUploadId-ni exception message-ə
-             * daxil etmirik.
-             */
+            
+
+
+
             throw new IllegalStateException(
                     "Required batch parameter 'uploadId' is invalid"
             );
         }
     }
 
-    /*
-     * ============================================================
-     * SAFE EXIT STATUS
-     * ============================================================
-     *
-     * ExitStatus iki əsas məlumat daşıya bilər:
-     *
-     * exitCode
-     * exitDescription
-     *
-     * Biz yalnız exitCode istifadə edirik.
-     *
-     * exitDescription bəzən exception məlumatı,
-     * filename və başqa internal detail daşıya bilər.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     private String resolveSafeExitCode(
             JobExecution jobExecution
     ) {

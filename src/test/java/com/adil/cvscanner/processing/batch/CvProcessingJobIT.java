@@ -151,13 +151,13 @@ class CvProcessingJobIT {
     void cleanBeforeTest()
             throws IOException {
 
-        /*
-         * processing_failure və candidate
-         * hər ikisi cv_upload-a bağlıdır.
-         *
-         * Ona görə parent CvUpload-dan əvvəl
-         * child row-ları təmizləyirik.
-         */
+        
+
+
+
+
+
+
         processingFailureRepository.deleteAll();
 
         candidateRepository.deleteAll();
@@ -167,36 +167,36 @@ class CvProcessingJobIT {
         clearStorage();
     }
 
-    /*
-     * ============================================================
-     * TEST 1
-     * HAPPY PATH
-     * ============================================================
-     *
-     * 2 valid CV
-     *
-     * expected:
-     *
-     * Batch          = COMPLETED
-     * Candidate      = 2
-     * Failure        = 0
-     *
-     * totalFiles     = 2
-     * processedFiles = 2
-     * failedFiles    = 0
-     *
-     * UploadStatus   = COMPLETED
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldProcessAllCandidatesAndCompleteUpload()
             throws Exception {
 
-        /*
-         * =====================================================
-         * 1. CREATE UPLOAD
-         * =====================================================
-         */
+        
+
+
+
+
 
         CvUpload upload =
                 new CvUpload(
@@ -226,11 +226,11 @@ class CvProcessingJobIT {
                 2
         );
 
-        /*
-         * =====================================================
-         * 2. CREATE REAL CV FILES
-         * =====================================================
-         */
+        
+
+
+
+
 
         Path extractionDirectory =
                 uploadStorage
@@ -247,9 +247,9 @@ class CvProcessingJobIT {
                 backendDirectory
         );
 
-        /*
-         * Jane DOCX
-         */
+        
+
+
         TestDocumentFactory.createDocx(
                 extractionDirectory.resolve(
                         "jane.docx"
@@ -265,9 +265,9 @@ class CvProcessingJobIT {
                 "Docker"
         );
 
-        /*
-         * John PDF
-         */
+        
+
+
         TestDocumentFactory.createPdf(
                 backendDirectory.resolve(
                         "john.pdf"
@@ -283,9 +283,9 @@ class CvProcessingJobIT {
                 "Kafka"
         );
 
-        /*
-         * Reader bunu ignore etməlidir.
-         */
+        
+
+
         Files.writeString(
                 extractionDirectory.resolve(
                         "notes.txt"
@@ -293,11 +293,11 @@ class CvProcessingJobIT {
                 "This file must be ignored"
         );
 
-        /*
-         * =====================================================
-         * 3. START ASYNC JOB
-         * =====================================================
-         */
+        
+
+
+
+
 
         JobExecution launchedExecution =
                 jobOperator.start(
@@ -311,22 +311,22 @@ class CvProcessingJobIT {
                 launchedExecution.getId()
         ).isPositive();
 
-        /*
-         * =====================================================
-         * 4. WAIT
-         * =====================================================
-         */
+        
+
+
+
+
 
         JobExecution completedExecution =
                 waitForJobCompletion(
                         launchedExecution.getId()
                 );
 
-        /*
-         * =====================================================
-         * 5. BATCH STATUS
-         * =====================================================
-         */
+        
+
+
+
+
 
         assertThat(
                 completedExecution.getStatus()
@@ -369,11 +369,11 @@ class CvProcessingJobIT {
                 stepExecution.getWriteSkipCount()
         ).isZero();
 
-        /*
-         * =====================================================
-         * 6. UPLOAD BUSINESS STATUS + COUNTERS
-         * =====================================================
-         */
+        
+
+
+
+
 
         CvUpload completedUpload =
                 cvUploadRepository
@@ -404,21 +404,21 @@ class CvProcessingJobIT {
                 completedUpload.getFailedFiles()
         ).isZero();
 
-        /*
-         * =====================================================
-         * 7. NO PROCESSING FAILURE
-         * =====================================================
-         */
+        
+
+
+
+
 
         assertThat(
                 processingFailureRepository.count()
         ).isZero();
 
-        /*
-         * =====================================================
-         * 8. REAL CANDIDATE DATA
-         * =====================================================
-         */
+        
+
+
+
+
 
         TransactionTemplate transactionTemplate =
                 new TransactionTemplate(
@@ -532,39 +532,39 @@ class CvProcessingJobIT {
         );
     }
 
-    /*
-     * ============================================================
-     * TEST 2
-     * PARTIAL SUCCESS
-     * ============================================================
-     *
-     * 3 CV:
-     *
-     * john.pdf   ✅
-     * jane.docx  ✅
-     * broken.pdf ❌
-     *
-     * expected:
-     *
-     * Spring Batch:
-     * COMPLETED
-     *
-     * Business:
-     * COMPLETED_WITH_ERRORS
-     *
-     * candidates = 2
-     * failures   = 1
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldSkipInvalidDocumentAuditFailureAndCompleteWithErrors()
             throws Exception {
 
-        /*
-         * =====================================================
-         * 1. CREATE UPLOAD
-         * =====================================================
-         */
+        
+
+
+
+
 
         CvUpload upload =
                 new CvUpload(
@@ -588,11 +588,11 @@ class CvProcessingJobIT {
                 UploadStatus.UPLOADED
         );
 
-        /*
-         * =====================================================
-         * 2. CREATE FILESYSTEM
-         * =====================================================
-         */
+        
+
+
+
+
 
         Path extractionDirectory =
                 uploadStorage
@@ -604,9 +604,9 @@ class CvProcessingJobIT {
                 extractionDirectory
         );
 
-        /*
-         * VALID #1
-         */
+        
+
+
         TestDocumentFactory.createPdf(
                 extractionDirectory.resolve(
                         "john.pdf"
@@ -621,9 +621,9 @@ class CvProcessingJobIT {
                 "PostgreSQL"
         );
 
-        /*
-         * VALID #2
-         */
+        
+
+
         TestDocumentFactory.createDocx(
                 extractionDirectory.resolve(
                         "jane.docx"
@@ -638,22 +638,22 @@ class CvProcessingJobIT {
                 "Redis"
         );
 
-        /*
-         * INVALID
-         *
-         * Extension .pdf-dir,
-         * amma real content text/plain-dir.
-         *
-         * Tika bunu:
-         *
-         * UNSUPPORTED_MEDIA_TYPE
-         *
-         * kimi reject etməlidir.
-         *
-         * Fault tolerant step isə bütün job-u
-         * fail etmək əvəzinə bu item-i
-         * SKIP etməlidir.
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         Files.writeString(
                 extractionDirectory.resolve(
                         "broken.pdf"
@@ -664,11 +664,11 @@ class CvProcessingJobIT {
                 """
         );
 
-        /*
-         * =====================================================
-         * 3. START JOB
-         * =====================================================
-         */
+        
+
+
+
+
 
         JobExecution launchedExecution =
                 jobOperator.start(
@@ -678,28 +678,28 @@ class CvProcessingJobIT {
                         )
                 );
 
-        /*
-         * =====================================================
-         * 4. WAIT
-         * =====================================================
-         */
+        
+
+
+
+
 
         JobExecution completedExecution =
                 waitForJobCompletion(
                         launchedExecution.getId()
                 );
 
-        /*
-         * =====================================================
-         * 5. BATCH JOB MUST STILL COMPLETE
-         * =====================================================
-         *
-         * Bu çox vacibdir:
-         *
-         * broken.pdf = item-level problem
-         *
-         * infrastructure/job-level problem deyil.
-         */
+        
+
+
+
+
+
+
+
+
+
+
 
         assertThat(
                 completedExecution.getStatus()
@@ -718,61 +718,61 @@ class CvProcessingJobIT {
                 BatchStatus.COMPLETED
         );
 
-        /*
-         * Reader üç supported-extension
-         * file tapıb:
-         *
-         * broken.pdf
-         * jane.docx
-         * john.pdf
-         */
+        
+
+
+
+
+
+
+
         assertThat(
                 stepExecution.getReadCount()
         ).isEqualTo(
                 3
         );
 
-        /*
-         * Yalnız iki valid CandidateDraft
-         * writer-a çatıb.
-         */
+        
+
+
+
         assertThat(
                 stepExecution.getWriteCount()
         ).isEqualTo(
                 2
         );
 
-        /*
-         * Reader özü fail etməyib.
-         */
+        
+
+
         assertThat(
                 stepExecution.getReadSkipCount()
         ).isZero();
 
-        /*
-         * broken.pdf processor/Tika-da
-         * DocumentParsingException atıb.
-         *
-         * Ona görə process skip = 1.
-         */
+        
+
+
+
+
+
         assertThat(
                 stepExecution.getProcessSkipCount()
         ).isEqualTo(
                 1
         );
 
-        /*
-         * DB writer problemi yoxdur.
-         */
+        
+
+
         assertThat(
                 stepExecution.getWriteSkipCount()
         ).isZero();
 
-        /*
-         * =====================================================
-         * 6. CANDIDATE RESULT
-         * =====================================================
-         */
+        
+
+
+
+
 
         List<Candidate> candidates =
                 candidateRepository
@@ -807,11 +807,11 @@ class CvProcessingJobIT {
                         "broken.pdf"
                 );
 
-        /*
-         * =====================================================
-         * 7. PROCESSING FAILURE AUDIT
-         * =====================================================
-         */
+        
+
+
+
+
 
         List<ProcessingFailure> failures =
                 processingFailureRepository
@@ -843,26 +843,26 @@ class CvProcessingJobIT {
                 "broken.pdf"
         );
 
-        /*
-         * Tika actual MIME type text/plain
-         * aşkar etdiyi üçün bizim
-         * DocumentErrorCode:
-         *
-         * UNSUPPORTED_MEDIA_TYPE
-         */
+        
+
+
+
+
+
+
         assertThat(
                 failure.getErrorCode()
         ).isEqualTo(
                 "UNSUPPORTED_MEDIA_TYPE"
         );
 
-        /*
-         * Full stacktrace və CV text
-         * saxlamırıq.
-         *
-         * Sadəcə sanitized business/error
-         * message.
-         */
+        
+
+
+
+
+
+
         assertThat(
                 failure.getErrorMessage()
         )
@@ -875,11 +875,11 @@ class CvProcessingJobIT {
                 failure.getCreatedAt()
         ).isNotNull();
 
-        /*
-         * =====================================================
-         * 8. CV_UPLOAD COUNTERS + BUSINESS STATUS
-         * =====================================================
-         */
+        
+
+
+
+
 
         CvUpload completedUpload =
                 cvUploadRepository
@@ -906,15 +906,15 @@ class CvProcessingJobIT {
                 1
         );
 
-        /*
-         * Spring Batch:
-         *
-         * COMPLETED
-         *
-         * amma business result:
-         *
-         * COMPLETED_WITH_ERRORS
-         */
+        
+
+
+
+
+
+
+
+
         assertThat(
                 completedUpload.getStatus()
         ).isEqualTo(
@@ -922,11 +922,11 @@ class CvProcessingJobIT {
         );
     }
 
-    /*
-     * ============================================================
-     * JOB PARAMETERS
-     * ============================================================
-     */
+    
+
+
+
+
 
     private JobParameters createJobParameters(
             UUID uploadId
@@ -940,11 +940,11 @@ class CvProcessingJobIT {
                 .toJobParameters();
     }
 
-    /*
-     * ============================================================
-     * STEP LOOKUP
-     * ============================================================
-     */
+    
+
+
+
+
 
     private StepExecution findProcessingStep(
             JobExecution jobExecution
@@ -969,11 +969,11 @@ class CvProcessingJobIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * CANDIDATE LOOKUP
-     * ============================================================
-     */
+    
+
+
+
+
 
     private Candidate findCandidateByFilename(
             List<Candidate> candidates,
@@ -998,11 +998,11 @@ class CvProcessingJobIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * ASYNC JOB WAIT
-     * ============================================================
-     */
+    
+
+
+
+
 
     private JobExecution waitForJobCompletion(
             long executionId
@@ -1021,15 +1021,15 @@ class CvProcessingJobIT {
                         )
         ) {
 
-            /*
-             * Job başqa cv-batch-* thread-də
-             * işləyir.
-             *
-             * Ona görə original
-             * JobExecution obyektinə baxmaq
-             * əvəzinə fresh state-i
-             * JobRepository-dən götürürük.
-             */
+            
+
+
+
+
+
+
+
+
             JobExecution currentExecution =
                     jobRepository
                             .getJobExecution(
@@ -1060,11 +1060,11 @@ class CvProcessingJobIT {
         );
     }
 
-    /*
-     * ============================================================
-     * TEMP STORAGE
-     * ============================================================
-     */
+    
+
+
+
+
 
     private static Path createStorageRoot() {
 
@@ -1139,11 +1139,11 @@ class CvProcessingJobIT {
         }
     }
 
-    /*
-     * ============================================================
-     * FINAL CLEANUP
-     * ============================================================
-     */
+    
+
+
+
+
 
     @AfterAll
     static void cleanupStorage()

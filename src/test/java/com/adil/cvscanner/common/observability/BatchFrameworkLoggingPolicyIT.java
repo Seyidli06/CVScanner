@@ -15,17 +15,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Testcontainers
 class BatchFrameworkLoggingPolicyIT {
 
-    /*
-     * ============================================================
-     * REAL POSTGRESQL
-     * ============================================================
-     *
-     * Test production application.yaml ilə real
-     * Spring context başladır.
-     *
-     * Logging property-ni test daxilində override
-     * etmirik.
-     */
+    
+
+
+
+
+
+
+
+
+
+
     @Container
     @ServiceConnection
     static PostgreSQLContainer postgres =
@@ -42,24 +42,24 @@ class BatchFrameworkLoggingPolicyIT {
                             "test"
                     );
 
-    /*
-     * ============================================================
-     * TARGET FRAMEWORK LOGGER
-     * ============================================================
-     *
-     * Real logs-da raw exception stacktrace-i
-     * məhz bu class yazırdı:
-     *
-     * org.springframework.batch.core.step.item.ChunkOrientedStep
-     */
+    
+
+
+
+
+
+
+
+
+
     private static final String CHUNK_LOGGER_NAME =
             "org.springframework.batch.core.step.item.ChunkOrientedStep";
 
-    /*
-     * ============================================================
-     * TEST
-     * ============================================================
-     */
+    
+
+
+
+
     @Test
     void shouldDisableUnsafeChunkFrameworkLogger() {
 
@@ -68,10 +68,10 @@ class BatchFrameworkLoggingPolicyIT {
                         CHUNK_LOGGER_NAME
                 );
 
-        /*
-         * OFF olduqda heç bir severity aktiv
-         * olmamalıdır.
-         */
+        
+
+
+
         assertThat(
                 logger.isErrorEnabled()
         ).isFalse();

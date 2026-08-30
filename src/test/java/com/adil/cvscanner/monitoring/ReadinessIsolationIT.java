@@ -30,24 +30,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 )
 class ReadinessIsolationIT {
 
-    /*
-     * ============================================================
-     * REAL POSTGRESQL
-     * ============================================================
-     *
-     * Application context:
-     *
-     * Flyway
-     * JPA
-     * repositories
-     *
-     * real PostgreSQL ilə başlayır.
-     *
-     * Yəni test fake application context deyil.
-     *
-     * Sadəcə db health contributor-u test üçün
-     * idarə edilən implementation ilə əvəz olunur.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Container
     @ServiceConnection
@@ -72,57 +72,57 @@ class ReadinessIsolationIT {
     private ControllableDatabaseHealthIndicator
             databaseHealthIndicator;
 
-    /*
-     * ============================================================
-     * RESET
-     * ============================================================
-     */
+    
+
+
+
+
 
     @BeforeEach
     void setUp() {
 
-        /*
-         * Hər test həmişə healthy vəziyyətdən
-         * başlayır.
-         */
+        
+
+
+
         databaseHealthIndicator.markUp();
     }
 
-    /*
-     * ============================================================
-     * MAIN TEST
-     * ============================================================
-     *
-     * İstədiyimiz davranış:
-     *
-     * DB UP
-     *
-     * /livez  -> 200 UP
-     * /readyz -> 200 UP
-     *
-     *
-     * DB DOWN
-     *
-     * /livez  -> 200 UP
-     * /readyz -> 503 DOWN
-     *
-     *
-     * DB RECOVERS
-     *
-     * /readyz -> 200 UP
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldRemoveApplicationFromReadinessWithoutFailingLiveness()
             throws Exception {
 
-        /*
-         * =====================================================
-         * 1. INITIAL STATE
-         * =====================================================
-         *
-         * Database health = UP.
-         */
+        
+
+
+
+
+
+
 
         mockMvc.perform(
                         get(
@@ -158,30 +158,30 @@ class ReadinessIsolationIT {
                         )
                 );
 
-        /*
-         * =====================================================
-         * 2. SIMULATE DATABASE FAILURE
-         * =====================================================
-         */
+        
+
+
+
+
 
         databaseHealthIndicator.markDown();
 
-        /*
-         * =====================================================
-         * 3. LIVENESS MUST REMAIN UP
-         * =====================================================
-         *
-         * DB external dependency-dir.
-         *
-         * Database-in düşməsi:
-         *
-         * "JVM/application öldü"
-         *
-         * demək deyil.
-         *
-         * Ona görə Kubernetes application-ı
-         * restart etməməlidir.
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         mockMvc.perform(
                         get(
@@ -217,28 +217,28 @@ class ReadinessIsolationIT {
                         )
                 );
 
-        /*
-         * =====================================================
-         * 4. READINESS MUST BECOME DOWN
-         * =====================================================
-         *
-         * application.yaml:
-         *
-         * readiness:
-         *   include:
-         *     readinessState,db
-         *
-         *
-         * db = DOWN
-         *
-         * therefore:
-         *
-         * readiness = DOWN
-         *
-         * Spring Boot default HTTP mapping:
-         *
-         * DOWN -> 503
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         mockMvc.perform(
                         get(
@@ -274,19 +274,19 @@ class ReadinessIsolationIT {
                         )
                 );
 
-        /*
-         * =====================================================
-         * 5. SIMULATE DATABASE RECOVERY
-         * =====================================================
-         */
+        
+
+
+
+
 
         databaseHealthIndicator.markUp();
 
-        /*
-         * Readiness avtomatik bərpa olunmalıdır.
-         *
-         * Application restart lazım deyil.
-         */
+        
+
+
+
+
 
         mockMvc.perform(
                         get(
@@ -323,33 +323,33 @@ class ReadinessIsolationIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST CONFIGURATION
-     * ============================================================
-     *
-     * Production source-a heç nə əlavə etmirik.
-     *
-     * Bu bean yalnız bu integration test
-     * context-ində mövcuddur.
-     *
-     *
-     * Bean name çox vacibdir:
-     *
-     * dbHealthIndicator
-     *
-     * Spring Boot contributor ID:
-     *
-     * db
-     *
-     *
-     * application.yaml:
-     *
-     * readiness:
-     *   include: readinessState,db
-     *
-     * ilə buna görə uyğunlaşır.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @TestConfiguration(
             proxyBeanMethods = false
@@ -364,11 +364,11 @@ class ReadinessIsolationIT {
         }
     }
 
-    /*
-     * ============================================================
-     * CONTROLLABLE DB HEALTH
-     * ============================================================
-     */
+    
+
+
+
+
 
     static class ControllableDatabaseHealthIndicator
             implements HealthIndicator {

@@ -53,11 +53,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 )
 class CandidateCsvExportControllerIT {
 
-    /*
-     * ============================================================
-     * CONSTANTS
-     * ============================================================
-     */
+    
+
+
+
+
 
     private static final String EXPORT_URL =
             "/api/v1/candidates/export.csv";
@@ -75,11 +75,11 @@ class CandidateCsvExportControllerIT {
     private static final Path STORAGE_ROOT =
             createStorageRoot();
 
-    /*
-     * ============================================================
-     * REAL POSTGRESQL
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Container
     @ServiceConnection
@@ -113,11 +113,11 @@ class CandidateCsvExportControllerIT {
 
     private CvUpload secondUpload;
 
-    /*
-     * ============================================================
-     * TEST PROPERTIES
-     * ============================================================
-     */
+    
+
+
+
+
 
     @DynamicPropertySource
     static void properties(
@@ -135,20 +135,20 @@ class CandidateCsvExportControllerIT {
         );
     }
 
-    /*
-     * ============================================================
-     * DEFAULT DATASET
-     * ============================================================
-     *
-     * Eyni CandidateControllerIT dataset-i:
-     *
-     * Alice    5   Baku      REMOTE
-     * Bob      2   Baku      ONSITE
-     * Charlie  8   Ganja     REMOTE
-     * David    4   Baku      HYBRID
-     * Elvin    6   Baku      REMOTE
-     * Farid   10   Sumgait   REMOTE
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @BeforeEach
     void setUp() {
@@ -157,11 +157,11 @@ class CandidateCsvExportControllerIT {
 
         cvUploadRepository.deleteAll();
 
-        /*
-         * =====================================================
-         * UPLOAD #1
-         * =====================================================
-         */
+        
+
+
+
+
 
         backendUpload =
                 new CvUpload(
@@ -177,11 +177,11 @@ class CandidateCsvExportControllerIT {
                         backendUpload
                 );
 
-        /*
-         * =====================================================
-         * UPLOAD #2
-         * =====================================================
-         */
+        
+
+
+
+
 
         secondUpload =
                 new CvUpload(
@@ -197,11 +197,11 @@ class CandidateCsvExportControllerIT {
                         secondUpload
                 );
 
-        /*
-         * =====================================================
-         * CANDIDATES
-         * =====================================================
-         */
+        
+
+
+
+
 
         Candidate alice =
                 candidate(
@@ -308,12 +308,12 @@ class CandidateCsvExportControllerIT {
         );
     }
 
-    /*
-     * ============================================================
-     * TEST 1
-     * DOWNLOAD CONTRACT + DEFAULT SORT
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldDownloadCsvWithExpectedHeadersAndDefaultSort()
@@ -380,9 +380,9 @@ class CandidateCsvExportControllerIT {
                         result
                 );
 
-        /*
-         * UTF-8 BOM.
-         */
+        
+
+
 
         assertThat(
                 csv
@@ -398,9 +398,9 @@ class CandidateCsvExportControllerIT {
                 EXPECTED_HEADER
         );
 
-        /*
-         * Header + 6 candidates.
-         */
+        
+
+
 
         assertThat(
                 withoutBom(
@@ -410,11 +410,11 @@ class CandidateCsvExportControllerIT {
                 7
         );
 
-        /*
-         * Default:
-         *
-         * fullName ASC
-         */
+        
+
+
+
+
 
         assertAppearsBefore(
                 csv,
@@ -446,10 +446,10 @@ class CandidateCsvExportControllerIT {
                 "\"Farid Mammadov\""
         );
 
-        /*
-         * Skills export-da deterministic
-         * case-insensitive sort edilir.
-         */
+        
+
+
+
 
         assertThat(
                 csv
@@ -458,26 +458,26 @@ class CandidateCsvExportControllerIT {
         );
     }
 
-    /*
-     * ============================================================
-     * TEST 2
-     * FILTERS + SORT
-     * ============================================================
-     *
-     * skill = Java
-     * jobType = REMOTE
-     * minExperience = 3
-     *
-     * match:
-     *
-     * Farid 10
-     * Elvin  6
-     * Alice  5
-     *
-     * sort:
-     *
-     * experience DESC
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldApplyFiltersAndSortExport()
@@ -515,9 +515,9 @@ class CandidateCsvExportControllerIT {
                         result
                 );
 
-        /*
-         * Header + 3 matching candidates.
-         */
+        
+
+
 
         assertThat(
                 withoutBom(
@@ -562,12 +562,12 @@ class CandidateCsvExportControllerIT {
         );
     }
 
-    /*
-     * ============================================================
-     * TEST 3
-     * UTF-8 + COMMA + QUOTE + NEWLINE ESCAPING
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldEscapeCsvSpecialCharactersAndPreserveUtf8()
@@ -591,14 +591,14 @@ class CandidateCsvExportControllerIT {
                 candidate(
                         specialUpload,
 
-                        /*
-                         * Contains:
-                         *
-                         * Azərbaycan characters
-                         * quotes
-                         * comma
-                         * newline
-                         */
+                        
+
+
+
+
+
+
+
                         "Rəşad \"QA\", Əliyev\nSenior",
 
                         7,
@@ -635,18 +635,18 @@ class CandidateCsvExportControllerIT {
                         result
                 );
 
-        /*
-         * CSV quote escaping:
-         *
-         * "
-         *
-         * becomes:
-         *
-         * ""
-         *
-         * Embedded newline quoted cell daxilində
-         * qalır.
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
 
         assertThat(
                 csv
@@ -654,9 +654,9 @@ class CandidateCsvExportControllerIT {
                 "\"Rəşad \"\"QA\"\", Əliyev\nSenior\""
         );
 
-        /*
-         * Comma quoted cell daxilində təhlükəsizdir.
-         */
+        
+
+
 
         assertThat(
                 csv
@@ -664,11 +664,11 @@ class CandidateCsvExportControllerIT {
                 "\"Bakı, Azərbaycan\""
         );
 
-        /*
-         * Filename daxilində:
-         *
-         * comma + quotes
-         */
+        
+
+
+
+
 
         assertThat(
                 csv
@@ -676,9 +676,9 @@ class CandidateCsvExportControllerIT {
                 "\"special,\"\"resume\"\".pdf\""
         );
 
-        /*
-         * UTF-8 pozulmamalıdır.
-         */
+        
+
+
 
         assertThat(
                 csv
@@ -697,23 +697,23 @@ class CandidateCsvExportControllerIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 4
-     * CSV FORMULA INJECTION
-     * ============================================================
-     *
-     * Spreadsheet belə value-ni formula kimi
-     * interpret edə bilər:
-     *
-     * =2+2
-     *
-     * Export:
-     *
-     * '=2+2
-     *
-     * etməlidir.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldProtectSpreadsheetFormulaInjection()
@@ -766,13 +766,13 @@ class CandidateCsvExportControllerIT {
                         result
                 );
 
-        /*
-         * Dangerous:
-         *
-         * "=2+2"
-         *
-         * olmamalıdır.
-         */
+        
+
+
+
+
+
+
 
         assertThat(
                 csv
@@ -780,11 +780,11 @@ class CandidateCsvExportControllerIT {
                 ",\"=2+2\","
         );
 
-        /*
-         * Safe:
-         *
-         * "'=2+2"
-         */
+        
+
+
+
+
 
         assertThat(
                 csv
@@ -793,18 +793,18 @@ class CandidateCsvExportControllerIT {
         );
     }
 
-    /*
-     * ============================================================
-     * TEST 5
-     * EMPTY EXPORT
-     * ============================================================
-     *
-     * Matching candidate yoxdursa:
-     *
-     * 200
-     *
-     * və yalnız CSV header.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldReturnHeaderOnlyWhenNoCandidateMatches()
@@ -835,21 +835,21 @@ class CandidateCsvExportControllerIT {
         );
     }
 
-    /*
-     * ============================================================
-     * TEST 6
-     * INVALID REQUEST MUST FAIL BEFORE STREAMING
-     * ============================================================
-     *
-     * Bu xüsusilə vacibdir.
-     *
-     * StreamingResponseBody başlayandan sonra
-     * normal JSON error response qaytarmaq gec ola
-     * bilər.
-     *
-     * Buna görə validation controller daxilində
-     * pre-flight işləyir.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldReturnJson400BeforeStreamingForInvalidSort()
@@ -917,39 +917,39 @@ class CandidateCsvExportControllerIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 7
-     * MULTI-BATCH EXPORT + N+1 GUARD
-     * ============================================================
-     *
-     * Production export batch size:
-     *
-     * 250
-     *
-     * Burada 260 candidate yaradırıq.
-     *
-     * Deməli export ən az:
-     *
-     * batch #1 = 250
-     * batch #2 = 10
-     *
-     * işlətməlidir.
-     *
-     *
-     * Expected query architecture:
-     *
-     * batch 1:
-     *   page query
-     *   hydration query
-     *
-     * batch 2:
-     *   page query
-     *   hydration query
-     *
-     * Yəni yüzlərlə candidate olsa belə
-     * N+1 olmamalıdır.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldExportMoreThanOneBatchWithoutNPlusOne()
@@ -1022,10 +1022,10 @@ class CandidateCsvExportControllerIT {
                 260
         );
 
-        /*
-         * Setup query-lərini performance ölçümünə
-         * daxil etmirik.
-         */
+        
+
+
+
 
         Statistics statistics =
                 statistics();
@@ -1054,9 +1054,9 @@ class CandidateCsvExportControllerIT {
                         )
                 );
 
-        /*
-         * Header + 260 candidate.
-         */
+        
+
+
 
         assertThat(
                 csv.lines().count()
@@ -1080,19 +1080,19 @@ class CandidateCsvExportControllerIT {
                 "\"Bulk Candidate 259\""
         );
 
-        /*
-         * 260 candidate üçün yüzlərlə SQL
-         * görmək N+1 demək olardı.
-         *
-         * Hazırkı two-phase architecture-də
-         * təxminən 4 statement gözləyirik:
-         *
-         * 2 batches x
-         *   page + hydration.
-         *
-         * Bir qədər implementation variance
-         * üçün 4..8 interval saxlayırıq.
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
+
 
         long preparedStatements =
                 statistics
@@ -1106,25 +1106,25 @@ class CandidateCsvExportControllerIT {
         );
     }
 
-    /*
-     * ============================================================
-     * ASYNC STREAMING HELPER
-     * ============================================================
-     *
-     * StreamingResponseBody Spring MVC-də async
-     * request kimi işləyir.
-     *
-     * Ona görə:
-     *
-     * 1. initial request
-     * 2. asyncStarted
-     * 3. asyncDispatch
-     *
-     * Final RBAC:
-     *
-     * bütün normal CSV export request-ləri
-     * RECRUITER authority ilə gedir.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private MvcResult performCsvExport(
             MockHttpServletRequestBuilder requestBuilder
@@ -1155,11 +1155,11 @@ class CandidateCsvExportControllerIT {
                 .andReturn();
     }
 
-    /*
-     * ============================================================
-     * RESPONSE BODY
-     * ============================================================
-     */
+    
+
+
+
+
 
     private String csvBody(
             MvcResult result
@@ -1173,11 +1173,11 @@ class CandidateCsvExportControllerIT {
         );
     }
 
-    /*
-     * ============================================================
-     * BOM HELPER
-     * ============================================================
-     */
+    
+
+
+
+
 
     private String withoutBom(
             String csv
@@ -1201,11 +1201,11 @@ class CandidateCsvExportControllerIT {
         return csv;
     }
 
-    /*
-     * ============================================================
-     * ORDER ASSERTION
-     * ============================================================
-     */
+    
+
+
+
+
 
     private void assertAppearsBefore(
             String text,
@@ -1258,11 +1258,11 @@ class CandidateCsvExportControllerIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * CANDIDATE FACTORY
-     * ============================================================
-     */
+    
+
+
+
+
 
     private Candidate candidate(
             CvUpload upload,
@@ -1285,11 +1285,11 @@ class CandidateCsvExportControllerIT {
         );
     }
 
-    /*
-     * ============================================================
-     * HIBERNATE STATISTICS
-     * ============================================================
-     */
+    
+
+
+
+
 
     private Statistics statistics() {
 
@@ -1302,11 +1302,11 @@ class CandidateCsvExportControllerIT {
                 .getStatistics();
     }
 
-    /*
-     * ============================================================
-     * STORAGE ROOT
-     * ============================================================
-     */
+    
+
+
+
+
 
     private static Path createStorageRoot() {
 

@@ -28,21 +28,21 @@ public class ProcessingFailureController {
                 processingFailureQueryService;
     }
 
-    /*
-     * ============================================================
-     * GET PROCESSING FAILURES
-     * ============================================================
-     *
-     * GET
-     *
-     * /api/v1/uploads/{uploadId}/failures
-     *
-     *
-     * Optional:
-     *
-     * ?page=0
-     * &size=20
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @GetMapping
     public ResponseEntity<ProcessingFailurePageResponse>

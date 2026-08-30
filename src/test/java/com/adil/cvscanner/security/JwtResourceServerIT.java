@@ -47,54 +47,54 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 )
 class JwtResourceServerIT {
 
-    /*
-     * ============================================================
-     * TEST ISSUER
-     * ============================================================
-     */
+    
+
+
+
+
 
     private static final String ISSUER =
             "https://issuer.cvscanner.test";
 
-    /*
-     * ============================================================
-     * REAL RSA KEY PAIR
-     * ============================================================
-     *
-     * Private key:
-     *
-     * token signing
-     *
-     *
-     * Public key:
-     *
-     * Spring JwtDecoder validation
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private static final KeyPair KEY_PAIR =
             generateKeyPair();
 
-    /*
-     * Invalid-signature testcase üçün başqa key.
-     */
+    
+
+
 
     private static final KeyPair ATTACKER_KEY_PAIR =
             generateKeyPair();
 
-    /*
-     * ============================================================
-     * STORAGE
-     * ============================================================
-     */
+    
+
+
+
+
 
     private static final Path STORAGE_ROOT =
             createStorageRoot();
 
-    /*
-     * ============================================================
-     * REAL POSTGRES
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Container
     @ServiceConnection
@@ -115,11 +115,11 @@ class JwtResourceServerIT {
     @Autowired
     private MockMvc mockMvc;
 
-    /*
-     * ============================================================
-     * TEST PROPERTIES
-     * ============================================================
-     */
+    
+
+
+
+
 
     @DynamicPropertySource
     static void properties(
@@ -146,22 +146,22 @@ class JwtResourceServerIT {
                 () -> "health,metrics"
         );
 
-        /*
-         * JwtSecurityProperties validation üçün.
-         */
+        
+
+
 
         registry.add(
                 "security.jwt.issuer-uri",
                 () -> ISSUER
         );
 
-        /*
-         * Production decoder bean də yaradılır,
-         * amma testdə @Primary decoder istifadə olunur.
-         *
-         * Nimbus JWK endpoint-ə token decode olunana
-         * qədər request etmir.
-         */
+        
+
+
+
+
+
+
 
         registry.add(
                 "security.jwt.jwk-set-uri",
@@ -174,13 +174,13 @@ class JwtResourceServerIT {
         );
     }
 
-    /*
-     * ============================================================
-     * TEST 1
-     *
-     * PUBLIC HEALTH
-     * ============================================================
-     */
+    
+
+
+
+
+
+
 
     @Test
     void shouldAllowAnonymousHealthRequest()
@@ -196,13 +196,13 @@ class JwtResourceServerIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 2
-     *
-     * PROTECTED RESOURCE WITHOUT TOKEN
-     * ============================================================
-     */
+    
+
+
+
+
+
+
 
     @Test
     void shouldReturnUnauthorizedWhenBearerTokenIsMissing()
@@ -218,13 +218,13 @@ class JwtResourceServerIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 3
-     *
-     * ADMIN SIGNED JWT
-     * ============================================================
-     */
+    
+
+
+
+
+
+
 
     @Test
     void shouldAllowValidAdminJwt()
@@ -258,13 +258,13 @@ class JwtResourceServerIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 4
-     *
-     * RECRUITER IS AUTHENTICATED BUT NOT AUTHORIZED
-     * ============================================================
-     */
+    
+
+
+
+
+
+
 
     @Test
     void shouldReturnForbiddenForRecruiterOnAdminEndpoint()
@@ -298,13 +298,13 @@ class JwtResourceServerIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 5
-     *
-     * UNKNOWN ROLE MUST NOT ESCALATE PRIVILEGES
-     * ============================================================
-     */
+    
+
+
+
+
+
+
 
     @Test
     void shouldRejectUnknownRoleFromAdminEndpoint()
@@ -338,13 +338,13 @@ class JwtResourceServerIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 6
-     *
-     * WRONG ISSUER
-     * ============================================================
-     */
+    
+
+
+
+
+
+
 
     @Test
     void shouldRejectTokenWithWrongIssuer()
@@ -378,24 +378,24 @@ class JwtResourceServerIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 7
-     *
-     * INVALID SIGNATURE
-     * ============================================================
-     */
+    
+
+
+
+
+
+
 
     @Test
     void shouldRejectTokenSignedByUnknownKey()
             throws Exception {
 
-        /*
-         * Token attacker private key ilə imzalanır.
-         *
-         * Decoder isə yalnız KEY_PAIR public key-ini
-         * etibarlı bilir.
-         */
+        
+
+
+
+
+
 
         String token =
                 createToken(
@@ -425,13 +425,13 @@ class JwtResourceServerIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 8
-     *
-     * EXPIRED TOKEN
-     * ============================================================
-     */
+    
+
+
+
+
+
+
 
     @Test
     void shouldRejectExpiredToken()
@@ -446,9 +446,9 @@ class JwtResourceServerIT {
                                 SecurityRoles.ADMIN
                         ),
 
-                        /*
-                         * Artıq keçmiş expiration.
-                         */
+                        
+
+
 
                         Instant.now()
                                 .minusSeconds(
@@ -470,23 +470,23 @@ class JwtResourceServerIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST JWT DECODER
-     * ============================================================
-     *
-     * Production:
-     *
-     * JWK endpoint
-     *
-     *
-     * Integration test:
-     *
-     * real RSA public key.
-     *
-     *
-     * Signature validation realdır.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @TestConfiguration
     static class TestJwtConfiguration {
@@ -515,11 +515,11 @@ class JwtResourceServerIT {
         }
     }
 
-    /*
-     * ============================================================
-     * CREATE REAL SIGNED JWT
-     * ============================================================
-     */
+    
+
+
+
+
 
     private static String createToken(
             KeyPair signingKeyPair,
@@ -603,11 +603,11 @@ class JwtResourceServerIT {
         }
     }
 
-    /*
-     * ============================================================
-     * RSA KEY GENERATOR
-     * ============================================================
-     */
+    
+
+
+
+
 
     private static KeyPair generateKeyPair() {
 
@@ -636,11 +636,11 @@ class JwtResourceServerIT {
         }
     }
 
-    /*
-     * ============================================================
-     * TEMP STORAGE
-     * ============================================================
-     */
+    
+
+
+
+
 
     private static Path createStorageRoot() {
 

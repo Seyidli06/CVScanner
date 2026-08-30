@@ -19,11 +19,11 @@ import java.util.stream.Collectors;
 @Service
 public class CandidateXlsxExportService {
 
-    /*
-     * SXSSF yalnız son 100 row-u memory-də saxlayır.
-     *
-     * Köhnə rows temporary XML file-a flush olunur.
-     */
+    
+
+
+
+
     private static final int ROW_ACCESS_WINDOW_SIZE =
             100;
 
@@ -41,11 +41,11 @@ public class CandidateXlsxExportService {
                 candidateExportQueryService;
     }
 
-    /*
-     * ============================================================
-     * PRE-FLIGHT VALIDATION
-     * ============================================================
-     */
+    
+
+
+
+
 
     public void validateRequest(
             CandidateSearchCriteria criteria,
@@ -61,11 +61,11 @@ public class CandidateXlsxExportService {
                 );
     }
 
-    /*
-     * ============================================================
-     * XLSX EXPORT
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Transactional(
             readOnly = true,
@@ -89,12 +89,12 @@ public class CandidateXlsxExportService {
                         ROW_ACCESS_WINDOW_SIZE
                 );
 
-        /*
-         * SXSSF temp XML-ləri diskdə saxlayır.
-         *
-         * Compress etməklə temporary disk istifadəsini
-         * azaldırıq.
-         */
+        
+
+
+
+
+
         workbook.setCompressTempFiles(
                 true
         );
@@ -173,10 +173,10 @@ public class CandidateXlsxExportService {
                     break;
                 }
 
-                /*
-                 * Hibernate əvvəlki batch entity-lərini
-                 * memory-də saxlamasın.
-                 */
+                
+
+
+
                 candidateExportQueryService
                         .clearPersistenceContext();
 
@@ -195,10 +195,10 @@ public class CandidateXlsxExportService {
                 }
             }
 
-            /*
-             * HTTP OutputStream-ə real XLSX ZIP
-             * document yazılır.
-             */
+            
+
+
+
             workbook.write(
                     outputStream
             );
@@ -207,49 +207,49 @@ public class CandidateXlsxExportService {
 
         } finally {
 
-            /*
-             * close:
-             *
-             * workbook resources.
-             */
+            
+
+
+
+
             workbook.close();
 
-            /*
-             * dispose:
-             *
-             * SXSSF temporary files.
-             *
-             * Bu vacibdir.
-             * Əks halda export-lardan sonra temp directory
-             * böyüyə bilər.
-             */
+            
+
+
+
+
+
+
+
+
             workbook.dispose();
         }
     }
 
-    /*
-     * ============================================================
-     * SHEET CONFIGURATION
-     * ============================================================
-     */
+    
+
+
+
+
 
     private void configureSheet(
             Sheet sheet
     ) {
 
-        /*
-         * Header scroll zamanı ekranda qalsın.
-         */
+        
+
+
         sheet.createFreezePane(
                 0,
                 1
         );
 
-        /*
-         * AutoFilter:
-         *
-         * A1:H1
-         */
+        
+
+
+
+
         sheet.setAutoFilter(
                 new CellRangeAddress(
                         0,
@@ -259,12 +259,12 @@ public class CandidateXlsxExportService {
                 )
         );
 
-        /*
-         * autosizeColumn() SXSSF ilə böyük dataset-də
-         * lazımsız memory/CPU xərci yarada bilər.
-         *
-         * Ona görə fixed sensible widths.
-         */
+        
+
+
+
+
+
 
         sheet.setColumnWidth(
                 0,
@@ -307,11 +307,11 @@ public class CandidateXlsxExportService {
         );
     }
 
-    /*
-     * ============================================================
-     * HEADER STYLE
-     * ============================================================
-     */
+    
+
+
+
+
 
     private CellStyle createHeaderStyle(
             SXSSFWorkbook workbook
@@ -334,11 +334,11 @@ public class CandidateXlsxExportService {
         return style;
     }
 
-    /*
-     * ============================================================
-     * HEADER
-     * ============================================================
-     */
+    
+
+
+
+
 
     private void createHeaderRow(
             Sheet sheet,
@@ -383,11 +383,11 @@ public class CandidateXlsxExportService {
         }
     }
 
-    /*
-     * ============================================================
-     * CANDIDATE ROW
-     * ============================================================
-     */
+    
+
+
+
+
 
     private void createCandidateRow(
             Sheet sheet,
@@ -422,11 +422,11 @@ public class CandidateXlsxExportService {
                 candidate.fullName()
         );
 
-        /*
-         * Experience numeric cell kimi yazılır.
-         *
-         * Excel sorting/filtering daha düzgün işləyir.
-         */
+        
+
+
+
+
         if (
                 candidate.yearsOfExperience()
                         != null
@@ -483,29 +483,29 @@ public class CandidateXlsxExportService {
         );
     }
 
-    /*
-     * ============================================================
-     * STRING CELL
-     * ============================================================
-     *
-     * ÇOX VACİB:
-     *
-     * Burada setCellFormula istifadə etmirik.
-     *
-     * Hətta value:
-     *
-     * =2+2
-     *
-     * olsa belə:
-     *
-     * setCellValue(String)
-     *
-     * onu STRING cell kimi yazır.
-     *
-     * Buna görə CSV-dən fərqli olaraq
-     * leading apostrophe ilə data-nı dəyişmək
-     * lazım deyil.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private void writeStringCell(
             Row row,

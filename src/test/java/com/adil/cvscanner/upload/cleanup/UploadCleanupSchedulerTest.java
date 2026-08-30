@@ -86,12 +86,12 @@ class UploadCleanupSchedulerTest {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 1
-     * SCHEDULER DISABLED
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldNotRunOrRecordAttemptWhenSchedulerIsDisabled() {
@@ -114,12 +114,12 @@ class UploadCleanupSchedulerTest {
         ).isZero();
     }
 
-    /*
-     * ============================================================
-     * TEST 2
-     * CLEANUP DISABLED
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldNotRunOrRecordAttemptWhenCleanupIsDisabled() {
@@ -142,12 +142,12 @@ class UploadCleanupSchedulerTest {
         ).isZero();
     }
 
-    /*
-     * ============================================================
-     * TEST 3
-     * NORMAL EXECUTION
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldRecordSchedulerAttemptForNormalRun() {
@@ -196,12 +196,12 @@ class UploadCleanupSchedulerTest {
         ).isZero();
     }
 
-    /*
-     * ============================================================
-     * TEST 4
-     * DISTRIBUTED LOCK BUSY
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldTreatDistributedLockContentionAsSafeSchedulerAttempt() {
@@ -225,9 +225,6 @@ class UploadCleanupSchedulerTest {
                 1.0
         );
 
-        /*
-         * Distributed contention failure deyil.
-         */
 
         assertThat(
                 counter(
@@ -236,12 +233,12 @@ class UploadCleanupSchedulerTest {
         ).isZero();
     }
 
-    /*
-     * ============================================================
-     * TEST 5
-     * EXECUTION FAILURE
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldRecordFailureAndReleaseLocalGuard() {
@@ -298,12 +295,12 @@ class UploadCleanupSchedulerTest {
         );
     }
 
-    /*
-     * ============================================================
-     * TEST 6
-     * LOCAL OVERLAP
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldRecordLocalOverlapSkip()
@@ -365,9 +362,7 @@ class UploadCleanupSchedulerTest {
                         )
         ).isTrue();
 
-        /*
-         * Second invocation local guard-a ilişəcək.
-         */
+
 
         scheduler.runScheduledCleanup();
 
@@ -405,9 +400,6 @@ class UploadCleanupSchedulerTest {
                 firstThread.isAlive()
         ).isFalse();
 
-        /*
-         * Lock açıldıqdan sonra yenidən işləməlidir.
-         */
 
         when(
                 executionCoordinator.tryRunOnce()
@@ -441,11 +433,11 @@ class UploadCleanupSchedulerTest {
         );
     }
 
-    /*
-     * ============================================================
-     * HELPER
-     * ============================================================
-     */
+    
+
+
+
+
 
     private double counter(
             String name

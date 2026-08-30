@@ -29,23 +29,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Testcontainers
 class UploadCleanupCandidateFinderIT {
 
-    /*
-     * ============================================================
-     * TEMP STORAGE
-     * ============================================================
-     *
-     * Application context real LocalUploadStorage
-     * yaratdığı üçün test üçün isolated root.
-     */
 
     private static final Path STORAGE_ROOT =
             createStorageRoot();
 
-    /*
-     * ============================================================
-     * REAL POSTGRESQL
-     * ============================================================
-     */
 
     @Container
     @ServiceConnection
@@ -75,11 +62,7 @@ class UploadCleanupCandidateFinderIT {
     private JdbcTemplate
             jdbcTemplate;
 
-    /*
-     * ============================================================
-     * CONFIG
-     * ============================================================
-     */
+
 
     @DynamicPropertySource
     static void properties(
@@ -91,13 +74,13 @@ class UploadCleanupCandidateFinderIT {
                 () -> STORAGE_ROOT.toString()
         );
 
-        /*
-         * Cleanup:
-         *
-         * enabled
-         * 7 day retention
-         * max 2 rows per execution
-         */
+        
+
+
+
+
+
+
         registry.add(
                 "app.cleanup.enabled",
                 () -> "true"
@@ -125,24 +108,24 @@ class UploadCleanupCandidateFinderIT {
         cvUploadRepository.deleteAll();
     }
 
-    /*
-     * ============================================================
-     * TEST 1
-     *
-     * ONLY OLD SUCCESS-LIKE TERMINAL UPLOADS
-     * ============================================================
-     */
+    
+
+
+
+
+
+
 
     @Test
     void shouldSelectOnlyOldCompletedUploads() {
 
-        /*
-         * ========================================================
-         * OLD COMPLETED
-         * ========================================================
-         *
-         * Eligible.
-         */
+        
+
+
+
+
+
+
 
         CvUpload oldCompleted =
                 completedUpload(
@@ -154,13 +137,13 @@ class UploadCleanupCandidateFinderIT {
                 10
         );
 
-        /*
-         * ========================================================
-         * OLD COMPLETED WITH ERRORS
-         * ========================================================
-         *
-         * Eligible.
-         */
+        
+
+
+
+
+
+
 
         CvUpload oldPartial =
                 completedWithErrorsUpload(
@@ -172,13 +155,6 @@ class UploadCleanupCandidateFinderIT {
                 9
         );
 
-        /*
-         * ========================================================
-         * RECENT COMPLETED
-         * ========================================================
-         *
-         * Terminal olsa da retention keçməyib.
-         */
 
         CvUpload recentCompleted =
                 completedUpload(
@@ -190,13 +166,6 @@ class UploadCleanupCandidateFinderIT {
                 2
         );
 
-        /*
-         * ========================================================
-         * FAILED
-         * ========================================================
-         *
-         * completedAt köhnə olsa belə cleanup olmamalıdır.
-         */
 
         CvUpload failed =
                 failedUpload(
@@ -208,17 +177,6 @@ class UploadCleanupCandidateFinderIT {
                 30
         );
 
-        /*
-         * ========================================================
-         * PROCESSING
-         * ========================================================
-         *
-         * Corrupted/legacy row simulyasiya etmək üçün
-         * completed_at-a hətta köhnə tarix yazırıq.
-         *
-         * Status PROCESSING olduğu üçün yenə cleanup
-         * candidate olmamalıdır.
-         */
 
         CvUpload processing =
                 processingUpload(
@@ -230,16 +188,6 @@ class UploadCleanupCandidateFinderIT {
                 30
         );
 
-        /*
-         * ========================================================
-         * UPLOADED
-         * ========================================================
-         *
-         * Eyni defence:
-         *
-         * completed_at səhvən dolu olsa belə
-         * status cleanup-a uyğun deyil.
-         */
 
         CvUpload uploaded =
                 uploadedUpload(
@@ -251,21 +199,16 @@ class UploadCleanupCandidateFinderIT {
                 30
         );
 
-        /*
-         * ========================================================
-         * ACT
-         * ========================================================
-         */
+        
+
+
+
+
 
         List<CvUpload> candidates =
                 cleanupCandidateFinder
                         .findNextBatch();
 
-        /*
-         * batch-size = 2
-         *
-         * və eligible dəqiq 2 upload var.
-         */
         assertThat(
                 candidates
         ).hasSize(
@@ -284,9 +227,9 @@ class UploadCleanupCandidateFinderIT {
                 oldPartial.getId()
         );
 
-        /*
-         * Safety asserts.
-         */
+        
+
+
         assertThat(
                 candidates
                         .stream()
@@ -321,21 +264,6 @@ class UploadCleanupCandidateFinderIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 2
-     *
-     * BOUNDED BATCH + OLDEST FIRST
-     * ============================================================
-     *
-     * 3 eligible upload var.
-     *
-     * batch-size = 2.
-     *
-     * Expected:
-     *
-     * yalnız ən köhnə 2.
-     */
 
     @Test
     void shouldRespectBatchSizeAndSelectOldestFirst() {
@@ -404,11 +332,11 @@ class UploadCleanupCandidateFinderIT {
         );
     }
 
-    /*
-     * ============================================================
-     * COMPLETED FACTORY
-     * ============================================================
-     */
+    
+
+
+
+
 
     private CvUpload completedUpload(
             String filename
@@ -438,11 +366,11 @@ class UploadCleanupCandidateFinderIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * COMPLETED WITH ERRORS FACTORY
-     * ============================================================
-     */
+    
+
+
+
+
 
     private CvUpload completedWithErrorsUpload(
             String filename
@@ -472,11 +400,11 @@ class UploadCleanupCandidateFinderIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * FAILED FACTORY
-     * ============================================================
-     */
+    
+
+
+
+
 
     private CvUpload failedUpload(
             String filename
@@ -501,11 +429,11 @@ class UploadCleanupCandidateFinderIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * PROCESSING FACTORY
-     * ============================================================
-     */
+    
+
+
+
+
 
     private CvUpload processingUpload(
             String filename
@@ -528,11 +456,11 @@ class UploadCleanupCandidateFinderIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * UPLOADED FACTORY
-     * ============================================================
-     */
+    
+
+
+
+
 
     private CvUpload uploadedUpload(
             String filename
@@ -553,26 +481,6 @@ class UploadCleanupCandidateFinderIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST-ONLY TIMESTAMP CONTROL
-     * ============================================================
-     *
-     * Production entity-yə:
-     *
-     * setCompletedAt(...)
-     *
-     * əlavə etmirik.
-     *
-     * Test real PostgreSQL row-un timestamp-ını
-     * birbaşa dəyişir.
-     *
-     * Bu bizə həqiqi:
-     *
-     * completed_at <= cutoff
-     *
-     * query davranışını test etməyə imkan verir.
-     */
 
     private void moveCompletedAtBack(
             UUID uploadId,
@@ -618,11 +526,11 @@ class UploadCleanupCandidateFinderIT {
         );
     }
 
-    /*
-     * ============================================================
-     * TEMP STORAGE
-     * ============================================================
-     */
+    
+
+
+
+
 
     private static Path createStorageRoot() {
 

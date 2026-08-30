@@ -34,20 +34,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Testcontainers
 class UploadStorageCleanupServiceIT {
 
-    /*
-     * ============================================================
-     * STORAGE ROOT
-     * ============================================================
-     */
+
 
     private static final Path STORAGE_ROOT =
             createStorageRoot();
 
-    /*
-     * ============================================================
-     * REAL POSTGRESQL
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Container
     @ServiceConnection
@@ -89,11 +85,11 @@ class UploadStorageCleanupServiceIT {
     private JdbcTemplate
             jdbcTemplate;
 
-    /*
-     * ============================================================
-     * TEST CONFIG
-     * ============================================================
-     */
+    
+
+
+
+
 
     @DynamicPropertySource
     static void properties(
@@ -126,18 +122,18 @@ class UploadStorageCleanupServiceIT {
         );
     }
 
-    /*
-     * ============================================================
-     * CLEAN DB
-     * ============================================================
-     */
+    
+
+
+
+
 
     @BeforeEach
     void setUp() {
 
-        /*
-         * FK order.
-         */
+        
+
+
 
         candidateRepository.deleteAll();
 
@@ -146,29 +142,29 @@ class UploadStorageCleanupServiceIT {
         cvUploadRepository.deleteAll();
     }
 
-    /*
-     * ============================================================
-     * TEST 1
-     *
-     * DELETE ONLY ELIGIBLE STORAGE
-     * +
-     * KEEP BUSINESS DATA
-     * +
-     * AUDIT MARKER
-     * +
-     * SECOND RUN IDEMPOTENT
-     * ============================================================
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldDeleteOnlyEligibleStorageAndKeepDatabaseData()
             throws Exception {
 
-        /*
-         * ========================================================
-         * OLD COMPLETED
-         * ========================================================
-         */
+        
+
+
+
+
 
         CvUpload oldCompleted =
                 completedUpload(
@@ -184,9 +180,6 @@ class UploadStorageCleanupServiceIT {
                 oldCompleted.getId()
         );
 
-        /*
-         * Parsed Candidate DB-də qalmalıdır.
-         */
 
         Candidate candidate =
                 new Candidate(
@@ -206,13 +199,6 @@ class UploadStorageCleanupServiceIT {
                 candidate
         );
 
-        /*
-         * ========================================================
-         * RECENT COMPLETED
-         * ========================================================
-         *
-         * Retention daxilindədir.
-         */
 
         CvUpload recentCompleted =
                 completedUpload(
@@ -228,13 +214,13 @@ class UploadStorageCleanupServiceIT {
                 recentCompleted.getId()
         );
 
-        /*
-         * ========================================================
-         * FAILED
-         * ========================================================
-         *
-         * Hətta 30 gün köhnə olsa belə qorunmalıdır.
-         */
+        
+
+
+
+
+
+
 
         CvUpload failed =
                 failedUpload(
@@ -250,11 +236,11 @@ class UploadStorageCleanupServiceIT {
                 failed.getId()
         );
 
-        /*
-         * ========================================================
-         * PRE-CONDITIONS
-         * ========================================================
-         */
+        
+
+
+
+
 
         assertThat(
                 Files.exists(
@@ -280,18 +266,18 @@ class UploadStorageCleanupServiceIT {
                 )
         ).isTrue();
 
-        /*
-         * ========================================================
-         * ACT
-         * ========================================================
-         */
+        
+
+
+
+
 
         UploadCleanupRunResult result =
                 cleanupService.runOnce();
 
-        /*
-         * Only oldCompleted eligible.
-         */
+        
+
+
 
         assertThat(
                 result.selected()
@@ -319,11 +305,11 @@ class UploadStorageCleanupServiceIT {
                 1
         );
 
-        /*
-         * ========================================================
-         * FILESYSTEM
-         * ========================================================
-         */
+        
+
+
+
+
 
         assertThat(
                 Files.notExists(
@@ -333,9 +319,9 @@ class UploadStorageCleanupServiceIT {
                 )
         ).isTrue();
 
-        /*
-         * Recent completed untouched.
-         */
+        
+
+
 
         assertThat(
                 Files.exists(
@@ -345,9 +331,9 @@ class UploadStorageCleanupServiceIT {
                 )
         ).isTrue();
 
-        /*
-         * Failed untouched.
-         */
+        
+
+
 
         assertThat(
                 Files.exists(
@@ -357,11 +343,11 @@ class UploadStorageCleanupServiceIT {
                 )
         ).isTrue();
 
-        /*
-         * ========================================================
-         * DB UPLOAD ROWS MUST REMAIN
-         * ========================================================
-         */
+        
+
+
+
+
 
         assertThat(
                 cvUploadRepository.existsById(
@@ -381,11 +367,11 @@ class UploadStorageCleanupServiceIT {
                 )
         ).isTrue();
 
-        /*
-         * ========================================================
-         * CANDIDATE BUSINESS DATA MUST REMAIN
-         * ========================================================
-         */
+        
+
+
+
+
 
         assertThat(
                 candidateRepository.findAllByUpload_Id(
@@ -395,11 +381,11 @@ class UploadStorageCleanupServiceIT {
                 1
         );
 
-        /*
-         * ========================================================
-         * CLEANUP AUDIT
-         * ========================================================
-         */
+        
+
+
+
+
 
         assertThat(
                 cleanupRecordRepository.existsById(
@@ -419,15 +405,6 @@ class UploadStorageCleanupServiceIT {
                 )
         ).isFalse();
 
-        /*
-         * ========================================================
-         * SECOND RUN
-         * ========================================================
-         *
-         * oldCompleted artıq marker daşıyır.
-         *
-         * Finder onu bir daha seçməməlidir.
-         */
 
         UploadCleanupRunResult secondRun =
                 cleanupService.runOnce();
@@ -449,21 +426,7 @@ class UploadStorageCleanupServiceIT {
         ).isZero();
     }
 
-    /*
-     * ============================================================
-     * TEST 2
-     *
-     * STORAGE ALREADY ABSENT
-     * ============================================================
-     *
-     * DB cleanup marker yoxdur,
-     * amma physical directory artıq yoxdur.
-     *
-     * Bu error olmamalıdır.
-     *
-     * Audit marker yaradılmalıdır ki upload
-     * sonsuza qədər finder-ə düşməsin.
-     */
+
 
     @Test
     void shouldMarkCleanupWhenStorageIsAlreadyAbsent() {
@@ -478,9 +441,7 @@ class UploadStorageCleanupServiceIT {
                 10
         );
 
-        /*
-         * Qəsdən physical storage yaratmırıq.
-         */
+
 
         assertThat(
                 Files.notExists(
@@ -519,9 +480,7 @@ class UploadStorageCleanupServiceIT {
                 )
         ).isTrue();
 
-        /*
-         * Next run candidate deyil.
-         */
+
 
         UploadCleanupRunResult secondRun =
                 cleanupService.runOnce();
@@ -531,13 +490,13 @@ class UploadStorageCleanupServiceIT {
         ).isZero();
     }
 
-    /*
-     * ============================================================
-     * TEST 3
-     *
-     * STORAGE ROOT ESCAPE PROTECTION
-     * ============================================================
-     */
+    
+
+
+
+
+
+
 
     @Test
     void shouldRefuseRecursiveDeletionOutsideStorageRoot()
@@ -571,10 +530,7 @@ class UploadStorageCleanupServiceIT {
                             UploadStorageException.class
                     );
 
-            /*
-             * Security guard işlədiyi üçün
-             * external file hələ mövcuddur.
-             */
+
 
             assertThat(
                     Files.exists(
@@ -584,10 +540,6 @@ class UploadStorageCleanupServiceIT {
 
         } finally {
 
-            /*
-             * Test öz external temp faylını özü
-             * təmizləyir.
-             */
 
             Files.deleteIfExists(
                     outsideFile
@@ -599,11 +551,11 @@ class UploadStorageCleanupServiceIT {
         }
     }
 
-    /*
-     * ============================================================
-     * CREATE COMPLETED UPLOAD
-     * ============================================================
-     */
+    
+
+
+
+
 
     private CvUpload completedUpload(
             String filename
@@ -633,11 +585,11 @@ class UploadStorageCleanupServiceIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * CREATE FAILED UPLOAD
-     * ============================================================
-     */
+    
+
+
+
+
 
     private CvUpload failedUpload(
             String filename
@@ -662,11 +614,11 @@ class UploadStorageCleanupServiceIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * REAL PHYSICAL STORAGE
-     * ============================================================
-     */
+    
+
+
+
+
 
     private void createPhysicalStorage(
             UUID uploadId
@@ -685,9 +637,9 @@ class UploadStorageCleanupServiceIT {
                 cvsDirectory
         );
 
-        /*
-         * Extracted CV.
-         */
+        
+
+
 
         Files.writeString(
                 cvsDirectory.resolve(
@@ -696,12 +648,7 @@ class UploadStorageCleanupServiceIT {
                 "integration-test-cv"
         );
 
-        /*
-         * Upload directory daxilində əlavə artifact.
-         *
-         * Whole upload directory cleanup edilməlidir,
-         * yalnız cvs/ yox.
-         */
+
 
         Files.writeString(
                 uploadStorage
@@ -715,13 +662,6 @@ class UploadStorageCleanupServiceIT {
         );
     }
 
-    /*
-     * ============================================================
-     * MOVE COMPLETED_AT BACK
-     * ============================================================
-     *
-     * Production entity-yə test-only setter əlavə etmirik.
-     */
 
     private void moveCompletedAtBack(
             UUID uploadId,

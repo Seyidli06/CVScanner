@@ -26,11 +26,11 @@ public class CandidateCsvExportService {
                 candidateExportQueryService;
     }
 
-    /*
-     * ============================================================
-     * PRE-FLIGHT VALIDATION
-     * ============================================================
-     */
+    
+
+
+
+
 
     public void validateRequest(
             CandidateSearchCriteria criteria,
@@ -46,11 +46,11 @@ public class CandidateCsvExportService {
                 );
     }
 
-    /*
-     * ============================================================
-     * CSV EXPORT
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Transactional(
             readOnly = true,
@@ -77,9 +77,9 @@ public class CandidateCsvExportService {
                         )
                 );
 
-        /*
-         * Excel UTF-8 compatibility.
-         */
+        
+
+
         writer.write(
                 '\uFEFF'
         );
@@ -159,11 +159,11 @@ public class CandidateCsvExportService {
         writer.flush();
     }
 
-    /*
-     * ============================================================
-     * HEADER
-     * ============================================================
-     */
+    
+
+
+
+
 
     private void writeHeader(
             BufferedWriter writer
@@ -184,11 +184,11 @@ public class CandidateCsvExportService {
         );
     }
 
-    /*
-     * ============================================================
-     * ROW
-     * ============================================================
-     */
+    
+
+
+
+
 
     private void writeRow(
             BufferedWriter writer,
@@ -233,11 +233,11 @@ public class CandidateCsvExportService {
         );
     }
 
-    /*
-     * ============================================================
-     * CSV ESCAPING
-     * ============================================================
-     */
+    
+
+
+
+
 
     private void writeCsvCells(
             BufferedWriter writer,
@@ -292,9 +292,9 @@ public class CandidateCsvExportService {
                 "\"";
     }
 
-    /*
-     * CSV formula injection protection.
-     */
+    
+
+
     private String protectSpreadsheetFormula(
             String value
     ) {

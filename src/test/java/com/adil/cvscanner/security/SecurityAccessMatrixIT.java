@@ -76,12 +76,12 @@ class SecurityAccessMatrixIT {
         );
     }
 
-    /*
-     * ============================================================
-     * TEST 1
-     * PUBLIC HEALTH
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldAllowAnonymousHealthRequest()
@@ -98,12 +98,12 @@ class SecurityAccessMatrixIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 2
-     * ANONYMOUS METRICS
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldRejectAnonymousMetricsRequest()
@@ -120,12 +120,12 @@ class SecurityAccessMatrixIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 3
-     * RECRUITER CANNOT ACCESS METRICS
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldRejectRecruiterFromMetrics()
@@ -145,12 +145,12 @@ class SecurityAccessMatrixIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 4
-     * ADMIN CAN ACCESS METRICS
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldAllowAdminToReadMetrics()
@@ -170,12 +170,12 @@ class SecurityAccessMatrixIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 5
-     * ANONYMOUS APPLICATION API
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldRejectAnonymousApplicationApiRequest()
@@ -192,12 +192,12 @@ class SecurityAccessMatrixIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 6
-     * RECRUITER APPLICATION API
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldAllowRecruiterToUseApplicationApi()
@@ -217,12 +217,12 @@ class SecurityAccessMatrixIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 7
-     * ADMIN APPLICATION API
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldAllowAdminToUseApplicationApi()
@@ -242,12 +242,12 @@ class SecurityAccessMatrixIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 8
-     * UNKNOWN AUTHORITY
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldRejectUnknownRoleFromApplicationApi()
@@ -274,12 +274,12 @@ class SecurityAccessMatrixIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 9
-     * DEFAULT DENY - NON API INTERNAL ROUTE
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldDenyUnknownRouteEvenForAdmin()
@@ -299,22 +299,22 @@ class SecurityAccessMatrixIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 10
-     * UNKNOWN APPLICATION API ROUTE
-     * ============================================================
-     *
-     * Köhnə:
-     *
-     * /api/v1/**
-     *
-     * matcher olsaydı recruiter security qatından
-     * keçə bilərdi.
-     *
-     * Final explicit allowlist-də isə bu route
-     * tanınmır və denyAll() tərəfindən bloklanır.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldDenyUnknownApplicationRouteForRecruiter()
@@ -334,23 +334,23 @@ class SecurityAccessMatrixIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 11
-     * UNSUPPORTED HTTP METHOD
-     * ============================================================
-     *
-     * GET /api/v1/candidates icazəlidir.
-     *
-     * Amma:
-     *
-     * POST /api/v1/candidates
-     *
-     * application API contract-da yoxdur.
-     *
-     * Recruiter role-a sahib olsa belə
-     * security səviyyəsində deny edilməlidir.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldDenyUnsupportedApplicationMethodForRecruiter()
@@ -370,11 +370,11 @@ class SecurityAccessMatrixIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * SECURITY USERS
-     * ============================================================
-     */
+    
+
+
+
+
 
     private RequestPostProcessor recruiterUser() {
 
@@ -400,11 +400,11 @@ class SecurityAccessMatrixIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEMP STORAGE
-     * ============================================================
-     */
+    
+
+
+
+
 
     private static Path createStorageRoot() {
 

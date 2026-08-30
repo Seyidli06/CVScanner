@@ -58,11 +58,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 )
 class CandidateXlsxExportControllerIT {
 
-    /*
-     * ============================================================
-     * CONSTANTS
-     * ============================================================
-     */
+    
+
+
+
+
 
     private static final String EXPORT_URL =
             "/api/v1/candidates/export.xlsx";
@@ -73,11 +73,11 @@ class CandidateXlsxExportControllerIT {
     private static final Path STORAGE_ROOT =
             createStorageRoot();
 
-    /*
-     * ============================================================
-     * REAL POSTGRESQL
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Container
     @ServiceConnection
@@ -95,11 +95,11 @@ class CandidateXlsxExportControllerIT {
                             "test"
                     );
 
-    /*
-     * ============================================================
-     * DEPENDENCIES
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Autowired
     private MockMvc mockMvc;
@@ -113,21 +113,21 @@ class CandidateXlsxExportControllerIT {
     @Autowired
     private EntityManagerFactory entityManagerFactory;
 
-    /*
-     * ============================================================
-     * TEST DATA
-     * ============================================================
-     */
+    
+
+
+
+
 
     private CvUpload backendUpload;
 
     private CvUpload secondUpload;
 
-    /*
-     * ============================================================
-     * TEST PROPERTIES
-     * ============================================================
-     */
+    
+
+
+
+
 
     @DynamicPropertySource
     static void properties(
@@ -145,71 +145,71 @@ class CandidateXlsxExportControllerIT {
         );
     }
 
-    /*
-     * ============================================================
-     * DEFAULT DATASET
-     * ============================================================
-     *
-     * backendUpload:
-     *
-     * Alice
-     * 5 years
-     * Baku
-     * REMOTE
-     * Java, Spring Boot, PostgreSQL
-     *
-     * Bob
-     * 2 years
-     * Baku
-     * ONSITE
-     * Java, Docker
-     *
-     * Charlie
-     * 8 years
-     * Ganja
-     * REMOTE
-     * Python, FastAPI, PostgreSQL
-     *
-     * David
-     * 4 years
-     * Baku
-     * HYBRID
-     * JavaScript, React, Node.js
-     *
-     * secondUpload:
-     *
-     * Elvin
-     * 6 years
-     * Baku
-     * REMOTE
-     * Java, Redis
-     *
-     * Farid
-     * 10 years
-     * Sumgait
-     * REMOTE
-     * Java, Spring Boot
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @BeforeEach
     void setUp() {
 
-        /*
-         * Candidate upload-a FK ilə bağlıdır.
-         *
-         * Ona görə əvvəl candidate-lər,
-         * sonra upload-lar silinir.
-         */
+        
+
+
+
+
+
 
         candidateRepository.deleteAll();
 
         cvUploadRepository.deleteAll();
 
-        /*
-         * ========================================================
-         * UPLOAD #1
-         * ========================================================
-         */
+        
+
+
+
+
 
         backendUpload =
                 new CvUpload(
@@ -225,11 +225,11 @@ class CandidateXlsxExportControllerIT {
                         backendUpload
                 );
 
-        /*
-         * ========================================================
-         * UPLOAD #2
-         * ========================================================
-         */
+        
+
+
+
+
 
         secondUpload =
                 new CvUpload(
@@ -245,11 +245,11 @@ class CandidateXlsxExportControllerIT {
                         secondUpload
                 );
 
-        /*
-         * ========================================================
-         * CANDIDATES
-         * ========================================================
-         */
+        
+
+
+
+
 
         Candidate alice =
                 candidate(
@@ -356,15 +356,15 @@ class CandidateXlsxExportControllerIT {
         );
     }
 
-    /*
-     * ============================================================
-     * TEST 1
-     *
-     * DOWNLOAD CONTRACT
-     * +
-     * XLSX WORKBOOK STRUCTURE
-     * ============================================================
-     */
+    
+
+
+
+
+
+
+
+
 
     @Test
     void shouldDownloadValidXlsxWithExpectedWorkbookStructure()
@@ -377,11 +377,11 @@ class CandidateXlsxExportControllerIT {
                         )
                 );
 
-        /*
-         * ========================================================
-         * HTTP RESPONSE
-         * ========================================================
-         */
+        
+
+
+
+
 
         assertThat(
                 result.getResponse()
@@ -433,11 +433,11 @@ class CandidateXlsxExportControllerIT {
                         )
         ).isNotBlank();
 
-        /*
-         * ========================================================
-         * XLSX PARSE
-         * ========================================================
-         */
+        
+
+
+
+
 
         try (
                 XSSFWorkbook workbook =
@@ -461,11 +461,11 @@ class CandidateXlsxExportControllerIT {
                     sheet
             ).isNotNull();
 
-            /*
-             * 1 header
-             * +
-             * 6 candidates
-             */
+            
+
+
+
+
 
             assertThat(
                     sheet.getPhysicalNumberOfRows()
@@ -479,11 +479,11 @@ class CandidateXlsxExportControllerIT {
                     )
             );
 
-            /*
-             * Default sort:
-             *
-             * fullName ASC
-             */
+            
+
+
+
+
 
             assertThat(
                     stringCell(
@@ -545,11 +545,11 @@ class CandidateXlsxExportControllerIT {
                     "Farid Mammadov"
             );
 
-            /*
-             * ====================================================
-             * FREEZE PANE
-             * ====================================================
-             */
+            
+
+
+
+
 
             assertThat(
                     sheet.getPaneInformation()
@@ -561,13 +561,13 @@ class CandidateXlsxExportControllerIT {
                             .isFreezePane()
             ).isTrue();
 
-            /*
-             * ====================================================
-             * AUTO FILTER
-             * ====================================================
-             *
-             * A1:H1
-             */
+            
+
+
+
+
+
+
 
             assertThat(
                     sheet
@@ -586,17 +586,17 @@ class CandidateXlsxExportControllerIT {
         }
     }
 
-    /*
-     * ============================================================
-     * TEST 2
-     *
-     * FILTERING
-     * +
-     * SORT
-     * +
-     * NUMERIC EXPERIENCE CELL
-     * ============================================================
-     */
+    
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldApplyFiltersAndKeepExperienceNumeric()
@@ -645,9 +645,9 @@ class CandidateXlsxExportControllerIT {
                     sheet
             ).isNotNull();
 
-            /*
-             * Header + 3 candidates.
-             */
+            
+
+
 
             assertThat(
                     sheet.getPhysicalNumberOfRows()
@@ -685,11 +685,11 @@ class CandidateXlsxExportControllerIT {
                     "Alice Johnson"
             );
 
-            /*
-             * ====================================================
-             * EXPERIENCE MUST BE NUMERIC
-             * ====================================================
-             */
+            
+
+
+
+
 
             Cell faridExperience =
                     sheet
@@ -774,13 +774,13 @@ class CandidateXlsxExportControllerIT {
         }
     }
 
-    /*
-     * ============================================================
-     * TEST 3
-     *
-     * UNICODE / AZERBAIJANI CHARACTERS
-     * ============================================================
-     */
+    
+
+
+
+
+
+
 
     @Test
     void shouldPreserveUnicodeText()
@@ -846,9 +846,9 @@ class CandidateXlsxExportControllerIT {
                     sheet
             ).isNotNull();
 
-            /*
-             * Header + 1 candidate.
-             */
+            
+
+
 
             assertThat(
                     sheet.getPhysicalNumberOfRows()
@@ -908,13 +908,13 @@ class CandidateXlsxExportControllerIT {
         }
     }
 
-    /*
-     * ============================================================
-     * TEST 4
-     *
-     * FORMULA INJECTION SAFETY
-     * ============================================================
-     */
+    
+
+
+
+
+
+
 
     @Test
     void shouldStoreFormulaLookingValueAsPlainString()
@@ -1011,13 +1011,13 @@ class CandidateXlsxExportControllerIT {
         }
     }
 
-    /*
-     * ============================================================
-     * TEST 5
-     *
-     * EMPTY RESULT
-     * ============================================================
-     */
+    
+
+
+
+
+
+
 
     @Test
     void shouldReturnHeaderOnlyWorkbookWhenNoCandidateMatches()
@@ -1064,13 +1064,13 @@ class CandidateXlsxExportControllerIT {
         }
     }
 
-    /*
-     * ============================================================
-     * TEST 6
-     *
-     * INVALID REQUEST MUST FAIL BEFORE STREAMING
-     * ============================================================
-     */
+    
+
+
+
+
+
+
 
     @Test
     void shouldReturnJson400BeforeStreamingForInvalidSort()
@@ -1138,15 +1138,15 @@ class CandidateXlsxExportControllerIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 7
-     *
-     * MULTI-BATCH EXPORT
-     * +
-     * N+1 GUARD
-     * ============================================================
-     */
+    
+
+
+
+
+
+
+
+
 
     @Test
     void shouldExportMultipleBatchesWithoutNPlusOne()
@@ -1219,10 +1219,10 @@ class CandidateXlsxExportControllerIT {
                 260
         );
 
-        /*
-         * Dataset yaratma query-lərini
-         * performance ölçümünə daxil etmirik.
-         */
+        
+
+
+
 
         Statistics statistics =
                 statistics();
@@ -1260,11 +1260,11 @@ class CandidateXlsxExportControllerIT {
                     sheet
             ).isNotNull();
 
-            /*
-             * 1 header
-             * +
-             * 260 candidates
-             */
+            
+
+
+
+
 
             assertThat(
                     sheet.getPhysicalNumberOfRows()
@@ -1293,19 +1293,19 @@ class CandidateXlsxExportControllerIT {
             );
         }
 
-        /*
-         * Expected architecture:
-         *
-         * batch 1:
-         * page + hydration
-         *
-         * batch 2:
-         * page + hydration
-         *
-         * Implementation variance:
-         *
-         * 4..8
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
+
 
         long preparedStatements =
                 statistics
@@ -1319,14 +1319,14 @@ class CandidateXlsxExportControllerIT {
         );
     }
 
-    /*
-     * ============================================================
-     * ASYNC XLSX EXPORT HELPER
-     * ============================================================
-     *
-     * Bütün normal XLSX export request-ləri
-     * RECRUITER authority ilə göndərilir.
-     */
+    
+
+
+
+
+
+
+
 
     private MvcResult performXlsxExport(
             MockHttpServletRequestBuilder requestBuilder
@@ -1357,11 +1357,11 @@ class CandidateXlsxExportControllerIT {
                 .andReturn();
     }
 
-    /*
-     * ============================================================
-     * RESPONSE BYTES -> XSSFWorkbook
-     * ============================================================
-     */
+    
+
+
+
+
 
     private XSSFWorkbook workbook(
             MvcResult result
@@ -1372,17 +1372,17 @@ class CandidateXlsxExportControllerIT {
                         .getResponse()
                         .getContentAsByteArray();
 
-        /*
-         * XLSX əslində ZIP container-dir.
-         *
-         * ZIP magic:
-         *
-         * 50 4B
-         *
-         * ASCII:
-         *
-         * PK
-         */
+        
+
+
+
+
+
+
+
+
+
+
 
         assertThat(
                 bytes.length
@@ -1409,11 +1409,11 @@ class CandidateXlsxExportControllerIT {
         );
     }
 
-    /*
-     * ============================================================
-     * HEADER VALIDATION
-     * ============================================================
-     */
+    
+
+
+
+
 
     private void assertHeader(
             Row row
@@ -1496,11 +1496,11 @@ class CandidateXlsxExportControllerIT {
         );
     }
 
-    /*
-     * ============================================================
-     * STRING CELL HELPER
-     * ============================================================
-     */
+    
+
+
+
+
 
     private String stringCell(
             XSSFSheet sheet,
@@ -1535,11 +1535,11 @@ class CandidateXlsxExportControllerIT {
         return cell.getStringCellValue();
     }
 
-    /*
-     * ============================================================
-     * CANDIDATE FACTORY
-     * ============================================================
-     */
+    
+
+
+
+
 
     private Candidate candidate(
             CvUpload upload,
@@ -1562,11 +1562,11 @@ class CandidateXlsxExportControllerIT {
         );
     }
 
-    /*
-     * ============================================================
-     * HIBERNATE STATISTICS
-     * ============================================================
-     */
+    
+
+
+
+
 
     private Statistics statistics() {
 
@@ -1579,11 +1579,11 @@ class CandidateXlsxExportControllerIT {
                 .getStatistics();
     }
 
-    /*
-     * ============================================================
-     * TEMP STORAGE ROOT
-     * ============================================================
-     */
+    
+
+
+
+
 
     private static Path createStorageRoot() {
 

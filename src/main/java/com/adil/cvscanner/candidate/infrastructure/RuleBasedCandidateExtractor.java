@@ -19,16 +19,16 @@ import java.util.regex.Pattern;
 public class RuleBasedCandidateExtractor
         implements CandidateExtractor {
 
-    /*
-     * ============================================================
-     * NAME
-     * ============================================================
-     *
-     * Explicit label varsa ona üstünlük veririk:
-     *
-     * Name: John Smith
-     * Full Name: John Smith
-     */
+    
+
+
+
+
+
+
+
+
+
     private static final Pattern NAME_LABEL_PATTERN =
             Pattern.compile(
                     "(?im)^\\s*(?:full\\s+name|name)"
@@ -38,20 +38,20 @@ public class RuleBasedCandidateExtractor
                             + "\\s*$"
             );
 
-    /*
-     * ============================================================
-     * EXPERIENCE
-     * ============================================================
-     *
-     * Dəstəkləyir:
-     *
-     * 5 years experience
-     * 5 years of experience
-     * 5+ years experience
-     * 5 yrs experience
-     * 5 years professional experience
-     * 5 years of professional experience
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
     private static final Pattern EXPERIENCE_PATTERN =
             Pattern.compile(
                     "(?i)\\b"
@@ -66,13 +66,13 @@ public class RuleBasedCandidateExtractor
                             + "\\b"
             );
 
-    /*
-     * Məsələn:
-     *
-     * Over 5 years of experience
-     * More than 7 years experience
-     * At least 3 years of professional experience
-     */
+    
+
+
+
+
+
+
     private static final Pattern QUALIFIED_EXPERIENCE_PATTERN =
             Pattern.compile(
                     "(?i)\\b"
@@ -88,11 +88,11 @@ public class RuleBasedCandidateExtractor
                             + "\\b"
             );
 
-    /*
-     * ============================================================
-     * LOCATION
-     * ============================================================
-     */
+    
+
+
+
+
 
     private static final Pattern LOCATION_PATTERN =
             Pattern.compile(
@@ -113,20 +113,20 @@ public class RuleBasedCandidateExtractor
                             + "\\s*$"
             );
 
-    /*
-     * ============================================================
-     * JOB TYPE
-     * ============================================================
-     *
-     * Əvvəl explicit preference axtarırıq.
-     *
-     * Bunun səbəbi:
-     *
-     * "worked with remote teams"
-     *
-     * cümləsinin avtomatik REMOTE preference
-     * sayılmamasıdır.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
     private static final Pattern JOB_TYPE_PATTERN =
             Pattern.compile(
                     "(?im)^\\s*"
@@ -140,11 +140,11 @@ public class RuleBasedCandidateExtractor
                             + "\\s*$"
             );
 
-    /*
-     * ============================================================
-     * NAME FALSE-POSITIVE PROTECTION
-     * ============================================================
-     */
+    
+
+
+
+
 
     private static final Set<String> SECTION_HEADINGS =
             Set.of(
@@ -168,11 +168,11 @@ public class RuleBasedCandidateExtractor
                     "languages"
             );
 
-    /*
-     * Əgər ilk line bunlardan birini daşıyırsa,
-     * böyük ehtimalla şəxs adı deyil,
-     * job title-dır.
-     */
+    
+
+
+
+
     private static final Set<String> JOB_TITLE_WORDS =
             Set.of(
                     "developer",
@@ -192,15 +192,15 @@ public class RuleBasedCandidateExtractor
                     "lead"
             );
 
-    /*
-     * ============================================================
-     * SKILLS
-     * ============================================================
-     *
-     * Controlled dictionary.
-     *
-     * Phase 6 üçün deterministic saxlayırıq.
-     */
+    
+
+
+
+
+
+
+
+
     private static final List<String> KNOWN_SKILLS =
             List.of(
                     "Spring Boot",
@@ -294,21 +294,21 @@ public class RuleBasedCandidateExtractor
         );
     }
 
-    /*
-     * ============================================================
-     * FULL NAME
-     * ============================================================
-     */
+    
+
+
+
+
 
     private String extractFullName(
             String text
     ) {
 
-        /*
-         * 1. Ən güclü signal:
-         *
-         * Name: John Smith
-         */
+        
+
+
+
+
         Matcher explicitNameMatcher =
                 NAME_LABEL_PATTERN.matcher(
                         text
@@ -323,11 +323,11 @@ public class RuleBasedCandidateExtractor
             );
         }
 
-        /*
-         * 2. Explicit label yoxdursa,
-         * meaningful lines arasında
-         * plausible person name axtarırıq.
-         */
+        
+
+
+
+
         return text
                 .lines()
                 .map(String::trim)
@@ -368,9 +368,9 @@ public class RuleBasedCandidateExtractor
                         Locale.ROOT
                 );
 
-        /*
-         * Section heading deyil.
-         */
+        
+
+
         if (
                 SECTION_HEADINGS.contains(
                         lowerCase
@@ -379,9 +379,9 @@ public class RuleBasedCandidateExtractor
             return false;
         }
 
-        /*
-         * Contact məlumatı deyil.
-         */
+        
+
+
         if (
                 normalized.contains("@")
                         || lowerCase.startsWith(
@@ -397,9 +397,9 @@ public class RuleBasedCandidateExtractor
             return false;
         }
 
-        /*
-         * Telefon, tarix və s.
-         */
+        
+
+
         if (
                 normalized
                         .chars()
@@ -415,12 +415,12 @@ public class RuleBasedCandidateExtractor
                         "\\s+"
                 );
 
-        /*
-         * MVP rule:
-         *
-         * insan adı minimum 2,
-         * maksimum 5 hissədən ibarət olsun.
-         */
+        
+
+
+
+
+
         if (
                 words.length < 2
                         || words.length > 5
@@ -428,9 +428,9 @@ public class RuleBasedCandidateExtractor
             return false;
         }
 
-        /*
-         * Hər token person-name kimi görünməlidir.
-         */
+        
+
+
         for (
                 String word : words
         ) {
@@ -461,29 +461,29 @@ public class RuleBasedCandidateExtractor
             String word
     ) {
 
-        /*
-         * Unicode letters dəstəyi:
-         *
-         * Ə
-         * Ş
-         * Ç
-         * Ö
-         * Ü
-         * Ğ
-         * İ
-         *
-         * və s.
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
+
         return word.matches(
                 "[\\p{L}][\\p{L}'’.-]*"
         );
     }
 
-    /*
-     * ============================================================
-     * EXPERIENCE
-     * ============================================================
-     */
+    
+
+
+
+
 
     private Integer extractYearsOfExperience(
             String text
@@ -513,10 +513,10 @@ public class RuleBasedCandidateExtractor
             return regularExperience;
         }
 
-        /*
-         * CV-də bir neçə experience ifadəsi
-         * varsa ən böyük uyğun dəyəri götürürük.
-         */
+        
+
+
+
         return Math.max(
                 regularExperience,
                 qualifiedExperience
@@ -572,11 +572,11 @@ public class RuleBasedCandidateExtractor
         return highest;
     }
 
-    /*
-     * ============================================================
-     * LOCATION
-     * ============================================================
-     */
+    
+
+
+
+
 
     private String extractPreferredLocation(
             String text
@@ -626,19 +626,19 @@ public class RuleBasedCandidateExtractor
                 : value;
     }
 
-    /*
-     * ============================================================
-     * JOB TYPE
-     * ============================================================
-     */
+    
+
+
+
+
 
     private JobType extractPreferredJobType(
             String text
     ) {
 
-        /*
-         * 1. Əvvəl explicit preference.
-         */
+        
+
+
         Matcher matcher =
                 JOB_TYPE_PATTERN.matcher(
                         text
@@ -653,18 +653,18 @@ public class RuleBasedCandidateExtractor
             );
         }
 
-        /*
-         * 2. Bəzi CV-lərdə ayrıca line olur:
-         *
-         * Remote
-         *
-         * Hybrid
-         *
-         * On-site
-         *
-         * Amma sadəcə normal sentence içindəki
-         * "remote" sözünü götürmürük.
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
         for (
                 String line : text.lines().toList()
         ) {
@@ -743,11 +743,11 @@ public class RuleBasedCandidateExtractor
         };
     }
 
-    /*
-     * ============================================================
-     * SKILLS
-     * ============================================================
-     */
+    
+
+
+
+
 
     private Set<String> extractSkills(
             String text
@@ -773,10 +773,10 @@ public class RuleBasedCandidateExtractor
             }
         }
 
-        /*
-         * Spring Boot varsa generic Spring-i
-         * ayrıca saxlamaq istəmirik.
-         */
+        
+
+
+
         if (
                 detectedSkills.contains(
                         "Spring Boot"
@@ -796,22 +796,22 @@ public class RuleBasedCandidateExtractor
             String skill
     ) {
 
-        /*
-         * Raw String.contains istifadə etmirik.
-         *
-         * Əks halda:
-         *
-         * JavaScript
-         *
-         * içindən:
-         *
-         * Java
-         *
-         * səhvən tapıla bilər.
-         *
-         * Sol və sağ tərəfdə letter/digit
-         * boundary yoxlayırıq.
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         Pattern pattern =
                 Pattern.compile(
                         "(?iu)"
@@ -829,11 +829,11 @@ public class RuleBasedCandidateExtractor
                 .find();
     }
 
-    /*
-     * ============================================================
-     * SOURCE
-     * ============================================================
-     */
+    
+
+
+
+
 
     private String extractSourceFilename(
             Path source
@@ -864,11 +864,11 @@ public class RuleBasedCandidateExtractor
         return filename.toString();
     }
 
-    /*
-     * ============================================================
-     * COMMON
-     * ============================================================
-     */
+    
+
+
+
+
 
     private String normalizeWhitespace(
             String value

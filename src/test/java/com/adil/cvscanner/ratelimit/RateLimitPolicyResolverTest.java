@@ -18,11 +18,11 @@ class RateLimitPolicyResolverTest {
                 new RateLimitPolicyResolver();
     }
 
-    /*
-     * ============================================================
-     * UPLOAD
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Test
     void shouldResolveUploadPostAsUploadPolicy() {
@@ -41,11 +41,11 @@ class RateLimitPolicyResolverTest {
                 );
     }
 
-    /*
-     * ============================================================
-     * CANDIDATES
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Test
     void shouldResolveCandidateSearchAsReadPolicy() {
@@ -64,11 +64,11 @@ class RateLimitPolicyResolverTest {
                 );
     }
 
-    /*
-     * ============================================================
-     * UPLOAD STATUS
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Test
     void shouldResolveUploadStatusAsReadPolicy() {
@@ -87,11 +87,11 @@ class RateLimitPolicyResolverTest {
                 );
     }
 
-    /*
-     * ============================================================
-     * PROCESSING FAILURES
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Test
     void shouldResolveProcessingFailuresAsReadPolicy() {
@@ -110,11 +110,11 @@ class RateLimitPolicyResolverTest {
                 );
     }
 
-    /*
-     * ============================================================
-     * CSV EXPORT
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Test
     void shouldResolveCsvExportAsExportPolicy() {
@@ -133,11 +133,11 @@ class RateLimitPolicyResolverTest {
                 );
     }
 
-    /*
-     * ============================================================
-     * XLSX EXPORT
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Test
     void shouldResolveXlsxExportAsExportPolicy() {
@@ -156,11 +156,11 @@ class RateLimitPolicyResolverTest {
                 );
     }
 
-    /*
-     * ============================================================
-     * PUBLIC HEALTH
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Test
     void shouldIgnoreHealthEndpoint() {
@@ -190,11 +190,11 @@ class RateLimitPolicyResolverTest {
         ).isEmpty();
     }
 
-    /*
-     * ============================================================
-     * METRICS
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Test
     void shouldIgnoreMetricsEndpoint() {
@@ -210,11 +210,11 @@ class RateLimitPolicyResolverTest {
         ).isEmpty();
     }
 
-    /*
-     * ============================================================
-     * UNKNOWN APPLICATION ROUTE
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Test
     void shouldIgnoreUnknownApplicationRoute() {
@@ -230,11 +230,11 @@ class RateLimitPolicyResolverTest {
         ).isEmpty();
     }
 
-    /*
-     * ============================================================
-     * UNSUPPORTED METHOD
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Test
     void shouldIgnoreUnsupportedCandidatePost() {
@@ -264,11 +264,11 @@ class RateLimitPolicyResolverTest {
         ).isEmpty();
     }
 
-    /*
-     * ============================================================
-     * PREFIX COLLISION
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Test
     void shouldNotTreatNestedUnknownUploadRouteAsRead() {

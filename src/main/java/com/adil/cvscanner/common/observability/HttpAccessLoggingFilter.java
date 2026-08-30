@@ -64,20 +64,20 @@ public class HttpAccessLoggingFilter
                 correlationId = "-";
             }
 
-            /*
-             * IMPORTANT:
-             *
-             * Qəsdən loglamırıq:
-             *
-             * request.getQueryString()
-             * request body
-             * request headers
-             * Authorization
-             * Cookie
-             * uploaded CV content
-             *
-             * yalnız təhlükəsiz operational metadata.
-             */
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
             log.info(
                     "HTTP_ACCESS method={} path={} status={} durationMs={} correlationId={}",
                     request.getMethod(),
@@ -89,17 +89,17 @@ public class HttpAccessLoggingFilter
         }
     }
 
-    /*
-     * ============================================================
-     * HEALTH PROBES
-     * ============================================================
-     *
-     * Kubernetes readiness/liveness probe-ları
-     * çox tez-tez çağırıla bilər.
-     *
-     * Onları hər dəfə access log-a yazmaq
-     * lazımsız noise yaradar.
-     */
+    
+
+
+
+
+
+
+
+
+
+
     @Override
     protected boolean shouldNotFilter(
             HttpServletRequest request

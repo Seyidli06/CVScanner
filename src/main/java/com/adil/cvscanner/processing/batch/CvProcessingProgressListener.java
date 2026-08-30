@@ -27,32 +27,32 @@ public class CvProcessingProgressListener
                 uploadStatusService;
     }
 
-    /*
-     * ============================================================
-     * SUCCESSFUL CHUNK
-     * ============================================================
-     *
-     * Spring Batch 6:
-     *
-     * afterChunk(Chunk<O>)
-     *
-     * writer-dan sonra,
-     * transaction daxilində çağırılır.
-     *
-     *
-     * Məsələn:
-     *
-     * chunk:
-     *
-     * candidate1
-     * candidate2
-     * ...
-     * candidate10
-     *
-     *      ↓
-     *
-     * processedFiles += 10
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Override
     public void afterChunk(

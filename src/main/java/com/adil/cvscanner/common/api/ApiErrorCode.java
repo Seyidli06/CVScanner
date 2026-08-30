@@ -2,6 +2,8 @@ package com.adil.cvscanner.common.api;
 
 public enum ApiErrorCode {
 
+    INVALID_UPLOAD,
+
     UPLOAD_NOT_FOUND,
 
     INVALID_CANDIDATE_QUERY,

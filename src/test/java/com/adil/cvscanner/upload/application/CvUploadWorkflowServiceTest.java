@@ -51,12 +51,12 @@ class CvUploadWorkflowServiceTest {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 1
-     * SUCCESSFUL LAUNCH
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldUploadAndLaunchProcessingJob() {
@@ -78,49 +78,27 @@ class CvUploadWorkflowServiceTest {
                 upload
         );
 
-        /*
-         * launch() void deyil,
-         * JobExecution qaytarır.
-         *
-         * Amma workflow həmin return value-dan
-         * istifadə etmir.
-         *
-         * Mockito default olaraq null qaytara
-         * bildiyi üçün ayrıca stub lazım deyil.
-         */
-
         UploadResponse response =
                 workflowService
                         .uploadAndStartProcessing(
                                 file
                         );
 
-        /*
-         * Upload servisi çağırılıb.
-         */
+
         verify(
                 cvUploadService
         ).upload(
                 file
         );
 
-        /*
-         * Həmin CvUpload-un ID-si ilə
-         * Batch job start olunub.
-         */
+
         verify(
                 processingJobLauncher
         ).launch(
                 uploadId
         );
 
-        /*
-         * Launch successful olduğuna görə
-         * workflow özü FAILED etməməlidir.
-         *
-         * Status lifecycle artıq
-         * JobExecutionListener-in işidir.
-         */
+
         verify(
                 uploadStatusService,
                 never()
@@ -141,12 +119,12 @@ class CvUploadWorkflowServiceTest {
         );
     }
 
-    /*
-     * ============================================================
-     * TEST 2
-     * IMMEDIATE LAUNCH FAILURE
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldMarkUploadFailedWhenBatchLaunchFails() {
@@ -193,10 +171,7 @@ class CvUploadWorkflowServiceTest {
                                         file
                                 )
         )
-                /*
-                 * Eyni original exception
-                 * yuxarı ötürülməlidir.
-                 */
+
                 .isSameAs(
                         launchException
                 );
@@ -213,9 +188,9 @@ class CvUploadWorkflowServiceTest {
                 uploadId
         );
 
-        /*
-         * Əsas Phase 7.5 assertion.
-         */
+        
+
+
         verify(
                 uploadStatusService
         ).markFailed(
@@ -223,15 +198,7 @@ class CvUploadWorkflowServiceTest {
         );
     }
 
-    /*
-     * ============================================================
-     * TEST 3
-     * STATUS UPDATE ITSELF ALSO FAILS
-     * ============================================================
-     *
-     * Launch failure əsas/root exception olaraq
-     * qorunmalıdır.
-     */
+
 
     @Test
     void shouldPreserveLaunchExceptionWhenFailedStatusUpdateAlsoFails() {
@@ -297,9 +264,7 @@ class CvUploadWorkflowServiceTest {
                         launchException
                 );
 
-        /*
-         * Root exception dəyişməyib.
-         */
+        
         assertThat(
                 launchException
                         .getSuppressed()
@@ -318,11 +283,11 @@ class CvUploadWorkflowServiceTest {
         );
     }
 
-    /*
-     * ============================================================
-     * TEST DATA
-     * ============================================================
-     */
+    
+
+
+
+
 
     private CvUpload createUpload() {
 

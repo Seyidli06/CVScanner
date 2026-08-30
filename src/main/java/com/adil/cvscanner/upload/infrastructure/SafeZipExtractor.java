@@ -265,12 +265,12 @@ public class SafeZipExtractor {
                         try {
                             Files.deleteIfExists(path);
                         } catch (IOException ignored) {
-                            // Best-effort cleanup
+                            
                         }
                     });
 
         } catch (IOException ignored) {
-            // Best-effort cleanup
+            
         }
     }
 }

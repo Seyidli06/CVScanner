@@ -25,9 +25,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         properties = {
                 "app.rate-limit.enabled=true",
 
-                /*
-                 * Redis unavailable olsa request davam etməlidir.
-                 */
+                
+
+
                 "app.rate-limit.fail-open=true",
 
                 "app.rate-limit.redis-timeout=100ms",
@@ -125,11 +125,11 @@ class RateLimitFailOpenIT {
     void shouldAllowRequestWhenRedisIsUnavailableAndFailOpenIsTrue()
             throws Exception {
 
-        /*
-         * Spring context artıq ayaqdadır.
-         *
-         * Redis-i request-dən əvvəl dayandırırıq.
-         */
+        
+
+
+
+
         REDIS.stop();
 
         mockMvc.perform(
@@ -148,10 +148,10 @@ class RateLimitFailOpenIT {
                                                 )
                                 )
                 )
-                /*
-                 * Redis down olsa belə business endpoint
-                 * normal işləyir.
-                 */
+                
+
+
+
                 .andExpect(
                         status().isOk()
                 )

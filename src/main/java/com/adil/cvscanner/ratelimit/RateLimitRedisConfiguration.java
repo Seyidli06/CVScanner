@@ -28,13 +28,13 @@ import java.time.Duration;
 )
 public class RateLimitRedisConfiguration {
 
-    /*
-     * ============================================================
-     * REDIS CLIENT
-     * ============================================================
-     *
-     * RedisClient yaratmaq Redis server-ə connection açmır.
-     */
+    
+
+
+
+
+
+
 
     @Bean(
             destroyMethod = "shutdown"
@@ -57,16 +57,16 @@ public class RateLimitRedisConfiguration {
         );
     }
 
-    /*
-     * ============================================================
-     * REDIS CONNECTION
-     * ============================================================
-     *
-     * @Lazy vacibdir.
-     *
-     * Redis application startup zamanı unavailable olsa belə
-     * Spring context qalxa bilir.
-     */
+    
+
+
+
+
+
+
+
+
+
 
     @Bean(
             destroyMethod = "close"
@@ -85,11 +85,11 @@ public class RateLimitRedisConfiguration {
         );
     }
 
-    /*
-     * ============================================================
-     * BUCKET4J DISTRIBUTED PROXY MANAGER
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Bean
     @Lazy
@@ -124,11 +124,11 @@ public class RateLimitRedisConfiguration {
                 .build();
     }
 
-    /*
-     * ============================================================
-     * POLICY RESOLVER
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Bean
     RateLimitPolicyResolver rateLimitPolicyResolver() {
@@ -136,11 +136,11 @@ public class RateLimitRedisConfiguration {
         return new RateLimitPolicyResolver();
     }
 
-    /*
-     * ============================================================
-     * RESPONSE WRITER
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Bean
     RateLimitResponseWriter rateLimitResponseWriter(
@@ -152,11 +152,11 @@ public class RateLimitRedisConfiguration {
         );
     }
 
-    /*
-     * ============================================================
-     * RATE LIMIT FILTER
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Bean
     RateLimitingFilter rateLimitingFilter(
@@ -172,16 +172,16 @@ public class RateLimitRedisConfiguration {
         );
     }
 
-    /*
-     * ============================================================
-     * DISABLE NORMAL SERVLET REGISTRATION
-     * ============================================================
-     *
-     * Filter yalnız Spring Security chain daxilində işləməlidir.
-     *
-     * Əks halda eyni request iki dəfə filter-dən keçə bilər
-     * və iki token consume edilə bilər.
-     */
+    
+
+
+
+
+
+
+
+
+
 
     @Bean
     FilterRegistrationBean<RateLimitingFilter>
@@ -202,11 +202,11 @@ public class RateLimitRedisConfiguration {
         return registration;
     }
 
-    /*
-     * ============================================================
-     * REDIS BUCKET EXPIRATION
-     * ============================================================
-     */
+    
+
+
+
+
 
     private Duration longestRefillPeriod(
             RateLimitProperties properties

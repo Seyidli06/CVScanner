@@ -19,11 +19,11 @@ public class CvUploadStatusService {
                 cvUploadRepository;
     }
 
-    /*
-     * ============================================================
-     * PROCESSING START
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Transactional
     public void markProcessing(
@@ -42,21 +42,21 @@ public class CvUploadStatusService {
         );
     }
 
-    /*
-     * ============================================================
-     * LIVE SUCCESS COUNTER
-     * ============================================================
-     *
-     * Chunk uğurla writer-dan keçəndə
-     * həmin chunk-dakı item sayı qədər:
-     *
-     * processedFiles
-     *
-     * artırılır.
-     *
-     * Bu metod chunk transaction-a
-     * qoşulur.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Transactional
     public void recordProcessed(
@@ -87,15 +87,15 @@ public class CvUploadStatusService {
         );
     }
 
-    /*
-     * ============================================================
-     * LIVE FAILURE COUNTER
-     * ============================================================
-     *
-     * CV həqiqətən skip olunanda:
-     *
-     * failedFiles++
-     */
+    
+
+
+
+
+
+
+
+
 
     @Transactional
     public void recordFailed(
@@ -114,16 +114,16 @@ public class CvUploadStatusService {
         );
     }
 
-    /*
-     * ============================================================
-     * SUCCESSFUL TERMINAL STATE
-     * ============================================================
-     *
-     * Counter-lar artıq chunk-by-chunk
-     * DB-də saxlanıldığı üçün burada
-     * yenidən Batch metadata-dan
-     * overwrite etmirik.
-     */
+    
+
+
+
+
+
+
+
+
+
 
     @Transactional
     public void complete(
@@ -135,15 +135,15 @@ public class CvUploadStatusService {
                         uploadId
                 );
 
-        /*
-         * CvUpload.complete():
-         *
-         * failedFiles == 0
-         *      -> COMPLETED
-         *
-         * failedFiles > 0
-         *      -> COMPLETED_WITH_ERRORS
-         */
+        
+
+
+
+
+
+
+
+
         upload.complete();
 
         cvUploadRepository.saveAndFlush(
@@ -151,11 +151,11 @@ public class CvUploadStatusService {
         );
     }
 
-    /*
-     * ============================================================
-     * FAILED TERMINAL STATE
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Transactional
     public void markFailed(

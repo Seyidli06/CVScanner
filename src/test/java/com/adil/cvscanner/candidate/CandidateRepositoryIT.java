@@ -79,13 +79,13 @@ class CandidateRepositoryIT {
         assertThat(candidateId)
                 .isNotNull();
 
-        /*
-         * Hibernate-in first-level cache-ni təmizləyirik.
-         *
-         * Bununla aşağıdakı findById()
-         * entity-ni memory-dən yox,
-         * həqiqətən PostgreSQL-dən oxuyacaq.
-         */
+        
+
+
+
+
+
+
         entityManager.clear();
 
         Candidate found =

@@ -38,11 +38,11 @@ public class RateLimitResponseWriter {
                 );
     }
 
-    /*
-     * ============================================================
-     * 429 TOO MANY REQUESTS
-     * ============================================================
-     */
+    
+
+
+
+
 
     public void writeRateLimitExceeded(
             HttpServletRequest request,
@@ -83,11 +83,11 @@ public class RateLimitResponseWriter {
         );
     }
 
-    /*
-     * ============================================================
-     * 503 RATE-LIMITER BACKEND UNAVAILABLE
-     * ============================================================
-     */
+    
+
+
+
+
 
     public void writeBackendUnavailable(
             HttpServletRequest request,
@@ -103,11 +103,11 @@ public class RateLimitResponseWriter {
         );
     }
 
-    /*
-     * ============================================================
-     * COMMON ERROR WRITER
-     * ============================================================
-     */
+    
+
+
+
+
 
     private void writeError(
             HttpServletRequest request,
@@ -143,20 +143,20 @@ public class RateLimitResponseWriter {
         );
     }
 
-    /*
-     * ============================================================
-     * RETRY-AFTER
-     * ============================================================
-     *
-     * HTTP Retry-After integer seconds şəklində göndərilir.
-     *
-     * 1.2 saniyə gözləmə varsa:
-     *
-     * Retry-After: 2
-     *
-     * Floor etmək olmaz, çünki client 1 saniyədən sonra
-     * yenidən request göndərib hələ də limitə düşə bilər.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private long toRetryAfterSeconds(
             Duration duration

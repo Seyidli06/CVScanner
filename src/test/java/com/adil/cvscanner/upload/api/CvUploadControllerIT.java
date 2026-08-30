@@ -48,24 +48,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Testcontainers
 class CvUploadControllerIT {
 
-    /*
-     * ============================================================
-     * TEMP STORAGE
-     * ============================================================
-     *
-     * Real LocalUploadStorage istifadə olunur.
-     *
-     * Test heç vaxt production/dev storage-a toxunmur.
-     */
+    
+
+
+
+
+
+
+
+
 
     private static final Path STORAGE_ROOT =
             createStorageRoot();
 
-    /*
-     * ============================================================
-     * REAL POSTGRESQL
-     * ============================================================
-     */
+    
+
+
+
+
 
     @Container
     @ServiceConnection
@@ -89,41 +89,41 @@ class CvUploadControllerIT {
     @Autowired
     private CvUploadRepository cvUploadRepository;
 
-    /*
-     * ============================================================
-     * ONLY BATCH LAUNCH IS MOCKED
-     * ============================================================
-     *
-     * Bunlar REAL qalır:
-     *
-     * Controller
-     * WorkflowService
-     * CvUploadService
-     * LocalUploadStorage
-     * SafeZipExtractor
-     * Repository
-     * PostgreSQL
-     *
-     * Yalnız Batch job-un arxa planda həqiqətən
-     * başlamasını bu controller testində istəmirik.
-     *
-     * Batch özü ayrıca:
-     *
-     * CvProcessingJobIT
-     * CvProcessingRetryIT
-     * CvProcessingRestartIT
-     *
-     * ilə test olunur.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @MockitoBean
     private CvProcessingJobLauncher cvProcessingJobLauncher;
 
-    /*
-     * ============================================================
-     * TEST CONFIGURATION
-     * ============================================================
-     */
+    
+
+
+
+
 
     @DynamicPropertySource
     static void properties(
@@ -186,61 +186,61 @@ class CvUploadControllerIT {
         );
     }
 
-    /*
-     * ============================================================
-     * CLEAN STATE
-     * ============================================================
-     */
+    
+
+
+
+
 
     @BeforeEach
     void setUp() throws IOException {
 
-        /*
-         * Mockito mock hər testdən əvvəl
-         * tam təmiz vəziyyətə gətirilir.
-         */
+        
+
+
+
 
         reset(
                 cvProcessingJobLauncher
         );
 
-        /*
-         * Real PostgreSQL test datası təmizlənir.
-         */
+        
+
+
 
         cvUploadRepository.deleteAll();
 
-        /*
-         * Temp storage-da əvvəlki testdən
-         * fayl qalmasın.
-         */
+        
+
+
+
 
         clearStorageRoot();
     }
 
-    /*
-     * ============================================================
-     * TEST 1
-     * VALID ZIP
-     * ============================================================
-     *
-     * POST /api/v1/uploads
-     *
-     * ZIP:
-     *
-     * candidates.zip
-     * └── john-doe.pdf
-     *
-     * Expected:
-     *
-     * HTTP 202
-     *
-     * upload DB-də yaranır
-     * status = UPLOADED
-     * totalFiles = 1
-     *
-     * Batch launcher çağırılır.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldAcceptValidZipAndReturn202()
@@ -260,11 +260,11 @@ class CvUploadControllerIT {
                         zipBytes
                 );
 
-        /*
-         * =====================================================
-         * ACT + HTTP ASSERT
-         * =====================================================
-         */
+        
+
+
+
+
 
         mockMvc.perform(
                         multipart(
@@ -301,11 +301,11 @@ class CvUploadControllerIT {
                         )
                 );
 
-        /*
-         * =====================================================
-         * DATABASE ASSERT
-         * =====================================================
-         */
+        
+
+
+
+
 
         List<CvUpload> uploads =
                 cvUploadRepository.findAll();
@@ -331,13 +331,13 @@ class CvUploadControllerIT {
                 UploadStatus.UPLOADED
         );
 
-        /*
-         * totalFiles HTTP response-da deyil.
-         *
-         * Amma business state-də həqiqətən
-         * düzgün persist edildiyini burada
-         * yoxlayırıq.
-         */
+        
+
+
+
+
+
+
 
         assertThat(
                 upload.getTotalFiles()
@@ -353,10 +353,10 @@ class CvUploadControllerIT {
                 upload.getFailedFiles()
         ).isZero();
 
-        /*
-         * Workflow Batch launcher-a qədər
-         * gəlib.
-         */
+        
+
+
+
 
         verify(
                 cvProcessingJobLauncher
@@ -364,9 +364,9 @@ class CvUploadControllerIT {
                 upload.getId()
         );
 
-        /*
-         * ZIP real storage-a extract edilib.
-         */
+        
+
+
 
         assertThat(
                 regularFileExists(
@@ -375,12 +375,12 @@ class CvUploadControllerIT {
         ).isTrue();
     }
 
-    /*
-     * ============================================================
-     * TEST 2
-     * INVALID ZIP
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldRejectInvalidZipWith400()
@@ -417,38 +417,38 @@ class CvUploadControllerIT {
                 cvUploadRepository.count()
         ).isZero();
 
-        /*
-         * ZIP validation uğursuz olduğuna görə
-         * Batch mərhələsinə çatmamalıdır.
-         */
+        
+
+
+
 
         org.mockito.Mockito.verifyNoInteractions(
                 cvProcessingJobLauncher
         );
     }
 
-    /*
-     * ============================================================
-     * TEST 3
-     * ZIP SLIP ATTACK
-     * ============================================================
-     *
-     * Archive daxilində:
-     *
-     * ../evil.pdf
-     *
-     * var.
-     *
-     * Bu path extraction directory-dən
-     * kənara çıxmağa çalışır.
-     *
-     * Expected:
-     *
-     * HTTP 400
-     * upload DB-də yoxdur
-     * Batch başlamır
-     * evil.pdf storage root-dan kənara yazılmır
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldRejectZipSlipArchiveWith400()
@@ -492,12 +492,12 @@ class CvUploadControllerIT {
                 cvProcessingJobLauncher
         );
 
-        /*
-         * Əsas təhlükəsizlik assertion-u.
-         *
-         * evil.pdf heç yerdə storage daxilində
-         * normal extracted file kimi yaranmamalıdır.
-         */
+        
+
+
+
+
+
 
         assertThat(
                 regularFileExists(
@@ -506,47 +506,47 @@ class CvUploadControllerIT {
         ).isFalse();
     }
 
-    /*
-     * ============================================================
-     * TEST 4
-     * IMMEDIATE BATCH LAUNCH FAILURE
-     * ============================================================
-     *
-     * Flow:
-     *
-     * ZIP validation          SUCCESS
-     * extraction              SUCCESS
-     * DB save                 SUCCESS
-     * Batch launch            FAILURE
-     *
-     * Expected:
-     *
-     * HTTP 500
-     *
-     * DB:
-     * status = FAILED
-     *
-     * Extract olunmuş fayl saxlanılır.
-     *
-     * Bu vacibdir:
-     *
-     * launch failure zamanı storage-ı silmirik,
-     * çünki debug/recovery/retry üçün fayl lazım ola bilər.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldReturn500AndMarkUploadFailedWhenJobLaunchFails()
             throws Exception {
 
-        /*
-         * Exception-in constructor signature-na
-         * testimizi bağlamamaq üçün Mockito mock
-         * exception istifadə edirik.
-         *
-         * Workflow üçün əsas məsələ type-dır:
-         *
-         * CvProcessingLaunchException
-         */
+        
+
+
+
+
+
+
+
+
 
         CvProcessingLaunchException launchException =
                 mock(
@@ -579,13 +579,13 @@ class CvUploadControllerIT {
                         zipBytes
                 );
 
-        /*
-         * =====================================================
-         * HTTP ASSERT
-         * =====================================================
-         *
-         * GlobalApiExceptionHandler contract.
-         */
+        
+
+
+
+
+
+
 
         mockMvc.perform(
                         multipart(
@@ -643,11 +643,11 @@ class CvUploadControllerIT {
                         ).isNotEmpty()
                 );
 
-        /*
-         * =====================================================
-         * DATABASE ASSERT
-         * =====================================================
-         */
+        
+
+
+
+
 
         List<CvUpload> uploads =
                 cvUploadRepository.findAll();
@@ -691,14 +691,14 @@ class CvUploadControllerIT {
                 failedUpload.getCompletedAt()
         ).isNotNull();
 
-        /*
-         * =====================================================
-         * STORAGE ASSERT
-         * =====================================================
-         *
-         * Launch uğursuz olsa belə extracted CV
-         * storage-da saxlanmalıdır.
-         */
+        
+
+
+
+
+
+
+
 
         assertThat(
                 regularFileExists(
@@ -713,11 +713,11 @@ class CvUploadControllerIT {
         );
     }
 
-    /*
-     * ============================================================
-     * ZIP HELPER
-     * ============================================================
-     */
+    
+
+
+
+
 
     private static byte[] createZip(
             String entryName,
@@ -753,18 +753,18 @@ class CvUploadControllerIT {
         return output.toByteArray();
     }
 
-    /*
-     * ============================================================
-     * MINIMAL PDF-LIKE CONTENT
-     * ============================================================
-     *
-     * Bu testdə Batch/Tika işləmir.
-     *
-     * Məqsəd ZIP upload/extraction flow-dur.
-     *
-     * Yenə də plain random bytes əvəzinə
-     * PDF signature ilə başlayan content veririk.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
 
     private static byte[] minimalPdfBytes() {
 
@@ -787,11 +787,11 @@ class CvUploadControllerIT {
         );
     }
 
-    /*
-     * ============================================================
-     * STORAGE SEARCH
-     * ============================================================
-     */
+    
+
+
+
+
 
     private static boolean regularFileExists(
             String filename
@@ -821,11 +821,11 @@ class CvUploadControllerIT {
         }
     }
 
-    /*
-     * ============================================================
-     * STORAGE CLEANUP
-     * ============================================================
-     */
+    
+
+
+
+
 
     private static void clearStorageRoot()
             throws IOException {
@@ -886,11 +886,11 @@ class CvUploadControllerIT {
         }
     }
 
-    /*
-     * ============================================================
-     * TEMP ROOT CREATION
-     * ============================================================
-     */
+    
+
+
+
+
 
     private static Path createStorageRoot() {
 

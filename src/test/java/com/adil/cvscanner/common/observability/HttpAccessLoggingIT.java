@@ -44,12 +44,12 @@ class HttpAccessLoggingIT {
     @Autowired
     private MockMvc mockMvc;
 
-    /*
-     * ============================================================
-     * TEST 1
-     * SUCCESS REQUEST LOG
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldLogSafeHttpMetadata(
@@ -105,17 +105,17 @@ class HttpAccessLoggingIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 2
-     * QUERY STRING MUST NOT BE LOGGED
-     * ============================================================
-     *
-     * Query parameter potentially sensitive ola bilər.
-     *
-     * path loglayırıq,
-     * query string yox.
-     */
+    
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldNotLogQueryString(
@@ -165,22 +165,22 @@ class HttpAccessLoggingIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 3
-     * SENSITIVE HEADERS MUST NOT BE LOGGED
-     * ============================================================
-     *
-     * Burada request authentication-ı
-     * SecurityTestUsers.recruiter() verir.
-     *
-     * Authorization header isə yalnız access-log
-     * redaction/safety contract-ını yoxlamaq üçündür.
-     *
-     * Fake Bearer token istifadə etmirik, çünki
-     * JWT Resource Server onu real JWT kimi
-     * authenticate etməyə çalışa bilər.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldNotLogAuthorizationOrCookie(
@@ -240,12 +240,12 @@ class HttpAccessLoggingIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 4
-     * ERROR RESPONSE ALSO LOGGED
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldLogHttpErrorStatus(
@@ -295,16 +295,16 @@ class HttpAccessLoggingIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 5
-     * HEALTH PROBES MUST NOT FLOOD ACCESS LOG
-     * ============================================================
-     *
-     * /livez PUBLIC endpoint-dir.
-     *
-     * Burada qəsdən authentication istifadə etmirik.
-     */
+    
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldNotAccessLogHealthProbe(
@@ -333,16 +333,16 @@ class HttpAccessLoggingIT {
         );
     }
 
-    /*
-     * ============================================================
-     * HELPER
-     * ============================================================
-     *
-     * Spring context özü də çox log yaza bilər.
-     *
-     * Biz yalnız öz access log marker-imizi
-     * olan sətirləri yoxlayırıq.
-     */
+    
+
+
+
+
+
+
+
+
+
 
     private String accessLogsOnly(
             String output

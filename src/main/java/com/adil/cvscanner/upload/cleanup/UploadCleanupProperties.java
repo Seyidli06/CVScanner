@@ -12,86 +12,86 @@ import java.time.Duration;
 )
 public class UploadCleanupProperties {
 
-    /*
-     * ============================================================
-     * CLEANUP BUSINESS SWITCH
-     * ============================================================
-     */
+    
+
+
+
+
 
     private boolean enabled =
             true;
 
-    /*
-     * ============================================================
-     * RETENTION
-     * ============================================================
-     */
+    
+
+
+
+
 
     private Duration completedRetention =
             Duration.ofDays(
                     7
             );
 
-    /*
-     * ============================================================
-     * MAX UPLOADS PER CLEANUP RUN
-     * ============================================================
-     */
+    
+
+
+
+
 
     private int batchSize =
             100;
 
-    /*
-     * ============================================================
-     * AUTOMATIC SCHEDULER SWITCH
-     * ============================================================
-     *
-     * Destructive background operation olduğu üçün
-     * default FALSE saxlayırıq.
-     *
-     * Manual cleanup service bundan asılı deyil.
-     */
+    
+
+
+
+
+
+
+
+
+
 
     private boolean schedulerEnabled =
             false;
 
-    /*
-     * ============================================================
-     * DELAY BETWEEN RUNS
-     * ============================================================
-     *
-     * fixedDelay semantics:
-     *
-     * cleanup bitir
-     *      ↓
-     * 1 saat gözlə
-     *      ↓
-     * növbəti cleanup
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
 
     private Duration scheduleDelay =
             Duration.ofHours(
                     1
             );
 
-    /*
-     * ============================================================
-     * APPLICATION START INITIAL DELAY
-     * ============================================================
-     *
-     * App qalxan kimi filesystem cleanup başlamasın.
-     */
+    
+
+
+
+
+
+
 
     private Duration initialDelay =
             Duration.ofMinutes(
                     1
             );
 
-    /*
-     * ============================================================
-     * VALIDATION
-     * ============================================================
-     */
+    
+
+
+
+
 
     @PostConstruct
     void validate() {
@@ -173,11 +173,11 @@ public class UploadCleanupProperties {
         }
     }
 
-    /*
-     * ============================================================
-     * GETTERS / SETTERS
-     * ============================================================
-     */
+    
+
+
+
+
 
     public boolean isEnabled() {
 

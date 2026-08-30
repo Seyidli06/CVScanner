@@ -26,7 +26,6 @@ public record ApiErrorResponse(
             String message,
             String path
     ) {
-
         return new ApiErrorResponse(
                 Instant.now(),
                 status.value(),

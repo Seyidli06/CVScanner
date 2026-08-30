@@ -23,15 +23,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Testcontainers
 class CorrelationIdFilterIT {
 
-    /*
-     * ============================================================
-     * REAL POSTGRESQL
-     * ============================================================
-     *
-     * Full Spring application context başladırıq.
-     *
-     * localhost:5435 dependency-si yoxdur.
-     */
+    
+
+
+
+
+
+
+
+
     @Container
     @ServiceConnection
     static PostgreSQLContainer postgres =
@@ -51,20 +51,20 @@ class CorrelationIdFilterIT {
     @Autowired
     private MockMvc mockMvc;
 
-    /*
-     * ============================================================
-     * TEST 1
-     * CLIENT PROVIDES VALID CORRELATION ID
-     * ============================================================
-     *
-     * Request:
-     *
-     * X-Correlation-ID: frontend-request-123
-     *
-     * Response:
-     *
-     * X-Correlation-ID: frontend-request-123
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldPreserveValidIncomingCorrelationId()
@@ -95,16 +95,16 @@ class CorrelationIdFilterIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 2
-     * HEADER MISSING
-     * ============================================================
-     *
-     * Client correlation ID verməyib.
-     *
-     * Server UUID yaratmalıdır.
-     */
+    
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldGenerateCorrelationIdWhenHeaderIsMissing()
@@ -136,9 +136,9 @@ class CorrelationIdFilterIT {
                 generatedCorrelationId
         ).isNotBlank();
 
-        /*
-         * Bizim generated format UUID-dir.
-         */
+        
+
+
         UUID parsed =
                 UUID.fromString(
                         generatedCorrelationId
@@ -151,17 +151,17 @@ class CorrelationIdFilterIT {
         );
     }
 
-    /*
-     * ============================================================
-     * TEST 3
-     * INVALID CLIENT VALUE
-     * ============================================================
-     *
-     * Space character allowlist-də yoxdur.
-     *
-     * Buna görə incoming value reject olunur
-     * və yeni UUID yaradılır.
-     */
+    
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldReplaceInvalidIncomingCorrelationId()
@@ -207,18 +207,18 @@ class CorrelationIdFilterIT {
         );
     }
 
-    /*
-     * ============================================================
-     * TEST 4
-     * TOO LONG VALUE
-     * ============================================================
-     *
-     * Max:
-     *
-     * 128
-     *
-     * 129-character client input reject olunur.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldReplaceTooLongCorrelationId()
@@ -262,15 +262,15 @@ class CorrelationIdFilterIT {
         );
     }
 
-    /*
-     * ============================================================
-     * TEST 5
-     * EVERY REQUEST GETS ITS OWN ID
-     * ============================================================
-     *
-     * MDC/thread reuse səbəbindən əvvəlki request
-     * ID-si növbəti request-ə keçməməlidir.
-     */
+    
+
+
+
+
+
+
+
+
 
     @Test
     void shouldGenerateIndependentCorrelationIdsForSeparateRequests()

@@ -59,11 +59,11 @@ public class RateLimitService {
                 );
     }
 
-    /*
-     * ============================================================
-     * CONSUME
-     * ============================================================
-     */
+    
+
+
+
+
 
     public RateLimitDecision consume(
             RateLimitPolicy policy,
@@ -93,16 +93,16 @@ public class RateLimitService {
 
         try {
 
-            /*
-             * ProxyManager burada lazy şəkildə alınır.
-             *
-             * Application startup zamanı Redis connection
-             * açmaq məcburiyyətində deyilik.
-             *
-             * Redis həmin anda unavailable olsa,
-             * exception burada tutulur və fail-open /
-             * fail-closed policy işləyir.
-             */
+            
+
+
+
+
+
+
+
+
+
 
             LettuceBasedProxyManager<String>
                     proxyManager =
@@ -149,10 +149,10 @@ public class RateLimitService {
                 RuntimeException exception
         ) {
 
-            /*
-             * Raw principal, JWT subject, Redis key,
-             * request body və token loglanmır.
-             */
+            
+
+
+
 
             LOGGER.warn(
                     "RATE_LIMIT_BACKEND_UNAVAILABLE policy={} failOpen={} errorType={}",
@@ -170,11 +170,11 @@ public class RateLimitService {
         }
     }
 
-    /*
-     * ============================================================
-     * BUCKET CONFIGURATION
-     * ============================================================
-     */
+    
+
+
+
+
 
     private BucketConfiguration createBucketConfiguration(
             RateLimitPolicy policy
@@ -221,11 +221,11 @@ public class RateLimitService {
         };
     }
 
-    /*
-     * ============================================================
-     * DISTRIBUTED REDIS KEY
-     * ============================================================
-     */
+    
+
+
+
+
 
     private String createBucketKey(
             RateLimitPolicy policy,
@@ -241,11 +241,11 @@ public class RateLimitService {
         );
     }
 
-    /*
-     * ============================================================
-     * PRINCIPAL HASH
-     * ============================================================
-     */
+    
+
+
+
+
 
     private String hashPrincipal(
             String principal

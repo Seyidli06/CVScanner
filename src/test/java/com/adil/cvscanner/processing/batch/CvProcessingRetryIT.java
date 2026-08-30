@@ -48,13 +48,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 )
 @TestPropertySource(
         properties = {
-                /*
-                 * Production-da delay 500ms-dir.
-                 *
-                 * Testdə lazımsız gözləməmək üçün
-                 * retry davranışını dəyişmədən
-                 * delay-i sıfırlayırıq.
-                 */
+                
+
+
+
+
+
+
                 "app.batch.retry.max-retries=2",
                 "app.batch.retry.delay=0ms"
         }
@@ -70,10 +70,10 @@ class CvProcessingRetryIT {
     private static final String NON_RETRYABLE_STEP_NAME =
             "nonRetryableTestStep";
 
-    /*
-     * Real Spring Batch metadata PostgreSQL-da
-     * saxlanacaq.
-     */
+    
+
+
+
     @Container
     @ServiceConnection
     static PostgreSQLContainer postgres =
@@ -112,23 +112,23 @@ class CvProcessingRetryIT {
     private NonRetryableProbeWriter
             nonRetryableProbeWriter;
 
-    /*
-     * ============================================================
-     * TEST 1
-     * TRANSIENT ERROR MUST BE RETRIED
-     * ============================================================
-     *
-     * attempt #1 -> transient DB error
-     * attempt #2 -> transient DB error
-     * attempt #3 -> success
-     *
-     * expected:
-     *
-     * attempts = 3
-     * Job      = COMPLETED
-     * Step     = COMPLETED
-     * write    = 1
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldRetryTransientDataAccessFailureAndEventuallyComplete()
@@ -136,10 +136,10 @@ class CvProcessingRetryIT {
 
         transientRetryProbeWriter.reset();
 
-        /*
-         * Test JobInstance hər test run-da
-         * unikal olsun.
-         */
+        
+
+
+
         JobParameters parameters =
                 uniqueJobParameters();
 
@@ -154,11 +154,11 @@ class CvProcessingRetryIT {
                         launchedExecution.getId()
                 );
 
-        /*
-         * İlk iki write fail olsa da
-         * üçüncü invocation uğurlu olduğu üçün
-         * bütün job tamamlanmalıdır.
-         */
+        
+
+
+
+
         assertThat(
                 completedExecution.getStatus()
         ).isEqualTo(
@@ -177,37 +177,37 @@ class CvProcessingRetryIT {
                 BatchStatus.COMPLETED
         );
 
-        /*
-         * Reader yalnız bir business item verir.
-         */
+        
+
+
         assertThat(
                 stepExecution.getReadCount()
         ).isEqualTo(
                 1
         );
 
-        /*
-         * Commit olunan real write sayı 1-dir.
-         *
-         * İlk iki invocation rollback/retry-dir.
-         */
+        
+
+
+
+
         assertThat(
                 stepExecution.getWriteCount()
         ).isEqualTo(
                 1
         );
 
-        /*
-         * Əsas assertion:
-         *
-         * maxRetries = 2
-         *
-         * 1 initial
-         * +
-         * 2 retries
-         *
-         * = 3 writer invocation
-         */
+        
+
+
+
+
+
+
+
+
+
+
         assertThat(
                 transientRetryProbeWriter
                         .getAttempts()
@@ -215,11 +215,11 @@ class CvProcessingRetryIT {
                 3
         );
 
-        /*
-         * Uğurlu final invocation-da
-         * item həqiqətən writer tərəfindən
-         * qəbul olunub.
-         */
+        
+
+
+
+
         assertThat(
                 transientRetryProbeWriter
                         .getSuccessfullyWrittenItems()
@@ -228,27 +228,27 @@ class CvProcessingRetryIT {
         );
     }
 
-    /*
-     * ============================================================
-     * TEST 2
-     * NON-TRANSIENT BUSINESS ERROR MUST NOT BE RETRIED
-     * ============================================================
-     *
-     * CandidateExtractionException
-     *
-     * transient DB exception deyil.
-     *
-     * Bu dedicated test step-də skip də
-     * configure etmirik.
-     *
-     * Ona görə:
-     *
-     * attempt #1 -> fail
-     *
-     * RETRY YOX
-     *
-     * Job = FAILED
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldNotRetryNonTransientBusinessFailure()
@@ -285,13 +285,13 @@ class CvProcessingRetryIT {
                 BatchStatus.FAILED
         );
 
-        /*
-         * RetryPolicy yalnız
-         * TransientDataAccessException
-         * hierarchy-sinə icazə verdiyi üçün
-         * CandidateExtractionException
-         * ikinci dəfə çağırılmamalıdır.
-         */
+        
+
+
+
+
+
+
         assertThat(
                 nonRetryableProbeWriter
                         .getAttempts()
@@ -300,20 +300,20 @@ class CvProcessingRetryIT {
         );
     }
 
-    /*
-     * ============================================================
-     * JOB PARAMETERS
-     * ============================================================
-     */
+    
+
+
+
+
 
     private JobParameters uniqueJobParameters() {
 
-        /*
-         * Bu yalnız TEST job-ları üçündür.
-         *
-         * Production cvProcessingJob üçün
-         * run.id əlavə etmirik.
-         */
+        
+
+
+
+
+
         return new JobParametersBuilder()
                 .addString(
                         "testRunId",
@@ -323,11 +323,11 @@ class CvProcessingRetryIT {
                 .toJobParameters();
     }
 
-    /*
-     * ============================================================
-     * ASYNC WAIT
-     * ============================================================
-     */
+    
+
+
+
+
 
     private JobExecution waitForJobCompletion(
             long executionId
@@ -375,11 +375,11 @@ class CvProcessingRetryIT {
         );
     }
 
-    /*
-     * ============================================================
-     * STEP LOOKUP
-     * ============================================================
-     */
+    
+
+
+
+
 
     private StepExecution findStep(
             JobExecution jobExecution,
@@ -406,28 +406,28 @@ class CvProcessingRetryIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST CONFIGURATION
-     * ============================================================
-     *
-     * Production cvProcessingJob-a toxunmuruq.
-     *
-     * Sadəcə retry mexanizmini isolated şəkildə
-     * real Spring Batch Step içində test edən
-     * iki xüsusi Job yaradırıq.
-     */
+    
+
+
+
+
+
+
+
+
+
+
 
     @TestConfiguration(
             proxyBeanMethods = false
     )
     static class RetryTestConfiguration {
 
-        /*
-         * ========================================================
-         * TRANSIENT WRITER
-         * ========================================================
-         */
+        
+
+
+
+
 
         @Bean
         TransientRetryProbeWriter
@@ -436,11 +436,11 @@ class CvProcessingRetryIT {
             return new TransientRetryProbeWriter();
         }
 
-        /*
-         * ========================================================
-         * NON-RETRYABLE WRITER
-         * ========================================================
-         */
+        
+
+
+
+
 
         @Bean
         NonRetryableProbeWriter
@@ -449,11 +449,11 @@ class CvProcessingRetryIT {
             return new NonRetryableProbeWriter();
         }
 
-        /*
-         * ========================================================
-         * TRANSIENT RETRY STEP
-         * ========================================================
-         */
+        
+
+
+
+
 
         @Bean("transientRetryTestStep")
         Step transientRetryTestStep(
@@ -465,11 +465,11 @@ class CvProcessingRetryIT {
                 TransientRetryProbeWriter writer
         ) {
 
-            /*
-             * ListItemReader Spring Batch-də
-             * testing üçün nəzərdə tutulmuş
-             * sadə ItemReader implementation-dır.
-             */
+            
+
+
+
+
             ListItemReader<String> reader =
                     new ListItemReader<>(
                             List.of(
@@ -505,10 +505,10 @@ class CvProcessingRetryIT {
 
                     .faultTolerant()
 
-                    /*
-                     * Production-da istifadə etdiyimiz
-                     * EYNİ RetryPolicy bean.
-                     */
+                    
+
+
+
                     .retryPolicy(
                             retryPolicy
                     )
@@ -516,11 +516,11 @@ class CvProcessingRetryIT {
                     .build();
         }
 
-        /*
-         * ========================================================
-         * TRANSIENT RETRY JOB
-         * ========================================================
-         */
+        
+
+
+
+
 
         @Bean("transientRetryTestJob")
         Job transientRetryTestJob(
@@ -539,11 +539,11 @@ class CvProcessingRetryIT {
                     .build();
         }
 
-        /*
-         * ========================================================
-         * NON-RETRYABLE STEP
-         * ========================================================
-         */
+        
+
+
+
+
 
         @Bean("nonRetryableTestStep")
         Step nonRetryableTestStep(
@@ -590,14 +590,14 @@ class CvProcessingRetryIT {
 
                     .faultTolerant()
 
-                    /*
-                     * Yenə production
-                     * RetryPolicy-dən istifadə
-                     * edirik.
-                     *
-                     * Amma writer transient
-                     * exception atmayacaq.
-                     */
+                    
+
+
+
+
+
+
+
                     .retryPolicy(
                             retryPolicy
                     )
@@ -605,11 +605,11 @@ class CvProcessingRetryIT {
                     .build();
         }
 
-        /*
-         * ========================================================
-         * NON-RETRYABLE JOB
-         * ========================================================
-         */
+        
+
+
+
+
 
         @Bean("nonRetryableTestJob")
         Job nonRetryableTestJob(
@@ -629,20 +629,20 @@ class CvProcessingRetryIT {
         }
     }
 
-    /*
-     * ============================================================
-     * TRANSIENT RETRY PROBE WRITER
-     * ============================================================
-     *
-     * Burada real DB-ni sındırmağa çalışmırıq.
-     *
-     * Spring DAO-nun transient exception
-     * hierarchy-sini simulyasiya edirik.
-     *
-     * attempt 1 -> error
-     * attempt 2 -> error
-     * attempt 3 -> success
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     static class TransientRetryProbeWriter
             implements ItemWriter<String> {
@@ -662,10 +662,10 @@ class CvProcessingRetryIT {
             int currentAttempt =
                     attempts.incrementAndGet();
 
-            /*
-             * İlk iki invocation
-             * temporary DB failure.
-             */
+            
+
+
+
             if (
                     currentAttempt <= 2
             ) {
@@ -675,9 +675,9 @@ class CvProcessingRetryIT {
                 );
             }
 
-            /*
-             * Üçüncü invocation uğurludur.
-             */
+            
+
+
             successfullyWrittenItems.addAll(
                     chunk.getItems()
             );
@@ -706,11 +706,11 @@ class CvProcessingRetryIT {
         }
     }
 
-    /*
-     * ============================================================
-     * NON-RETRYABLE PROBE WRITER
-     * ============================================================
-     */
+    
+
+
+
+
 
     static class NonRetryableProbeWriter
             implements ItemWriter<String> {

@@ -56,45 +56,45 @@ public class CvProcessingSkipListener
                 uploadStatusService;
     }
 
-    /*
-     * ============================================================
-     * READ SKIP
-     * ============================================================
-     *
-     * Hazırkı CvFileItemReader əvvəlcədən
-     * hazırlanmış Path list-i oxuyur.
-     *
-     * Skippable exception-larımız da
-     * processor exception-larıdır.
-     *
-     * Buna görə hazırda real read skip
-     * gözləmirik.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Override
     public void onSkipInRead(
             Throwable throwable
     ) {
-        // intentionally empty
+        
     }
 
-    /*
-     * ============================================================
-     * PROCESS SKIP
-     * ============================================================
-     *
-     * Əsas fault-tolerance flow buradadır:
-     *
-     * broken.pdf
-     *      ↓
-     * DocumentParsingException
-     *      ↓
-     * SKIP
-     *      ↓
-     * processing_failure INSERT
-     *      +
-     * failedFiles++
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Override
     public void onSkipInProcess(
@@ -128,54 +128,54 @@ public class CvProcessingSkipListener
                         errorMessage
                 );
 
-        /*
-         * Audit row.
-         */
+        
+
+
         processingFailureRepository
                 .saveAndFlush(
                         failure
                 );
 
-        /*
-         * Live failed counter.
-         *
-         * SkipListener callback real skip
-         * üçün commit-dən əvvəl çağırılır.
-         */
+        
+
+
+
+
+
         uploadStatusService
                 .recordFailed(
                         uploadId
                 );
     }
 
-    /*
-     * ============================================================
-     * WRITE SKIP
-     * ============================================================
-     *
-     * Hazırkı writer DB/infrastructure
-     * exception-ları skippable deyil.
-     *
-     * Ona görə writer problemi:
-     *
-     * STEP FAILED
-     *
-     * olmalıdır.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Override
     public void onSkipInWrite(
             CandidateDraft item,
             Throwable throwable
     ) {
-        // intentionally empty
+        
     }
 
-    /*
-     * ============================================================
-     * UPLOAD
-     * ============================================================
-     */
+    
+
+
+
+
 
     private CvUpload findUpload() {
 
@@ -192,11 +192,11 @@ public class CvProcessingSkipListener
                 );
     }
 
-    /*
-     * ============================================================
-     * FILENAME
-     * ============================================================
-     */
+    
+
+
+
+
 
     private String extractFilename(
             Path item
@@ -215,11 +215,11 @@ public class CvProcessingSkipListener
                 .toString();
     }
 
-    /*
-     * ============================================================
-     * ERROR CODE
-     * ============================================================
-     */
+    
+
+
+
+
 
     private String resolveErrorCode(
             Throwable throwable
@@ -247,11 +247,11 @@ public class CvProcessingSkipListener
         return PROCESSING_FAILED;
     }
 
-    /*
-     * ============================================================
-     * ERROR MESSAGE
-     * ============================================================
-     */
+    
+
+
+
+
 
     private String sanitizeErrorMessage(
             Throwable throwable
@@ -275,10 +275,10 @@ public class CvProcessingSkipListener
                     .getSimpleName();
         }
 
-        /*
-         * Multi-line stack/payload DB-yə
-         * düşməsin.
-         */
+        
+
+
+
         String normalized =
                 message
                         .replaceAll(

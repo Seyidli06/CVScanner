@@ -30,11 +30,11 @@ public class LocalUploadStorage {
                         .normalize();
     }
 
-    /*
-     * ============================================================
-     * STAGING
-     * ============================================================
-     */
+    
+
+
+
+
 
     public Path stage(
             MultipartFile file
@@ -86,11 +86,11 @@ public class LocalUploadStorage {
         }
     }
 
-    /*
-     * ============================================================
-     * DELETE STAGED FILE
-     * ============================================================
-     */
+    
+
+
+
+
 
     public void delete(
             Path path
@@ -117,16 +117,16 @@ public class LocalUploadStorage {
             Path parent =
                     managedPath.getParent();
 
-            /*
-             * stage():
-             *
-             * staging/<uuid>/upload.zip
-             *
-             * upload.zip silindikdən sonra həmin
-             * <uuid> directory-ni də silirik.
-             *
-             * storageRoot və staging root-a toxunmuruq.
-             */
+            
+
+
+
+
+
+
+
+
+
             if (
                     parent != null
                             &&
@@ -155,11 +155,11 @@ public class LocalUploadStorage {
         }
     }
 
-    /*
-     * ============================================================
-     * UPLOAD DIRECTORY
-     * ============================================================
-     */
+    
+
+
+
+
 
     public Path uploadDirectory(
             UUID uploadId
@@ -177,11 +177,11 @@ public class LocalUploadStorage {
                 .normalize();
     }
 
-    /*
-     * ============================================================
-     * EXTRACTION DIRECTORY
-     * ============================================================
-     */
+    
+
+
+
+
 
     public Path extractionDirectory(
             UUID uploadId
@@ -196,27 +196,27 @@ public class LocalUploadStorage {
                 .normalize();
     }
 
-    /*
-     * ============================================================
-     * DELETE ONE UPLOAD STORAGE
-     * ============================================================
-     *
-     * Cleanup service arbitrary Path vermir.
-     *
-     * Yalnız uploadId verir.
-     *
-     * Target həmişə:
-     *
-     * storageRoot/<uploadId>
-     *
-     * olur.
-     *
-     *
-     * Return:
-     *
-     * true  -> directory həqiqətən mövcud idi
-     * false -> artıq yox idi
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public boolean deleteUploadDirectory(
             UUID uploadId
@@ -239,11 +239,11 @@ public class LocalUploadStorage {
         return existed;
     }
 
-    /*
-     * ============================================================
-     * RECURSIVE DELETE
-     * ============================================================
-     */
+    
+
+
+
+
 
     public void deleteRecursively(
             Path path
@@ -256,19 +256,19 @@ public class LocalUploadStorage {
             return;
         }
 
-        /*
-         * Əvvəl security boundary check.
-         */
+        
+
+
         Path managedPath =
                 requireManagedPath(
                         path
                 );
 
-        /*
-         * Idempotency:
-         *
-         * directory artıq yoxdursa error deyil.
-         */
+        
+
+
+
+
         if (
                 Files.notExists(
                         managedPath
@@ -322,31 +322,31 @@ public class LocalUploadStorage {
         }
     }
 
-    /*
-     * ============================================================
-     * STORAGE BOUNDARY
-     * ============================================================
-     *
-     * Məsələn:
-     *
-     * storageRoot =
-     * C:/.../storage/uploads
-     *
-     *
-     * Allowed:
-     *
-     * C:/.../storage/uploads/<uuid>
-     * C:/.../storage/uploads/<uuid>/cvs
-     * C:/.../storage/uploads/staging/<uuid>/upload.zip
-     *
-     *
-     * Forbidden:
-     *
-     * C:/
-     * C:/Users
-     * storageRoot özü
-     * storageRoot/staging özü
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private Path requireManagedPath(
             Path path

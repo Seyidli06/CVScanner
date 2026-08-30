@@ -48,11 +48,11 @@ public class CandidateItemWriter
             return;
         }
 
-        /*
-         * =====================================================
-         * 1. CV UPLOAD
-         * =====================================================
-         */
+        
+
+
+
+
 
         CvUpload upload =
                 cvUploadRepository
@@ -65,16 +65,16 @@ public class CandidateItemWriter
                                         )
                         );
 
-        /*
-         * =====================================================
-         * 2. CHUNK-DƏKİ SOURCE FILENAMES
-         * =====================================================
-         *
-         * LinkedHashSet:
-         *
-         * - duplicate-ləri silir
-         * - deterministic order saxlayır
-         */
+        
+
+
+
+
+
+
+
+
+
 
         Set<String> sourceFilenames =
                 new LinkedHashSet<>();
@@ -92,25 +92,25 @@ public class CandidateItemWriter
             );
         }
 
-        /*
-         * =====================================================
-         * 3. DB-DƏ ƏVVƏLDƏN OLANLARI TAP
-         * =====================================================
-         *
-         * Bir query.
-         *
-         * Məsələn:
-         *
-         * chunk:
-         * john.pdf
-         * jane.docx
-         *
-         * DB:
-         * john.pdf
-         *
-         * result:
-         * john.pdf
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         Set<String> existingSourceFilenames =
                 new HashSet<>(
@@ -121,16 +121,16 @@ public class CandidateItemWriter
                                 )
                 );
 
-        /*
-         * =====================================================
-         * 4. EYNİ CHUNK DAXİLİ DUPLICATE QORUMASI
-         * =====================================================
-         *
-         * Normalda CvFileDiscoveryService eyni
-         * Path-i iki dəfə verməməlidir.
-         *
-         * Amma writer özü də defensive olsun.
-         */
+        
+
+
+
+
+
+
+
+
+
 
         Set<String> seenInCurrentChunk =
                 new HashSet<>();
@@ -145,13 +145,13 @@ public class CandidateItemWriter
             String sourceFilename =
                     draft.sourceFilename();
 
-            /*
-             * DB-də artıq varsa:
-             *
-             * restart/retry zamanı duplicate-dir.
-             *
-             * Skip edirik.
-             */
+            
+
+
+
+
+
+
             if (
                     existingSourceFilenames.contains(
                             sourceFilename
@@ -160,9 +160,9 @@ public class CandidateItemWriter
                 continue;
             }
 
-            /*
-             * Eyni chunk daxilində duplicate.
-             */
+            
+
+
             if (
                     !seenInCurrentChunk.add(
                             sourceFilename
@@ -187,32 +187,32 @@ public class CandidateItemWriter
             );
         }
 
-        /*
-         * Hamısı artıq DB-dədirsə,
-         * heç nə yazmağa ehtiyac yoxdur.
-         */
+        
+
+
+
         if (
                 candidatesToInsert.isEmpty()
         ) {
             return;
         }
 
-        /*
-         * =====================================================
-         * 5. PERSIST
-         * =====================================================
-         */
+        
+
+
+
+
 
         candidateRepository.saveAll(
                 candidatesToInsert
         );
 
-        /*
-         * UNIQUE constraint kimi DB xətalarının
-         * chunk transaction bitəndən çox sonra
-         * yox, elə writer daxilində üzə çıxmasını
-         * istəyirik.
-         */
+        
+
+
+
+
+
         candidateRepository.flush();
     }
 

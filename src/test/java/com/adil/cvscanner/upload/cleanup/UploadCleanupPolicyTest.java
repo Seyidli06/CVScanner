@@ -13,14 +13,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class UploadCleanupPolicyTest {
 
-    /*
-     * ============================================================
-     * FIXED TIME
-     * ============================================================
-     *
-     * Test real wall-clock-a bağlı deyil.
-     */
-
     private static final Instant NOW =
             Instant.parse(
                     "2026-08-21T12:00:00Z"
@@ -63,12 +55,12 @@ class UploadCleanupPolicyTest {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 1
-     * RECENT COMPLETED
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldNotCleanupRecentlyCompletedUpload() {
@@ -76,24 +68,24 @@ class UploadCleanupPolicyTest {
         CvUpload upload =
                 completedUpload();
 
-        /*
-         * complete() indi çağırıldığı üçün
-         * test fixed clock-dan fərqli real time
-         * istifadə edir.
-         *
-         * Ona görə burada əsas expectation:
-         *
-         * recent completion retention daxilindədir.
-         */
+        
+
+
+
+
+
+
+
+
 
         assertThat(
                 upload.getCompletedAt()
         ).isNotNull();
 
-        /*
-         * Test runtime 2026-08-21 ətrafındadır,
-         * 7 günlük cutoff-dan yenidir.
-         */
+        
+
+
+
         assertThat(
                 policy.isEligibleForCleanup(
                         upload
@@ -101,12 +93,12 @@ class UploadCleanupPolicyTest {
         ).isFalse();
     }
 
-    /*
-     * ============================================================
-     * TEST 2
-     * UPLOADED MUST NEVER BE CLEANED
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldNotCleanupUploadedState() {
@@ -127,12 +119,12 @@ class UploadCleanupPolicyTest {
         ).isFalse();
     }
 
-    /*
-     * ============================================================
-     * TEST 3
-     * PROCESSING MUST NEVER BE CLEANED
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldNotCleanupProcessingState() {
@@ -155,14 +147,14 @@ class UploadCleanupPolicyTest {
         ).isFalse();
     }
 
-    /*
-     * ============================================================
-     * TEST 4
-     * FAILED MUST NEVER BE AUTO-CLEANED
-     * ============================================================
-     *
-     * Restart/debug üçün əsas safety rule.
-     */
+    
+
+
+
+
+
+
+
 
     @Test
     void shouldNotCleanupFailedUpload() {
@@ -187,15 +179,15 @@ class UploadCleanupPolicyTest {
         ).isFalse();
     }
 
-    /*
-     * ============================================================
-     * TEST 5
-     * COMPLETED_WITH_ERRORS IS TERMINAL
-     * ============================================================
-     *
-     * Status cleanup üçün prinsipcə icazəlidir,
-     * amma retention müddəti keçməyibsə silinməməlidir.
-     */
+    
+
+
+
+
+
+
+
+
 
     @Test
     void shouldRespectRetentionForCompletedWithErrors() {
@@ -225,12 +217,12 @@ class UploadCleanupPolicyTest {
         ).isFalse();
     }
 
-    /*
-     * ============================================================
-     * TEST 6
-     * GLOBAL DISABLE
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldNotCleanupAnythingWhenDisabled() {
@@ -249,11 +241,11 @@ class UploadCleanupPolicyTest {
         ).isFalse();
     }
 
-    /*
-     * ============================================================
-     * FACTORY
-     * ============================================================
-     */
+    
+
+
+
+
 
     private CvUpload completedUpload() {
 

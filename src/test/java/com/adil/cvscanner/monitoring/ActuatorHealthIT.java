@@ -19,20 +19,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Testcontainers
 class ActuatorHealthIT {
 
-    /*
-     * ============================================================
-     * REAL POSTGRESQL
-     * ============================================================
-     *
-     * Readiness group:
-     *
-     * readinessState + db
-     *
-     * olduğu üçün real database istifadə edirik.
-     *
-     * localhost:5435 kimi developer-machine
-     * dependency-si yoxdur.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Container
     @ServiceConnection
@@ -53,12 +53,12 @@ class ActuatorHealthIT {
     @Autowired
     private MockMvc mockMvc;
 
-    /*
-     * ============================================================
-     * TEST 1
-     * OVERALL HEALTH
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldExposeOverallHealth()
@@ -82,25 +82,25 @@ class ActuatorHealthIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 2
-     * INTERNAL DETAILS MUST NOT BE EXPOSED
-     * ============================================================
-     *
-     * application.yaml:
-     *
-     * show-details: never
-     * show-components: never
-     *
-     * Client yalnız:
-     *
-     * {
-     *   "status": "UP"
-     * }
-     *
-     * görməlidir.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldHideHealthComponentsAndDetails()
@@ -134,18 +134,18 @@ class ActuatorHealthIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 3
-     * LIVENESS
-     * ============================================================
-     *
-     * Liveness:
-     *
-     * JVM/application process yaşayır?
-     *
-     * DB burada criterion deyil.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldExposeLivenessProbe()
@@ -179,21 +179,21 @@ class ActuatorHealthIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 4
-     * READINESS
-     * ============================================================
-     *
-     * Readiness group:
-     *
-     * readinessState
-     * +
-     * db
-     *
-     * Real PostgreSQL UP olduğu üçün
-     * readiness də UP olmalıdır.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldExposeReadinessProbeWithDatabaseAvailable()
@@ -227,19 +227,19 @@ class ActuatorHealthIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 5
-     * SHORT LIVENESS PATH
-     * ============================================================
-     *
-     * management.endpoint.health.probes
-     *     .add-additional-paths=true
-     *
-     * nəticəsində:
-     *
-     * /livez
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldExposeLivezAdditionalPath()
@@ -263,12 +263,12 @@ class ActuatorHealthIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 6
-     * SHORT READINESS PATH
-     * ============================================================
-     */
+    
+
+
+
+
+
 
     @Test
     void shouldExposeReadyzAdditionalPath()
@@ -292,33 +292,33 @@ class ActuatorHealthIT {
                 );
     }
 
-    /*
-     * ============================================================
-     * TEST 7
-     * ENVIRONMENT ACTUATOR MUST NOT BE ANONYMOUSLY ACCESSIBLE
-     * ============================================================
-     *
-     * Final security model:
-     *
-     * PUBLIC:
-     *   /actuator/health/**
-     *   /livez
-     *   /readyz
-     *
-     * ADMIN:
-     *   /actuator/metrics/**
-     *
-     * everything else:
-     *   denied
-     *
-     * Buna görə anonymous:
-     *
-     * GET /actuator/env
-     *
-     * controller/MVC səviyyəsinə çatmadan
-     * Spring Security tərəfindən 401 ilə
-     * reject olunur.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void shouldRejectAnonymousEnvironmentActuatorEndpoint()

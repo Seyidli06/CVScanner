@@ -35,36 +35,36 @@ public class CvUploadWorkflowService {
             MultipartFile file
     ) {
 
-        /*
-         * =====================================================
-         * 1. SECURE UPLOAD + EXTRACTION
-         * =====================================================
-         *
-         * Bu metod:
-         *
-         * - staging
-         * - ZIP validation
-         * - extraction
-         * - CvUpload persist
-         *
-         * işlərini tamamlayır.
-         *
-         * Buradan qayıdanda:
-         *
-         * DB row var.
-         * storage hazırdır.
-         * status = UPLOADED.
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         CvUpload upload =
                 cvUploadService.upload(
                         file
                 );
 
-        /*
-         * =====================================================
-         * 2. START BATCH JOB
-         * =====================================================
-         */
+        
+
+
+
+
 
         try {
 
@@ -76,45 +76,45 @@ public class CvUploadWorkflowService {
                 CvProcessingLaunchException launchException
         ) {
 
-            /*
-             * =================================================
-             * IMMEDIATE LAUNCH FAILURE
-             * =================================================
-             *
-             * Job heç normal processing lifecycle-a
-             * daxil ola bilmədi.
-             *
-             * CvProcessingJobListener.beforeJob()
-             * çağırılmaya da bilər.
-             *
-             * Ona görə upload-u burada FAILED
-             * edirik.
-             */
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
             markFailedPreservingOriginalException(
                     upload,
                     launchException
             );
 
-            /*
-             * Controller/global exception handling
-             * original launch exception-u görməlidir.
-             */
+            
+
+
+
             throw launchException;
         }
 
-        /*
-         * Job qəbul edildi.
-         *
-         * Bundan sonrakı lifecycle:
-         *
-         * beforeJob:
-         * UPLOADED -> PROCESSING
-         *
-         * afterJob:
-         * -> COMPLETED
-         * -> COMPLETED_WITH_ERRORS
-         * -> FAILED
-         */
+        
+
+
+
+
+
+
+
+
+
+
+
+
         return UploadResponse.from(
                 upload
         );

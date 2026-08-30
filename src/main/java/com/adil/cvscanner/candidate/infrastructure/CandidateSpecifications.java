@@ -15,11 +15,11 @@ public final class CandidateSpecifications {
     private CandidateSpecifications() {
     }
 
-    /*
-     * ============================================================
-     * BUILD COMPLETE SPECIFICATION
-     * ============================================================
-     */
+    
+
+
+
+
 
     public static Specification<Candidate> from(
             CandidateSearchCriteria criteria
@@ -94,27 +94,27 @@ public final class CandidateSpecifications {
             );
         }
 
-        /*
-         * Spring Data JPA 4.x:
-         *
-         * Specification.allOf(...)
-         *
-         * bütün predicate-ləri AND ilə
-         * birləşdirir.
-         *
-         * List boş olsa unrestricted query
-         * kimi işləyir.
-         */
+        
+
+
+
+
+
+
+
+
+
+
         return Specification.allOf(
                 specifications
         );
     }
 
-    /*
-     * ============================================================
-     * UPLOAD
-     * ============================================================
-     */
+    
+
+
+
+
 
     private static Specification<Candidate>
     hasUploadId(
@@ -137,26 +137,26 @@ public final class CandidateSpecifications {
                 );
     }
 
-    /*
-     * ============================================================
-     * SKILL
-     * ============================================================
-     *
-     * Candidate.skills:
-     *
-     * @ElementCollection Set<String>
-     *
-     * olduğu üçün candidate_skill
-     * collection-a JOIN edirik.
-     *
-     * Filter case-insensitive-dir:
-     *
-     * java
-     * Java
-     * JAVA
-     *
-     * hamısı eyni nəticəni verir.
-     */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private static Specification<Candidate>
     hasSkill(
@@ -182,10 +182,10 @@ public final class CandidateSpecifications {
                             JoinType.INNER
                     );
 
-            /*
-             * JOIN eyni Candidate-i duplicate
-             * row kimi qaytara bilməsin.
-             */
+            
+
+
+
             query.distinct(
                     true
             );
@@ -199,17 +199,17 @@ public final class CandidateSpecifications {
         };
     }
 
-    /*
-     * ============================================================
-     * LOCATION
-     * ============================================================
-     *
-     * Exact, amma case-insensitive:
-     *
-     * Baku
-     * baku
-     * BAKU
-     */
+    
+
+
+
+
+
+
+
+
+
+
 
     private static Specification<Candidate>
     hasLocation(
@@ -238,11 +238,11 @@ public final class CandidateSpecifications {
                 );
     }
 
-    /*
-     * ============================================================
-     * JOB TYPE
-     * ============================================================
-     */
+    
+
+
+
+
 
     private static Specification<Candidate>
     hasJobType(
@@ -262,11 +262,11 @@ public final class CandidateSpecifications {
                 );
     }
 
-    /*
-     * ============================================================
-     * MIN EXPERIENCE
-     * ============================================================
-     */
+    
+
+
+
+
 
     private static Specification<Candidate>
     experienceAtLeast(
