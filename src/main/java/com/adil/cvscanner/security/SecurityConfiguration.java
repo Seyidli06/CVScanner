@@ -98,6 +98,14 @@ public class SecurityConfiguration {
                                                 SecurityRoles.ROLE_ADMIN
                                         )
 
+
+                                        .requestMatchers(
+                                                "/v3/api-docs/**",
+                                                "/swagger-ui/**",
+                                                "/swagger-ui.html"
+                                        )
+                                        .permitAll()
+
                                         /*
                                          * =================================================
                                          * CV UPLOAD

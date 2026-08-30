@@ -10,9 +10,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
 @RequestMapping("/api/v1/candidates")
+@SecurityRequirement(
+        name = "bearerAuth"
+)
 public class CandidateController {
 
     private final CandidateQueryService candidateQueryService;
