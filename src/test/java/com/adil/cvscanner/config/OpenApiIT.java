@@ -31,6 +31,7 @@ class OpenApiIT {
     static void configureProperties(
             DynamicPropertyRegistry registry
     ) {
+
         registry.add(
                 "spring.datasource.url",
                 POSTGRES::getJdbcUrl
@@ -85,6 +86,54 @@ class OpenApiIT {
                                 "$['paths']['/api/v1/candidates']"
                         )
                                 .exists()
+                );
+    }
+
+    @Test
+    void shouldDocumentBearerAuthenticationForProtectedBusinessEndpoints()
+            throws Exception {
+
+        mockMvc.perform(
+                        get("/v3/api-docs")
+                )
+                .andExpect(
+                        status().isOk()
+                )
+                .andExpect(
+                        jsonPath(
+                                "$['paths']['/api/v1/candidates']['get']['security'][0]['bearerAuth']"
+                        )
+                                .isArray()
+                )
+                .andExpect(
+                        jsonPath(
+                                "$['paths']['/api/v1/candidates/export.csv']['get']['security'][0]['bearerAuth']"
+                        )
+                                .isArray()
+                )
+                .andExpect(
+                        jsonPath(
+                                "$['paths']['/api/v1/candidates/export.xlsx']['get']['security'][0]['bearerAuth']"
+                        )
+                                .isArray()
+                )
+                .andExpect(
+                        jsonPath(
+                                "$['paths']['/api/v1/uploads']['post']['security'][0]['bearerAuth']"
+                        )
+                                .isArray()
+                )
+                .andExpect(
+                        jsonPath(
+                                "$['paths']['/api/v1/uploads/{uploadId}']['get']['security'][0]['bearerAuth']"
+                        )
+                                .isArray()
+                )
+                .andExpect(
+                        jsonPath(
+                                "$['paths']['/api/v1/uploads/{uploadId}/failures']['get']['security'][0]['bearerAuth']"
+                        )
+                                .isArray()
                 );
     }
 

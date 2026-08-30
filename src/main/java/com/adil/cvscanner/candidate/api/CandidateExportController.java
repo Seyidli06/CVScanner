@@ -3,6 +3,7 @@ package com.adil.cvscanner.candidate.api;
 import com.adil.cvscanner.candidate.application.CandidateCsvExportService;
 import com.adil.cvscanner.candidate.application.CandidateSearchCriteria;
 import com.adil.cvscanner.candidate.domain.JobType;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -17,9 +18,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(
-        "/api/v1/candidates"
-)
+@RequestMapping("/api/v1/candidates")
+@SecurityRequirement(name = "bearerAuth")
 public class CandidateExportController {
 
     private static final MediaType CSV_MEDIA_TYPE =
@@ -29,87 +29,44 @@ public class CandidateExportController {
                     StandardCharsets.UTF_8
             );
 
-    private final CandidateCsvExportService
-            candidateCsvExportService;
+    private final CandidateCsvExportService candidateCsvExportService;
 
     public CandidateExportController(
             CandidateCsvExportService candidateCsvExportService
     ) {
-
         this.candidateCsvExportService =
                 candidateCsvExportService;
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @GetMapping(
             value = "/export.csv",
             produces = "text/csv"
     )
     public ResponseEntity<StreamingResponseBody> exportCsv(
-            @RequestParam(
-                    required = false
-            )
+            @RequestParam(required = false)
             UUID uploadId,
 
-            @RequestParam(
-                    required = false
-            )
+            @RequestParam(required = false)
             String skill,
 
-            @RequestParam(
-                    required = false
-            )
+            @RequestParam(required = false)
             String location,
 
-            @RequestParam(
-                    required = false
-            )
+            @RequestParam(required = false)
             JobType jobType,
 
-            @RequestParam(
-                    required = false
-            )
+            @RequestParam(required = false)
             Integer minExperience,
 
-            @RequestParam(
-                    required = false
-            )
+            @RequestParam(required = false)
             Integer maxExperience,
 
-            @RequestParam(
-                    defaultValue = "fullName"
-            )
+            @RequestParam(defaultValue = "fullName")
             String sortBy,
 
-            @RequestParam(
-                    defaultValue = "asc"
-            )
+            @RequestParam(defaultValue = "asc")
             String direction
     ) {
-
-        
-
-
-
 
         CandidateSearchCriteria criteria =
                 new CandidateSearchCriteria(
@@ -121,48 +78,24 @@ public class CandidateExportController {
                         maxExperience
                 );
 
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-        candidateCsvExportService
-                .validateRequest(
-                        criteria,
-                        sortBy,
-                        direction
-                );
+        candidateCsvExportService.validateRequest(
+                criteria,
+                sortBy,
+                direction
+        );
 
         StreamingResponseBody body =
                 outputStream ->
-                        candidateCsvExportService
-                                .writeCsv(
-                                        outputStream,
-                                        criteria,
-                                        sortBy,
-                                        direction
-                                );
-
-        
-
-
-
-
+                        candidateCsvExportService.writeCsv(
+                                outputStream,
+                                criteria,
+                                sortBy,
+                                direction
+                        );
 
         return ResponseEntity
                 .ok()
-                .contentType(
-                        CSV_MEDIA_TYPE
-                )
+                .contentType(CSV_MEDIA_TYPE)
                 .header(
                         HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=\"candidates.csv\""
@@ -174,8 +107,6 @@ public class CandidateExportController {
                 .cacheControl(
                         CacheControl.noStore()
                 )
-                .body(
-                        body
-                );
+                .body(body);
     }
 }

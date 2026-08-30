@@ -1,6 +1,7 @@
 package com.adil.cvscanner.processing.api;
 
 import com.adil.cvscanner.processing.application.ProcessingFailureQueryService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,64 +12,37 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(
-        "/api/v1/uploads/{uploadId}/failures"
-)
+@RequestMapping("/api/v1/uploads/{uploadId}/failures")
+@SecurityRequirement(name = "bearerAuth")
 public class ProcessingFailureController {
 
-    private final ProcessingFailureQueryService
-            processingFailureQueryService;
+    private final ProcessingFailureQueryService processingFailureQueryService;
 
     public ProcessingFailureController(
-            ProcessingFailureQueryService
-                    processingFailureQueryService
+            ProcessingFailureQueryService processingFailureQueryService
     ) {
-
         this.processingFailureQueryService =
                 processingFailureQueryService;
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @GetMapping
-    public ResponseEntity<ProcessingFailurePageResponse>
-    getFailures(
-
+    public ResponseEntity<ProcessingFailurePageResponse> getFailures(
             @PathVariable
             UUID uploadId,
 
-            @RequestParam(
-                    defaultValue = "0"
-            )
+            @RequestParam(defaultValue = "0")
             int page,
 
-            @RequestParam(
-                    defaultValue = "20"
-            )
+            @RequestParam(defaultValue = "20")
             int size
     ) {
 
         ProcessingFailurePageResponse response =
-                processingFailureQueryService
-                        .findByUpload(
-                                uploadId,
-                                page,
-                                size
-                        );
+                processingFailureQueryService.findByUpload(
+                        uploadId,
+                        page,
+                        size
+                );
 
         return ResponseEntity.ok(
                 response
