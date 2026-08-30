@@ -2024,9 +2024,3 @@ RELEASE GATE PASSED
 ```
 
 ---
-
-## Repository
-
-GitHub:
-
-https://github.com/Seyidli06/CVScanner
