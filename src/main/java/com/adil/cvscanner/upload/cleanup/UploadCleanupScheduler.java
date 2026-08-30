@@ -22,12 +22,6 @@ public class UploadCleanupScheduler {
 
     private final UploadCleanupMetrics cleanupMetrics;
 
-    
-
-
-
-
-
     private final AtomicBoolean running =
             new AtomicBoolean(
                     false
@@ -49,12 +43,6 @@ public class UploadCleanupScheduler {
                 cleanupMetrics;
     }
 
-    
-
-
-
-
-
     @Scheduled(
             initialDelayString =
                     "${app.cleanup.initial-delay:PT1M}",
@@ -63,11 +51,6 @@ public class UploadCleanupScheduler {
                     "${app.cleanup.schedule-delay:PT1H}"
     )
     public void runScheduledCleanup() {
-
-        
-
-
-
 
         if (
                 !properties.isSchedulerEnabled()
@@ -83,18 +66,8 @@ public class UploadCleanupScheduler {
             return;
         }
 
-        
-
-
-
         cleanupMetrics
                 .recordSchedulerAttempt();
-
-        
-
-
-
-
 
         if (
                 !running.compareAndSet(
@@ -120,11 +93,6 @@ public class UploadCleanupScheduler {
             UploadCleanupExecutionResult executionResult =
                     executionCoordinator
                             .tryRunOnce();
-
-            
-
-
-
 
             if (
                     !executionResult.executed()

@@ -19,21 +19,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Testcontainers
 class ActuatorHealthIT {
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Container
     @ServiceConnection
     static PostgreSQLContainer postgres =
@@ -52,13 +37,6 @@ class ActuatorHealthIT {
 
     @Autowired
     private MockMvc mockMvc;
-
-    
-
-
-
-
-
 
     @Test
     void shouldExposeOverallHealth()
@@ -81,26 +59,6 @@ class ActuatorHealthIT {
                         )
                 );
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @Test
     void shouldHideHealthComponentsAndDetails()
@@ -134,19 +92,6 @@ class ActuatorHealthIT {
                 );
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
     @Test
     void shouldExposeLivenessProbe()
             throws Exception {
@@ -178,22 +123,6 @@ class ActuatorHealthIT {
                         ).doesNotExist()
                 );
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @Test
     void shouldExposeReadinessProbeWithDatabaseAvailable()
@@ -227,20 +156,6 @@ class ActuatorHealthIT {
                 );
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Test
     void shouldExposeLivezAdditionalPath()
             throws Exception {
@@ -263,13 +178,6 @@ class ActuatorHealthIT {
                 );
     }
 
-    
-
-
-
-
-
-
     @Test
     void shouldExposeReadyzAdditionalPath()
             throws Exception {
@@ -291,34 +199,6 @@ class ActuatorHealthIT {
                         )
                 );
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @Test
     void shouldRejectAnonymousEnvironmentActuatorEndpoint()

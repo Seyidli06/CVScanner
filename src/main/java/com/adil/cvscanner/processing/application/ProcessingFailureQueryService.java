@@ -39,12 +39,6 @@ public class ProcessingFailureQueryService {
                 cvUploadRepository;
     }
 
-    
-
-
-
-
-
     @Transactional(
             readOnly = true
     )
@@ -64,21 +58,6 @@ public class ProcessingFailureQueryService {
                 size
         );
 
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         if (
                 !cvUploadRepository.existsById(
                         uploadId
@@ -89,17 +68,6 @@ public class ProcessingFailureQueryService {
                     uploadId
             );
         }
-
-        
-
-
-
-
-
-
-
-
-
 
         Sort sort =
                 Sort.by(
@@ -131,12 +99,6 @@ public class ProcessingFailureQueryService {
                 failures
         );
     }
-
-    
-
-
-
-
 
     private void validatePagination(
             int page,

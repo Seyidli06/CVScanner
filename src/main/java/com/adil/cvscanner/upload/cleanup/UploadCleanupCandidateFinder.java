@@ -15,16 +15,6 @@ import java.util.Set;
 @Service
 public class UploadCleanupCandidateFinder {
 
-    
-
-
-
-
-
-
-
-
-
     private static final Set<UploadStatus> CLEANUP_STATUSES =
             EnumSet.of(
                     UploadStatus.COMPLETED,
@@ -61,19 +51,10 @@ public class UploadCleanupCandidateFinder {
                 Clock.systemUTC();
     }
 
-    
-
-
-
-
-
     @Transactional(
             readOnly = true
     )
     public List<CvUpload> findNextBatch() {
-
-        
-
 
         if (
                 !properties.isEnabled()
@@ -81,18 +62,6 @@ public class UploadCleanupCandidateFinder {
 
             return List.of();
         }
-
-        
-
-
-
-
-
-
-
-
-
-
 
         OffsetDateTime cutoff =
                 OffsetDateTime
@@ -115,20 +84,6 @@ public class UploadCleanupCandidateFinder {
                                                 .getBatchSize()
                                 )
                         );
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
 
         return databaseCandidates
                 .stream()

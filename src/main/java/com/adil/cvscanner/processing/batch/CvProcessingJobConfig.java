@@ -37,12 +37,6 @@ public class CvProcessingJobConfig {
     private static final long SKIP_LIMIT =
             50;
 
-    
-
-
-
-
-
     @Bean
     @StepScope
     public CvFileItemReader cvFileReader(
@@ -63,12 +57,6 @@ public class CvProcessingJobConfig {
         );
     }
 
-    
-
-
-
-
-
     @Bean
     public ItemProcessor<Path, CandidateDraft>
     cvCandidateProcessor(
@@ -88,12 +76,6 @@ public class CvProcessingJobConfig {
             );
         };
     }
-
-    
-
-
-
-
 
     @Bean
     @StepScope
@@ -116,12 +98,6 @@ public class CvProcessingJobConfig {
         );
     }
 
-    
-
-
-
-
-
     @Bean
     @StepScope
     public CvProcessingProgressListener
@@ -141,12 +117,6 @@ public class CvProcessingJobConfig {
                 uploadStatusService
         );
     }
-
-    
-
-
-
-
 
     @Bean
     @StepScope
@@ -173,12 +143,6 @@ public class CvProcessingJobConfig {
         );
     }
 
-    
-
-
-
-
-
     @Bean
     public Step processCvFilesStep(
             JobRepository jobRepository,
@@ -202,21 +166,9 @@ public class CvProcessingJobConfig {
                 CHUNK_SIZE
         )
 
-                
-
-
-
-
-
                 .transactionManager(
                         transactionManager
                 )
-
-                
-
-
-
-
 
                 .reader(
                         cvFileReader
@@ -230,31 +182,11 @@ public class CvProcessingJobConfig {
                         candidateWriter
                 )
 
-                
-
-
-
-
-
-
-
-
                 .listener(
                         cvProcessingProgressListener
                 )
 
-                
-
-
-
-
-
                 .faultTolerant()
-
-                
-
-
-
 
                 .skip(
                         DocumentParsingException.class,
@@ -265,20 +197,9 @@ public class CvProcessingJobConfig {
                         SKIP_LIMIT
                 )
 
-                
-
-
-
-
-
-
                 .skipListener(
                         cvProcessingSkipListener
                 )
-
-                
-
-
 
                 .retryPolicy(
                         cvProcessingRetryPolicy
@@ -286,12 +207,6 @@ public class CvProcessingJobConfig {
 
                 .build();
     }
-
-    
-
-
-
-
 
     @Bean
     public Job cvProcessingJob(
@@ -313,12 +228,6 @@ public class CvProcessingJobConfig {
                 )
                 .build();
     }
-
-    
-
-
-
-
 
     private UUID parseUploadId(
             String uploadId

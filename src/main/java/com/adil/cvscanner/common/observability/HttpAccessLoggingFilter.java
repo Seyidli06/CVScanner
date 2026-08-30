@@ -64,20 +64,6 @@ public class HttpAccessLoggingFilter
                 correlationId = "-";
             }
 
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
             log.info(
                     "HTTP_ACCESS method={} path={} status={} durationMs={} correlationId={}",
                     request.getMethod(),
@@ -88,17 +74,6 @@ public class HttpAccessLoggingFilter
             );
         }
     }
-
-    
-
-
-
-
-
-
-
-
-
 
     @Override
     protected boolean shouldNotFilter(

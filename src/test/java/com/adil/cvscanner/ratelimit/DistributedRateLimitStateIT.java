@@ -67,12 +67,6 @@ class DistributedRateLimitStateIT {
                         REDIS_PORT
                 );
 
-        
-
-
-
-
-
         RedisURI uriA =
                 RedisURI.create(
                         redisUri
@@ -111,12 +105,6 @@ class DistributedRateLimitStateIT {
                                 5
                         )
                         .build();
-
-        
-
-
-
-
 
         RedisURI uriB =
                 RedisURI.create(
@@ -190,12 +178,6 @@ class DistributedRateLimitStateIT {
         }
     }
 
-    
-
-
-
-
-
     @Test
     void shouldShareBucketStateAcrossIndependentInstances() {
 
@@ -206,9 +188,6 @@ class DistributedRateLimitStateIT {
         BucketConfiguration configuration =
                 createConfiguration();
 
-        
-
-
         Bucket bucketFromInstanceA =
                 proxyManagerA.getProxy(
                         key,
@@ -216,23 +195,12 @@ class DistributedRateLimitStateIT {
                                 configuration
                 );
 
-        
-
-
-
         Bucket bucketFromInstanceB =
                 proxyManagerB.getProxy(
                         key,
                         () ->
                                 configuration
                 );
-
-        
-
-
-
-
-
 
         boolean firstRequest =
                 bucketFromInstanceA.tryConsume(
@@ -243,11 +211,6 @@ class DistributedRateLimitStateIT {
                 firstRequest
         ).isTrue();
 
-        
-
-
-
-
         boolean secondRequest =
                 bucketFromInstanceB.tryConsume(
                         1
@@ -256,17 +219,6 @@ class DistributedRateLimitStateIT {
         assertThat(
                 secondRequest
         ).isTrue();
-
-        
-
-
-
-
-
-
-
-
-
 
         boolean thirdRequest =
                 bucketFromInstanceA.tryConsume(
@@ -277,12 +229,6 @@ class DistributedRateLimitStateIT {
                 thirdRequest
         ).isFalse();
     }
-
-    
-
-
-
-
 
     @Test
     void shouldKeepDifferentDistributedKeysIndependent() {
@@ -312,11 +258,6 @@ class DistributedRateLimitStateIT {
                                 configuration
                 );
 
-        
-
-
-
-
         assertThat(
                 bucketA.tryConsume(
                         1
@@ -334,11 +275,6 @@ class DistributedRateLimitStateIT {
                         1
                 )
         ).isFalse();
-
-        
-
-
-
 
         assertThat(
                 bucketB.tryConsume(
@@ -358,12 +294,6 @@ class DistributedRateLimitStateIT {
                 )
         ).isFalse();
     }
-
-    
-
-
-
-
 
     private BucketConfiguration createConfiguration() {
 

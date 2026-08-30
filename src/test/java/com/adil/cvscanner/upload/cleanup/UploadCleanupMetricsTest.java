@@ -28,13 +28,6 @@ class UploadCleanupMetricsTest {
                 );
     }
 
-    
-
-
-
-
-
-
     @Test
     void shouldRecordSuccessfulCleanupRun() {
 
@@ -97,12 +90,6 @@ class UploadCleanupMetricsTest {
                 )
         ).isZero();
 
-        
-
-
-
-
-
         assertThat(
                 meterRegistry
                         .get(
@@ -127,8 +114,6 @@ class UploadCleanupMetricsTest {
                 250.0
         );
 
-
-
         assertThat(
                 gauge(
                         UploadCleanupMetrics.LAST_SUCCESS
@@ -137,8 +122,6 @@ class UploadCleanupMetricsTest {
                 0.0
         );
     }
-
-
 
     @Test
     void shouldRecordPartialRunWithoutUpdatingLastSuccess() {
@@ -198,21 +181,12 @@ class UploadCleanupMetricsTest {
                 1.0
         );
 
-
-
         assertThat(
                 gauge(
                         UploadCleanupMetrics.LAST_SUCCESS
                 )
         ).isZero();
     }
-
-    
-
-
-
-
-
 
     @Test
     void shouldRecordWholeRunFailure() {
@@ -230,8 +204,6 @@ class UploadCleanupMetricsTest {
         ).isEqualTo(
                 1.0
         );
-
-
 
         assertThat(
                 counter(
@@ -256,13 +228,6 @@ class UploadCleanupMetricsTest {
                 )
         ).isZero();
     }
-
-    
-
-
-
-
-
 
     @Test
     void shouldAccumulateMetricsAcrossRuns() {
@@ -342,12 +307,6 @@ class UploadCleanupMetricsTest {
                 2
         );
     }
-
-    
-
-
-
-
 
     private double counter(
             String metricName

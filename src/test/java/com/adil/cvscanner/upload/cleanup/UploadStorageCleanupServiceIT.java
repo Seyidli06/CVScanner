@@ -34,16 +34,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Testcontainers
 class UploadStorageCleanupServiceIT {
 
-
-
     private static final Path STORAGE_ROOT =
             createStorageRoot();
-
-    
-
-
-
-
 
     @Container
     @ServiceConnection
@@ -85,12 +77,6 @@ class UploadStorageCleanupServiceIT {
     private JdbcTemplate
             jdbcTemplate;
 
-    
-
-
-
-
-
     @DynamicPropertySource
     static void properties(
             DynamicPropertyRegistry registry
@@ -122,18 +108,8 @@ class UploadStorageCleanupServiceIT {
         );
     }
 
-    
-
-
-
-
-
     @BeforeEach
     void setUp() {
-
-        
-
-
 
         candidateRepository.deleteAll();
 
@@ -142,29 +118,9 @@ class UploadStorageCleanupServiceIT {
         cvUploadRepository.deleteAll();
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Test
     void shouldDeleteOnlyEligibleStorageAndKeepDatabaseData()
             throws Exception {
-
-        
-
-
-
-
 
         CvUpload oldCompleted =
                 completedUpload(
@@ -179,7 +135,6 @@ class UploadStorageCleanupServiceIT {
         createPhysicalStorage(
                 oldCompleted.getId()
         );
-
 
         Candidate candidate =
                 new Candidate(
@@ -199,7 +154,6 @@ class UploadStorageCleanupServiceIT {
                 candidate
         );
 
-
         CvUpload recentCompleted =
                 completedUpload(
                         "recent-completed.zip"
@@ -214,14 +168,6 @@ class UploadStorageCleanupServiceIT {
                 recentCompleted.getId()
         );
 
-        
-
-
-
-
-
-
-
         CvUpload failed =
                 failedUpload(
                         "failed.zip"
@@ -235,12 +181,6 @@ class UploadStorageCleanupServiceIT {
         createPhysicalStorage(
                 failed.getId()
         );
-
-        
-
-
-
-
 
         assertThat(
                 Files.exists(
@@ -266,18 +206,8 @@ class UploadStorageCleanupServiceIT {
                 )
         ).isTrue();
 
-        
-
-
-
-
-
         UploadCleanupRunResult result =
                 cleanupService.runOnce();
-
-        
-
-
 
         assertThat(
                 result.selected()
@@ -305,12 +235,6 @@ class UploadStorageCleanupServiceIT {
                 1
         );
 
-        
-
-
-
-
-
         assertThat(
                 Files.notExists(
                         uploadStorage.uploadDirectory(
@@ -318,10 +242,6 @@ class UploadStorageCleanupServiceIT {
                         )
                 )
         ).isTrue();
-
-        
-
-
 
         assertThat(
                 Files.exists(
@@ -331,10 +251,6 @@ class UploadStorageCleanupServiceIT {
                 )
         ).isTrue();
 
-        
-
-
-
         assertThat(
                 Files.exists(
                         uploadStorage.uploadDirectory(
@@ -342,12 +258,6 @@ class UploadStorageCleanupServiceIT {
                         )
                 )
         ).isTrue();
-
-        
-
-
-
-
 
         assertThat(
                 cvUploadRepository.existsById(
@@ -366,12 +276,6 @@ class UploadStorageCleanupServiceIT {
                         failed.getId()
                 )
         ).isTrue();
-
-        
-
-
-
-
 
         assertThat(
                 candidateRepository.findAllByUpload_Id(
@@ -381,12 +285,6 @@ class UploadStorageCleanupServiceIT {
                 1
         );
 
-        
-
-
-
-
-
         assertThat(
                 cleanupRecordRepository.existsById(
                         oldCompleted.getId()
@@ -404,7 +302,6 @@ class UploadStorageCleanupServiceIT {
                         failed.getId()
                 )
         ).isFalse();
-
 
         UploadCleanupRunResult secondRun =
                 cleanupService.runOnce();
@@ -426,8 +323,6 @@ class UploadStorageCleanupServiceIT {
         ).isZero();
     }
 
-
-
     @Test
     void shouldMarkCleanupWhenStorageIsAlreadyAbsent() {
 
@@ -440,8 +335,6 @@ class UploadStorageCleanupServiceIT {
                 upload.getId(),
                 10
         );
-
-
 
         assertThat(
                 Files.notExists(
@@ -480,8 +373,6 @@ class UploadStorageCleanupServiceIT {
                 )
         ).isTrue();
 
-
-
         UploadCleanupRunResult secondRun =
                 cleanupService.runOnce();
 
@@ -489,14 +380,6 @@ class UploadStorageCleanupServiceIT {
                 secondRun.selected()
         ).isZero();
     }
-
-    
-
-
-
-
-
-
 
     @Test
     void shouldRefuseRecursiveDeletionOutsideStorageRoot()
@@ -530,8 +413,6 @@ class UploadStorageCleanupServiceIT {
                             UploadStorageException.class
                     );
 
-
-
             assertThat(
                     Files.exists(
                             outsideFile
@@ -539,7 +420,6 @@ class UploadStorageCleanupServiceIT {
             ).isTrue();
 
         } finally {
-
 
             Files.deleteIfExists(
                     outsideFile
@@ -550,12 +430,6 @@ class UploadStorageCleanupServiceIT {
             );
         }
     }
-
-    
-
-
-
-
 
     private CvUpload completedUpload(
             String filename
@@ -585,12 +459,6 @@ class UploadStorageCleanupServiceIT {
                 );
     }
 
-    
-
-
-
-
-
     private CvUpload failedUpload(
             String filename
     ) {
@@ -614,12 +482,6 @@ class UploadStorageCleanupServiceIT {
                 );
     }
 
-    
-
-
-
-
-
     private void createPhysicalStorage(
             UUID uploadId
     ) throws IOException {
@@ -637,18 +499,12 @@ class UploadStorageCleanupServiceIT {
                 cvsDirectory
         );
 
-        
-
-
-
         Files.writeString(
                 cvsDirectory.resolve(
                         "resume.pdf"
                 ),
                 "integration-test-cv"
         );
-
-
 
         Files.writeString(
                 uploadStorage
@@ -661,7 +517,6 @@ class UploadStorageCleanupServiceIT {
                 "integration-test-manifest"
         );
     }
-
 
     private void moveCompletedAtBack(
             UUID uploadId,
@@ -706,7 +561,6 @@ class UploadStorageCleanupServiceIT {
                 1
         );
     }
-
 
     private static Path createStorageRoot() {
 

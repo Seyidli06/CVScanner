@@ -121,11 +121,6 @@ class RateLimitBackendUnavailableIT {
     void shouldReturn503WhenRedisIsUnavailableAndFailOpenIsFalse()
             throws Exception {
 
-        
-
-
-
-
         REDIS.stop();
 
         mockMvc.perform(

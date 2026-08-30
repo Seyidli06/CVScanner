@@ -30,21 +30,6 @@ public class RateLimitPolicyResolver {
                     "^/api/v1/uploads/[^/]+/failures$"
             );
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public Optional<RateLimitPolicy> resolve(
             String method,
             String path
@@ -59,12 +44,6 @@ public class RateLimitPolicyResolver {
                 path,
                 "path must not be null"
         );
-
-        
-
-
-
-
 
         if (
                 HttpMethod.POST.matches(
@@ -81,15 +60,6 @@ public class RateLimitPolicyResolver {
             );
         }
 
-        
-
-
-
-
-
-
-
-
         if (
                 !HttpMethod.GET.matches(
                         method
@@ -98,21 +68,6 @@ public class RateLimitPolicyResolver {
 
             return Optional.empty();
         }
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         if (
                 CSV_EXPORT_PATH.equals(
@@ -129,12 +84,6 @@ public class RateLimitPolicyResolver {
             );
         }
 
-        
-
-
-
-
-
         if (
                 CANDIDATES_PATH.equals(
                         path
@@ -145,14 +94,6 @@ public class RateLimitPolicyResolver {
                     RateLimitPolicy.READ
             );
         }
-
-        
-
-
-
-
-
-
 
         if (
                 UPLOAD_STATUS_PATTERN
@@ -166,15 +107,6 @@ public class RateLimitPolicyResolver {
                     RateLimitPolicy.READ
             );
         }
-
-        
-
-
-
-
-
-
-
 
         if (
                 PROCESSING_FAILURES_PATTERN

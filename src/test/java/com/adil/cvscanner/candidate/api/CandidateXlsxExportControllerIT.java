@@ -58,12 +58,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 )
 class CandidateXlsxExportControllerIT {
 
-    
-
-
-
-
-
     private static final String EXPORT_URL =
             "/api/v1/candidates/export.xlsx";
 
@@ -72,12 +66,6 @@ class CandidateXlsxExportControllerIT {
 
     private static final Path STORAGE_ROOT =
             createStorageRoot();
-
-    
-
-
-
-
 
     @Container
     @ServiceConnection
@@ -95,12 +83,6 @@ class CandidateXlsxExportControllerIT {
                             "test"
                     );
 
-    
-
-
-
-
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -113,21 +95,9 @@ class CandidateXlsxExportControllerIT {
     @Autowired
     private EntityManagerFactory entityManagerFactory;
 
-    
-
-
-
-
-
     private CvUpload backendUpload;
 
     private CvUpload secondUpload;
-
-    
-
-
-
-
 
     @DynamicPropertySource
     static void properties(
@@ -145,71 +115,12 @@ class CandidateXlsxExportControllerIT {
         );
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @BeforeEach
     void setUp() {
-
-        
-
-
-
-
-
 
         candidateRepository.deleteAll();
 
         cvUploadRepository.deleteAll();
-
-        
-
-
-
-
 
         backendUpload =
                 new CvUpload(
@@ -225,12 +136,6 @@ class CandidateXlsxExportControllerIT {
                         backendUpload
                 );
 
-        
-
-
-
-
-
         secondUpload =
                 new CvUpload(
                         "additional-candidates.zip"
@@ -244,12 +149,6 @@ class CandidateXlsxExportControllerIT {
                 cvUploadRepository.saveAndFlush(
                         secondUpload
                 );
-
-        
-
-
-
-
 
         Candidate alice =
                 candidate(
@@ -356,16 +255,6 @@ class CandidateXlsxExportControllerIT {
         );
     }
 
-    
-
-
-
-
-
-
-
-
-
     @Test
     void shouldDownloadValidXlsxWithExpectedWorkbookStructure()
             throws Exception {
@@ -376,12 +265,6 @@ class CandidateXlsxExportControllerIT {
                                 EXPORT_URL
                         )
                 );
-
-        
-
-
-
-
 
         assertThat(
                 result.getResponse()
@@ -433,12 +316,6 @@ class CandidateXlsxExportControllerIT {
                         )
         ).isNotBlank();
 
-        
-
-
-
-
-
         try (
                 XSSFWorkbook workbook =
                         workbook(
@@ -461,12 +338,6 @@ class CandidateXlsxExportControllerIT {
                     sheet
             ).isNotNull();
 
-            
-
-
-
-
-
             assertThat(
                     sheet.getPhysicalNumberOfRows()
             ).isEqualTo(
@@ -478,12 +349,6 @@ class CandidateXlsxExportControllerIT {
                             0
                     )
             );
-
-            
-
-
-
-
 
             assertThat(
                     stringCell(
@@ -545,12 +410,6 @@ class CandidateXlsxExportControllerIT {
                     "Farid Mammadov"
             );
 
-            
-
-
-
-
-
             assertThat(
                     sheet.getPaneInformation()
             ).isNotNull();
@@ -560,14 +419,6 @@ class CandidateXlsxExportControllerIT {
                             .getPaneInformation()
                             .isFreezePane()
             ).isTrue();
-
-            
-
-
-
-
-
-
 
             assertThat(
                     sheet
@@ -585,18 +436,6 @@ class CandidateXlsxExportControllerIT {
             );
         }
     }
-
-    
-
-
-
-
-
-
-
-
-
-
 
     @Test
     void shouldApplyFiltersAndKeepExperienceNumeric()
@@ -645,10 +484,6 @@ class CandidateXlsxExportControllerIT {
                     sheet
             ).isNotNull();
 
-            
-
-
-
             assertThat(
                     sheet.getPhysicalNumberOfRows()
             ).isEqualTo(
@@ -684,12 +519,6 @@ class CandidateXlsxExportControllerIT {
             ).isEqualTo(
                     "Alice Johnson"
             );
-
-            
-
-
-
-
 
             Cell faridExperience =
                     sheet
@@ -774,14 +603,6 @@ class CandidateXlsxExportControllerIT {
         }
     }
 
-    
-
-
-
-
-
-
-
     @Test
     void shouldPreserveUnicodeText()
             throws Exception {
@@ -846,10 +667,6 @@ class CandidateXlsxExportControllerIT {
                     sheet
             ).isNotNull();
 
-            
-
-
-
             assertThat(
                     sheet.getPhysicalNumberOfRows()
             ).isEqualTo(
@@ -907,14 +724,6 @@ class CandidateXlsxExportControllerIT {
             );
         }
     }
-
-    
-
-
-
-
-
-
 
     @Test
     void shouldStoreFormulaLookingValueAsPlainString()
@@ -1011,14 +820,6 @@ class CandidateXlsxExportControllerIT {
         }
     }
 
-    
-
-
-
-
-
-
-
     @Test
     void shouldReturnHeaderOnlyWorkbookWhenNoCandidateMatches()
             throws Exception {
@@ -1063,14 +864,6 @@ class CandidateXlsxExportControllerIT {
             );
         }
     }
-
-    
-
-
-
-
-
-
 
     @Test
     void shouldReturnJson400BeforeStreamingForInvalidSort()
@@ -1137,16 +930,6 @@ class CandidateXlsxExportControllerIT {
                         )
                 );
     }
-
-    
-
-
-
-
-
-
-
-
 
     @Test
     void shouldExportMultipleBatchesWithoutNPlusOne()
@@ -1219,11 +1002,6 @@ class CandidateXlsxExportControllerIT {
                 260
         );
 
-        
-
-
-
-
         Statistics statistics =
                 statistics();
 
@@ -1260,12 +1038,6 @@ class CandidateXlsxExportControllerIT {
                     sheet
             ).isNotNull();
 
-            
-
-
-
-
-
             assertThat(
                     sheet.getPhysicalNumberOfRows()
             ).isEqualTo(
@@ -1293,20 +1065,6 @@ class CandidateXlsxExportControllerIT {
             );
         }
 
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
         long preparedStatements =
                 statistics
                         .getPrepareStatementCount();
@@ -1318,15 +1076,6 @@ class CandidateXlsxExportControllerIT {
                 8L
         );
     }
-
-    
-
-
-
-
-
-
-
 
     private MvcResult performXlsxExport(
             MockHttpServletRequestBuilder requestBuilder
@@ -1357,12 +1106,6 @@ class CandidateXlsxExportControllerIT {
                 .andReturn();
     }
 
-    
-
-
-
-
-
     private XSSFWorkbook workbook(
             MvcResult result
     ) throws IOException {
@@ -1371,18 +1114,6 @@ class CandidateXlsxExportControllerIT {
                 result
                         .getResponse()
                         .getContentAsByteArray();
-
-        
-
-
-
-
-
-
-
-
-
-
 
         assertThat(
                 bytes.length
@@ -1408,12 +1139,6 @@ class CandidateXlsxExportControllerIT {
                 )
         );
     }
-
-    
-
-
-
-
 
     private void assertHeader(
             Row row
@@ -1496,12 +1221,6 @@ class CandidateXlsxExportControllerIT {
         );
     }
 
-    
-
-
-
-
-
     private String stringCell(
             XSSFSheet sheet,
             int rowIndex,
@@ -1535,12 +1254,6 @@ class CandidateXlsxExportControllerIT {
         return cell.getStringCellValue();
     }
 
-    
-
-
-
-
-
     private Candidate candidate(
             CvUpload upload,
             String fullName,
@@ -1562,12 +1275,6 @@ class CandidateXlsxExportControllerIT {
         );
     }
 
-    
-
-
-
-
-
     private Statistics statistics() {
 
         SessionFactory sessionFactory =
@@ -1578,12 +1285,6 @@ class CandidateXlsxExportControllerIT {
         return sessionFactory
                 .getStatistics();
     }
-
-    
-
-
-
-
 
     private static Path createStorageRoot() {
 

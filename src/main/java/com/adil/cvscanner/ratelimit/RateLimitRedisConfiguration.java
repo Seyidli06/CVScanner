@@ -28,14 +28,6 @@ import java.time.Duration;
 )
 public class RateLimitRedisConfiguration {
 
-    
-
-
-
-
-
-
-
     @Bean(
             destroyMethod = "shutdown"
     )
@@ -57,17 +49,6 @@ public class RateLimitRedisConfiguration {
         );
     }
 
-    
-
-
-
-
-
-
-
-
-
-
     @Bean(
             destroyMethod = "close"
     )
@@ -84,12 +65,6 @@ public class RateLimitRedisConfiguration {
                 )
         );
     }
-
-    
-
-
-
-
 
     @Bean
     @Lazy
@@ -124,23 +99,11 @@ public class RateLimitRedisConfiguration {
                 .build();
     }
 
-    
-
-
-
-
-
     @Bean
     RateLimitPolicyResolver rateLimitPolicyResolver() {
 
         return new RateLimitPolicyResolver();
     }
-
-    
-
-
-
-
 
     @Bean
     RateLimitResponseWriter rateLimitResponseWriter(
@@ -151,12 +114,6 @@ public class RateLimitRedisConfiguration {
                 jsonMapper
         );
     }
-
-    
-
-
-
-
 
     @Bean
     RateLimitingFilter rateLimitingFilter(
@@ -171,17 +128,6 @@ public class RateLimitRedisConfiguration {
                 responseWriter
         );
     }
-
-    
-
-
-
-
-
-
-
-
-
 
     @Bean
     FilterRegistrationBean<RateLimitingFilter>
@@ -201,12 +147,6 @@ public class RateLimitRedisConfiguration {
 
         return registration;
     }
-
-    
-
-
-
-
 
     private Duration longestRefillPeriod(
             RateLimitProperties properties

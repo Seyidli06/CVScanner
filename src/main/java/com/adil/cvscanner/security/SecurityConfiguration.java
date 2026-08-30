@@ -28,24 +28,11 @@ public class SecurityConfiguration {
     ) throws Exception {
 
         http
-                
-
-
-
-
-
-
 
                 .csrf(
                         csrf ->
                                 csrf.disable()
                 )
-
-                
-
-
-
-
 
                 .sessionManagement(
                         session ->
@@ -54,24 +41,9 @@ public class SecurityConfiguration {
                                 )
                 )
 
-                
-
-
-
-
-
                 .authorizeHttpRequests(
                         authorization ->
                                 authorization
-
-                                        
-
-
-
-
-
-
-
 
                                         .requestMatchers(
                                                 "/actuator/health",
@@ -81,15 +53,6 @@ public class SecurityConfiguration {
                                         )
                                         .permitAll()
 
-                                        
-
-
-
-
-
-
-
-
                                         .requestMatchers(
                                                 "/actuator/metrics",
                                                 "/actuator/metrics/**"
@@ -98,23 +61,12 @@ public class SecurityConfiguration {
                                                 SecurityRoles.ROLE_ADMIN
                                         )
 
-
                                         .requestMatchers(
                                                 "/v3/api-docs/**",
                                                 "/swagger-ui/**",
                                                 "/swagger-ui.html"
                                         )
                                         .permitAll()
-
-                                        
-
-
-
-
-
-
-
-
 
                                         .requestMatchers(
                                                 HttpMethod.POST,
@@ -125,14 +77,6 @@ public class SecurityConfiguration {
                                                 SecurityRoles.ROLE_ADMIN
                                         )
 
-                                        
-
-
-
-
-
-
-
                                         .requestMatchers(
                                                 HttpMethod.GET,
                                                 "/api/v1/uploads/*"
@@ -141,15 +85,6 @@ public class SecurityConfiguration {
                                                 SecurityRoles.ROLE_RECRUITER,
                                                 SecurityRoles.ROLE_ADMIN
                                         )
-
-                                        
-
-
-
-
-
-
-
 
                                         .requestMatchers(
                                                 HttpMethod.GET,
@@ -160,14 +95,6 @@ public class SecurityConfiguration {
                                                 SecurityRoles.ROLE_ADMIN
                                         )
 
-                                        
-
-
-
-
-
-
-
                                         .requestMatchers(
                                                 HttpMethod.GET,
                                                 "/api/v1/candidates"
@@ -176,12 +103,6 @@ public class SecurityConfiguration {
                                                 SecurityRoles.ROLE_RECRUITER,
                                                 SecurityRoles.ROLE_ADMIN
                                         )
-
-                                        
-
-
-
-
 
                                         .requestMatchers(
                                                 HttpMethod.GET,
@@ -192,12 +113,6 @@ public class SecurityConfiguration {
                                                 SecurityRoles.ROLE_ADMIN
                                         )
 
-                                        
-
-
-
-
-
                                         .requestMatchers(
                                                 HttpMethod.GET,
                                                 "/api/v1/candidates/export.xlsx"
@@ -207,31 +122,9 @@ public class SecurityConfiguration {
                                                 SecurityRoles.ROLE_ADMIN
                                         )
 
-                                        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                                         .anyRequest()
                                         .denyAll()
                 )
-
-                
-
-
-
-
 
                 .oauth2ResourceServer(
                         resourceServer ->
@@ -248,27 +141,6 @@ public class SecurityConfiguration {
                                         )
                 );
 
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         rateLimitingFilterProvider.ifAvailable(
                 rateLimitingFilter ->
                         http.addFilterAfter(
@@ -279,12 +151,6 @@ public class SecurityConfiguration {
 
         return http.build();
     }
-
-    
-
-
-
-
 
     @Bean
     JwtDecoder jwtDecoder(
@@ -310,12 +176,6 @@ public class SecurityConfiguration {
 
         return decoder;
     }
-
-    
-
-
-
-
 
     @Bean
     JwtAuthenticationConverter jwtAuthenticationConverter(

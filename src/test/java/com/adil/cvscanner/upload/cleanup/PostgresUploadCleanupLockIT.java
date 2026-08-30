@@ -70,8 +70,6 @@ class PostgresUploadCleanupLockIT {
         );
     }
 
-
-
     @Test
     void shouldRecordDistributedLockAcquisitionAndContention()
             throws Exception {
@@ -186,10 +184,6 @@ class PostgresUploadCleanupLockIT {
                         )
         ).isTrue();
 
-        
-
-
-
         assertThat(
                 counter(
                         meterRegistry,
@@ -233,7 +227,6 @@ class PostgresUploadCleanupLockIT {
                 firstThreadFailure.get()
         ).isNull();
 
-
         Optional<String> secondAfterRelease =
                 secondInstance
                         .tryExecute(
@@ -264,14 +257,6 @@ class PostgresUploadCleanupLockIT {
                 1.0
         );
     }
-
-    
-
-
-
-
-
-
 
     @Test
     void shouldReleaseLockAfterActionFailureAndRecordAcquisition() {
@@ -352,12 +337,6 @@ class PostgresUploadCleanupLockIT {
                 )
         ).isZero();
     }
-
-    
-
-
-
-
 
     private double counter(
             SimpleMeterRegistry meterRegistry,

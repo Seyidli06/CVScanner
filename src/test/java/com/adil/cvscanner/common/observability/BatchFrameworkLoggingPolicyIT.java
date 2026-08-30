@@ -15,17 +15,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Testcontainers
 class BatchFrameworkLoggingPolicyIT {
 
-    
-
-
-
-
-
-
-
-
-
-
     @Container
     @ServiceConnection
     static PostgreSQLContainer postgres =
@@ -42,23 +31,8 @@ class BatchFrameworkLoggingPolicyIT {
                             "test"
                     );
 
-    
-
-
-
-
-
-
-
-
-
     private static final String CHUNK_LOGGER_NAME =
             "org.springframework.batch.core.step.item.ChunkOrientedStep";
-
-    
-
-
-
 
     @Test
     void shouldDisableUnsafeChunkFrameworkLogger() {
@@ -67,10 +41,6 @@ class BatchFrameworkLoggingPolicyIT {
                 LoggerFactory.getLogger(
                         CHUNK_LOGGER_NAME
                 );
-
-        
-
-
 
         assertThat(
                 logger.isErrorEnabled()

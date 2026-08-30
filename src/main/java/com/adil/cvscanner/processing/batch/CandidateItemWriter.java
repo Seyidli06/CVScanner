@@ -48,12 +48,6 @@ public class CandidateItemWriter
             return;
         }
 
-        
-
-
-
-
-
         CvUpload upload =
                 cvUploadRepository
                         .findById(uploadId)
@@ -64,17 +58,6 @@ public class CandidateItemWriter
                                                         + uploadId
                                         )
                         );
-
-        
-
-
-
-
-
-
-
-
-
 
         Set<String> sourceFilenames =
                 new LinkedHashSet<>();
@@ -92,26 +75,6 @@ public class CandidateItemWriter
             );
         }
 
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         Set<String> existingSourceFilenames =
                 new HashSet<>(
                         candidateRepository
@@ -120,17 +83,6 @@ public class CandidateItemWriter
                                         sourceFilenames
                                 )
                 );
-
-        
-
-
-
-
-
-
-
-
-
 
         Set<String> seenInCurrentChunk =
                 new HashSet<>();
@@ -145,13 +97,6 @@ public class CandidateItemWriter
             String sourceFilename =
                     draft.sourceFilename();
 
-            
-
-
-
-
-
-
             if (
                     existingSourceFilenames.contains(
                             sourceFilename
@@ -159,9 +104,6 @@ public class CandidateItemWriter
             ) {
                 continue;
             }
-
-            
-
 
             if (
                     !seenInCurrentChunk.add(
@@ -187,31 +129,15 @@ public class CandidateItemWriter
             );
         }
 
-        
-
-
-
         if (
                 candidatesToInsert.isEmpty()
         ) {
             return;
         }
 
-        
-
-
-
-
-
         candidateRepository.saveAll(
                 candidatesToInsert
         );
-
-        
-
-
-
-
 
         candidateRepository.flush();
     }

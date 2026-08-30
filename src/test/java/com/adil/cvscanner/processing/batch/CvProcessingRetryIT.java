@@ -48,12 +48,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 )
 @TestPropertySource(
         properties = {
-                
-
-
-
-
-
 
                 "app.batch.retry.max-retries=2",
                 "app.batch.retry.delay=0ms"
@@ -69,10 +63,6 @@ class CvProcessingRetryIT {
 
     private static final String NON_RETRYABLE_STEP_NAME =
             "nonRetryableTestStep";
-
-    
-
-
 
     @Container
     @ServiceConnection
@@ -112,33 +102,11 @@ class CvProcessingRetryIT {
     private NonRetryableProbeWriter
             nonRetryableProbeWriter;
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Test
     void shouldRetryTransientDataAccessFailureAndEventuallyComplete()
             throws Exception {
 
         transientRetryProbeWriter.reset();
-
-        
-
-
 
         JobParameters parameters =
                 uniqueJobParameters();
@@ -153,11 +121,6 @@ class CvProcessingRetryIT {
                 waitForJobCompletion(
                         launchedExecution.getId()
                 );
-
-        
-
-
-
 
         assertThat(
                 completedExecution.getStatus()
@@ -177,36 +140,17 @@ class CvProcessingRetryIT {
                 BatchStatus.COMPLETED
         );
 
-        
-
-
         assertThat(
                 stepExecution.getReadCount()
         ).isEqualTo(
                 1
         );
 
-        
-
-
-
-
         assertThat(
                 stepExecution.getWriteCount()
         ).isEqualTo(
                 1
         );
-
-        
-
-
-
-
-
-
-
-
-
 
         assertThat(
                 transientRetryProbeWriter
@@ -215,11 +159,6 @@ class CvProcessingRetryIT {
                 3
         );
 
-        
-
-
-
-
         assertThat(
                 transientRetryProbeWriter
                         .getSuccessfullyWrittenItems()
@@ -227,28 +166,6 @@ class CvProcessingRetryIT {
                 "candidate-1"
         );
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @Test
     void shouldNotRetryNonTransientBusinessFailure()
@@ -285,13 +202,6 @@ class CvProcessingRetryIT {
                 BatchStatus.FAILED
         );
 
-        
-
-
-
-
-
-
         assertThat(
                 nonRetryableProbeWriter
                         .getAttempts()
@@ -300,19 +210,7 @@ class CvProcessingRetryIT {
         );
     }
 
-    
-
-
-
-
-
     private JobParameters uniqueJobParameters() {
-
-        
-
-
-
-
 
         return new JobParametersBuilder()
                 .addString(
@@ -322,12 +220,6 @@ class CvProcessingRetryIT {
                 )
                 .toJobParameters();
     }
-
-    
-
-
-
-
 
     private JobExecution waitForJobCompletion(
             long executionId
@@ -375,12 +267,6 @@ class CvProcessingRetryIT {
         );
     }
 
-    
-
-
-
-
-
     private StepExecution findStep(
             JobExecution jobExecution,
             String stepName
@@ -406,28 +292,10 @@ class CvProcessingRetryIT {
                 );
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
     @TestConfiguration(
             proxyBeanMethods = false
     )
     static class RetryTestConfiguration {
-
-        
-
-
-
-
 
         @Bean
         TransientRetryProbeWriter
@@ -436,24 +304,12 @@ class CvProcessingRetryIT {
             return new TransientRetryProbeWriter();
         }
 
-        
-
-
-
-
-
         @Bean
         NonRetryableProbeWriter
         nonRetryableProbeWriter() {
 
             return new NonRetryableProbeWriter();
         }
-
-        
-
-
-
-
 
         @Bean("transientRetryTestStep")
         Step transientRetryTestStep(
@@ -464,11 +320,6 @@ class CvProcessingRetryIT {
                 RetryPolicy retryPolicy,
                 TransientRetryProbeWriter writer
         ) {
-
-            
-
-
-
 
             ListItemReader<String> reader =
                     new ListItemReader<>(
@@ -505,22 +356,12 @@ class CvProcessingRetryIT {
 
                     .faultTolerant()
 
-                    
-
-
-
                     .retryPolicy(
                             retryPolicy
                     )
 
                     .build();
         }
-
-        
-
-
-
-
 
         @Bean("transientRetryTestJob")
         Job transientRetryTestJob(
@@ -538,12 +379,6 @@ class CvProcessingRetryIT {
                     )
                     .build();
         }
-
-        
-
-
-
-
 
         @Bean("nonRetryableTestStep")
         Step nonRetryableTestStep(
@@ -590,26 +425,12 @@ class CvProcessingRetryIT {
 
                     .faultTolerant()
 
-                    
-
-
-
-
-
-
-
                     .retryPolicy(
                             retryPolicy
                     )
 
                     .build();
         }
-
-        
-
-
-
-
 
         @Bean("nonRetryableTestJob")
         Job nonRetryableTestJob(
@@ -629,21 +450,6 @@ class CvProcessingRetryIT {
         }
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     static class TransientRetryProbeWriter
             implements ItemWriter<String> {
 
@@ -662,10 +468,6 @@ class CvProcessingRetryIT {
             int currentAttempt =
                     attempts.incrementAndGet();
 
-            
-
-
-
             if (
                     currentAttempt <= 2
             ) {
@@ -674,9 +476,6 @@ class CvProcessingRetryIT {
                         "Simulated temporary database resource failure"
                 );
             }
-
-            
-
 
             successfullyWrittenItems.addAll(
                     chunk.getItems()
@@ -706,12 +505,6 @@ class CvProcessingRetryIT {
         }
     }
 
-    
-
-
-
-
-
     static class NonRetryableProbeWriter
             implements ItemWriter<String> {
 
@@ -724,7 +517,6 @@ class CvProcessingRetryIT {
         ) {
 
             attempts.incrementAndGet();
-
 
             throw new CandidateExtractionException(
                     "Simulated deterministic candidate extraction failure"

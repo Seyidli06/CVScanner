@@ -12,86 +12,29 @@ import java.time.Duration;
 )
 public class UploadCleanupProperties {
 
-    
-
-
-
-
-
     private boolean enabled =
             true;
-
-    
-
-
-
-
 
     private Duration completedRetention =
             Duration.ofDays(
                     7
             );
 
-    
-
-
-
-
-
     private int batchSize =
             100;
 
-    
-
-
-
-
-
-
-
-
-
-
     private boolean schedulerEnabled =
             false;
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
 
     private Duration scheduleDelay =
             Duration.ofHours(
                     1
             );
 
-    
-
-
-
-
-
-
-
     private Duration initialDelay =
             Duration.ofMinutes(
                     1
             );
-
-    
-
-
-
-
 
     @PostConstruct
     void validate() {
@@ -172,12 +115,6 @@ public class UploadCleanupProperties {
             );
         }
     }
-
-    
-
-
-
-
 
     public boolean isEnabled() {
 

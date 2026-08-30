@@ -51,13 +51,6 @@ class CvUploadWorkflowServiceTest {
                 );
     }
 
-    
-
-
-
-
-
-
     @Test
     void shouldUploadAndLaunchProcessingJob() {
 
@@ -84,20 +77,17 @@ class CvUploadWorkflowServiceTest {
                                 file
                         );
 
-
         verify(
                 cvUploadService
         ).upload(
                 file
         );
 
-
         verify(
                 processingJobLauncher
         ).launch(
                 uploadId
         );
-
 
         verify(
                 uploadStatusService,
@@ -118,13 +108,6 @@ class CvUploadWorkflowServiceTest {
                 "candidates.zip"
         );
     }
-
-    
-
-
-
-
-
 
     @Test
     void shouldMarkUploadFailedWhenBatchLaunchFails() {
@@ -188,17 +171,12 @@ class CvUploadWorkflowServiceTest {
                 uploadId
         );
 
-        
-
-
         verify(
                 uploadStatusService
         ).markFailed(
                 uploadId
         );
     }
-
-
 
     @Test
     void shouldPreserveLaunchExceptionWhenFailedStatusUpdateAlsoFails() {
@@ -264,7 +242,6 @@ class CvUploadWorkflowServiceTest {
                         launchException
                 );
 
-        
         assertThat(
                 launchException
                         .getSuppressed()
@@ -282,12 +259,6 @@ class CvUploadWorkflowServiceTest {
                 uploadId
         );
     }
-
-    
-
-
-
-
 
     private CvUpload createUpload() {
 

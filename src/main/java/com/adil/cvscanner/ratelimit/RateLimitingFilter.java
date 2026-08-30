@@ -65,17 +65,6 @@ public class RateLimitingFilter
                         path
                 );
 
-        
-
-
-
-
-
-
-
-
-
-
         if (
                 policy.isEmpty()
         ) {
@@ -92,14 +81,6 @@ public class RateLimitingFilter
                 SecurityContextHolder
                         .getContext()
                         .getAuthentication();
-
-        
-
-
-
-
-
-
 
         if (
                 authentication == null
@@ -141,18 +122,9 @@ public class RateLimitingFilter
                         principal
                 );
 
-        
-
-
-
-
-
         if (
                 !decision.backendAvailable()
         ) {
-
-            
-
 
             if (
                     decision.allowed()
@@ -166,9 +138,6 @@ public class RateLimitingFilter
                 return;
             }
 
-            
-
-
             responseWriter.writeBackendUnavailable(
                     request,
                     response
@@ -176,12 +145,6 @@ public class RateLimitingFilter
 
             return;
         }
-
-        
-
-
-
-
 
         if (
                 !decision.allowed()
@@ -196,12 +159,6 @@ public class RateLimitingFilter
             return;
         }
 
-        
-
-
-
-
-
         response.setHeader(
                 RateLimitResponseWriter
                         .RATE_LIMIT_REMAINING_HEADER,
@@ -215,24 +172,6 @@ public class RateLimitingFilter
                 response
         );
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     private String resolveApplicationPath(
             HttpServletRequest request

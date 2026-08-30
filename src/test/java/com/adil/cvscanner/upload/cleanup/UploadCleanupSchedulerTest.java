@@ -86,13 +86,6 @@ class UploadCleanupSchedulerTest {
                 );
     }
 
-    
-
-
-
-
-
-
     @Test
     void shouldNotRunOrRecordAttemptWhenSchedulerIsDisabled() {
 
@@ -114,13 +107,6 @@ class UploadCleanupSchedulerTest {
         ).isZero();
     }
 
-    
-
-
-
-
-
-
     @Test
     void shouldNotRunOrRecordAttemptWhenCleanupIsDisabled() {
 
@@ -141,13 +127,6 @@ class UploadCleanupSchedulerTest {
                 )
         ).isZero();
     }
-
-    
-
-
-
-
-
 
     @Test
     void shouldRecordSchedulerAttemptForNormalRun() {
@@ -196,13 +175,6 @@ class UploadCleanupSchedulerTest {
         ).isZero();
     }
 
-    
-
-
-
-
-
-
     @Test
     void shouldTreatDistributedLockContentionAsSafeSchedulerAttempt() {
 
@@ -225,20 +197,12 @@ class UploadCleanupSchedulerTest {
                 1.0
         );
 
-
         assertThat(
                 counter(
                         UploadCleanupMetrics.SCHEDULER_FAILURES
                 )
         ).isZero();
     }
-
-    
-
-
-
-
-
 
     @Test
     void shouldRecordFailureAndReleaseLocalGuard() {
@@ -294,13 +258,6 @@ class UploadCleanupSchedulerTest {
                 1.0
         );
     }
-
-    
-
-
-
-
-
 
     @Test
     void shouldRecordLocalOverlapSkip()
@@ -362,8 +319,6 @@ class UploadCleanupSchedulerTest {
                         )
         ).isTrue();
 
-
-
         scheduler.runScheduledCleanup();
 
         verify(
@@ -400,7 +355,6 @@ class UploadCleanupSchedulerTest {
                 firstThread.isAlive()
         ).isFalse();
 
-
         when(
                 executionCoordinator.tryRunOnce()
         ).thenReturn(
@@ -432,12 +386,6 @@ class UploadCleanupSchedulerTest {
                 3.0
         );
     }
-
-    
-
-
-
-
 
     private double counter(
             String name

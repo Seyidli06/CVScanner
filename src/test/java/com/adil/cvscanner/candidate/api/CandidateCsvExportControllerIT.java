@@ -53,12 +53,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 )
 class CandidateCsvExportControllerIT {
 
-    
-
-
-
-
-
     private static final String EXPORT_URL =
             "/api/v1/candidates/export.csv";
 
@@ -74,12 +68,6 @@ class CandidateCsvExportControllerIT {
 
     private static final Path STORAGE_ROOT =
             createStorageRoot();
-
-    
-
-
-
-
 
     @Container
     @ServiceConnection
@@ -113,12 +101,6 @@ class CandidateCsvExportControllerIT {
 
     private CvUpload secondUpload;
 
-    
-
-
-
-
-
     @DynamicPropertySource
     static void properties(
             DynamicPropertyRegistry registry
@@ -135,33 +117,12 @@ class CandidateCsvExportControllerIT {
         );
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @BeforeEach
     void setUp() {
 
         candidateRepository.deleteAll();
 
         cvUploadRepository.deleteAll();
-
-        
-
-
-
-
 
         backendUpload =
                 new CvUpload(
@@ -177,12 +138,6 @@ class CandidateCsvExportControllerIT {
                         backendUpload
                 );
 
-        
-
-
-
-
-
         secondUpload =
                 new CvUpload(
                         "additional-candidates.zip"
@@ -196,12 +151,6 @@ class CandidateCsvExportControllerIT {
                 cvUploadRepository.saveAndFlush(
                         secondUpload
                 );
-
-        
-
-
-
-
 
         Candidate alice =
                 candidate(
@@ -308,13 +257,6 @@ class CandidateCsvExportControllerIT {
         );
     }
 
-    
-
-
-
-
-
-
     @Test
     void shouldDownloadCsvWithExpectedHeadersAndDefaultSort()
             throws Exception {
@@ -380,10 +322,6 @@ class CandidateCsvExportControllerIT {
                         result
                 );
 
-        
-
-
-
         assertThat(
                 csv
         ).startsWith(
@@ -398,10 +336,6 @@ class CandidateCsvExportControllerIT {
                 EXPECTED_HEADER
         );
 
-        
-
-
-
         assertThat(
                 withoutBom(
                         csv
@@ -409,12 +343,6 @@ class CandidateCsvExportControllerIT {
         ).isEqualTo(
                 7
         );
-
-        
-
-
-
-
 
         assertAppearsBefore(
                 csv,
@@ -446,38 +374,12 @@ class CandidateCsvExportControllerIT {
                 "\"Farid Mammadov\""
         );
 
-        
-
-
-
-
         assertThat(
                 csv
         ).contains(
                 "\"Java | PostgreSQL | Spring Boot\""
         );
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @Test
     void shouldApplyFiltersAndSortExport()
@@ -514,10 +416,6 @@ class CandidateCsvExportControllerIT {
                 csvBody(
                         result
                 );
-
-        
-
-
 
         assertThat(
                 withoutBom(
@@ -562,13 +460,6 @@ class CandidateCsvExportControllerIT {
         );
     }
 
-    
-
-
-
-
-
-
     @Test
     void shouldEscapeCsvSpecialCharactersAndPreserveUtf8()
             throws Exception {
@@ -590,14 +481,6 @@ class CandidateCsvExportControllerIT {
         Candidate specialCandidate =
                 candidate(
                         specialUpload,
-
-                        
-
-
-
-
-
-
 
                         "Rəşad \"QA\", Əliyev\nSenior",
 
@@ -635,28 +518,11 @@ class CandidateCsvExportControllerIT {
                         result
                 );
 
-        
-
-
-
-
-
-
-
-
-
-
-
-
         assertThat(
                 csv
         ).contains(
                 "\"Rəşad \"\"QA\"\", Əliyev\nSenior\""
         );
-
-        
-
-
 
         assertThat(
                 csv
@@ -664,21 +530,11 @@ class CandidateCsvExportControllerIT {
                 "\"Bakı, Azərbaycan\""
         );
 
-        
-
-
-
-
-
         assertThat(
                 csv
         ).contains(
                 "\"special,\"\"resume\"\".pdf\""
         );
-
-        
-
-
 
         assertThat(
                 csv
@@ -696,24 +552,6 @@ class CandidateCsvExportControllerIT {
                         "Azərbaycan"
                 );
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @Test
     void shouldProtectSpreadsheetFormulaInjection()
@@ -766,25 +604,11 @@ class CandidateCsvExportControllerIT {
                         result
                 );
 
-        
-
-
-
-
-
-
-
         assertThat(
                 csv
         ).doesNotContain(
                 ",\"=2+2\","
         );
-
-        
-
-
-
-
 
         assertThat(
                 csv
@@ -792,19 +616,6 @@ class CandidateCsvExportControllerIT {
                 "\"'=2+2\""
         );
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
 
     @Test
     void shouldReturnHeaderOnlyWhenNoCandidateMatches()
@@ -834,22 +645,6 @@ class CandidateCsvExportControllerIT {
                 EXPECTED_HEADER
         );
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @Test
     void shouldReturnJson400BeforeStreamingForInvalidSort()
@@ -916,40 +711,6 @@ class CandidateCsvExportControllerIT {
                         )
                 );
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @Test
     void shouldExportMoreThanOneBatchWithoutNPlusOne()
@@ -1022,11 +783,6 @@ class CandidateCsvExportControllerIT {
                 260
         );
 
-        
-
-
-
-
         Statistics statistics =
                 statistics();
 
@@ -1054,10 +810,6 @@ class CandidateCsvExportControllerIT {
                         )
                 );
 
-        
-
-
-
         assertThat(
                 csv.lines().count()
         ).isEqualTo(
@@ -1080,20 +832,6 @@ class CandidateCsvExportControllerIT {
                 "\"Bulk Candidate 259\""
         );
 
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
         long preparedStatements =
                 statistics
                         .getPrepareStatementCount();
@@ -1105,26 +843,6 @@ class CandidateCsvExportControllerIT {
                 8L
         );
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     private MvcResult performCsvExport(
             MockHttpServletRequestBuilder requestBuilder
@@ -1155,12 +873,6 @@ class CandidateCsvExportControllerIT {
                 .andReturn();
     }
 
-    
-
-
-
-
-
     private String csvBody(
             MvcResult result
     ) {
@@ -1172,12 +884,6 @@ class CandidateCsvExportControllerIT {
                 StandardCharsets.UTF_8
         );
     }
-
-    
-
-
-
-
 
     private String withoutBom(
             String csv
@@ -1200,12 +906,6 @@ class CandidateCsvExportControllerIT {
 
         return csv;
     }
-
-    
-
-
-
-
 
     private void assertAppearsBefore(
             String text,
@@ -1258,12 +958,6 @@ class CandidateCsvExportControllerIT {
                 );
     }
 
-    
-
-
-
-
-
     private Candidate candidate(
             CvUpload upload,
             String fullName,
@@ -1285,12 +979,6 @@ class CandidateCsvExportControllerIT {
         );
     }
 
-    
-
-
-
-
-
     private Statistics statistics() {
 
         SessionFactory sessionFactory =
@@ -1301,12 +989,6 @@ class CandidateCsvExportControllerIT {
         return sessionFactory
                 .getStatistics();
     }
-
-    
-
-
-
-
 
     private static Path createStorageRoot() {
 

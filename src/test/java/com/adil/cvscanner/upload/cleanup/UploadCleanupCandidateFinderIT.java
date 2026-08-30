@@ -29,10 +29,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Testcontainers
 class UploadCleanupCandidateFinderIT {
 
-
     private static final Path STORAGE_ROOT =
             createStorageRoot();
-
 
     @Container
     @ServiceConnection
@@ -62,8 +60,6 @@ class UploadCleanupCandidateFinderIT {
     private JdbcTemplate
             jdbcTemplate;
 
-
-
     @DynamicPropertySource
     static void properties(
             DynamicPropertyRegistry registry
@@ -73,13 +69,6 @@ class UploadCleanupCandidateFinderIT {
                 "app.upload.storage-root",
                 () -> STORAGE_ROOT.toString()
         );
-
-        
-
-
-
-
-
 
         registry.add(
                 "app.cleanup.enabled",
@@ -108,24 +97,8 @@ class UploadCleanupCandidateFinderIT {
         cvUploadRepository.deleteAll();
     }
 
-    
-
-
-
-
-
-
-
     @Test
     void shouldSelectOnlyOldCompletedUploads() {
-
-        
-
-
-
-
-
-
 
         CvUpload oldCompleted =
                 completedUpload(
@@ -137,14 +110,6 @@ class UploadCleanupCandidateFinderIT {
                 10
         );
 
-        
-
-
-
-
-
-
-
         CvUpload oldPartial =
                 completedWithErrorsUpload(
                         "old-partial.zip"
@@ -154,7 +119,6 @@ class UploadCleanupCandidateFinderIT {
                 oldPartial.getId(),
                 9
         );
-
 
         CvUpload recentCompleted =
                 completedUpload(
@@ -166,7 +130,6 @@ class UploadCleanupCandidateFinderIT {
                 2
         );
 
-
         CvUpload failed =
                 failedUpload(
                         "failed.zip"
@@ -176,7 +139,6 @@ class UploadCleanupCandidateFinderIT {
                 failed.getId(),
                 30
         );
-
 
         CvUpload processing =
                 processingUpload(
@@ -188,7 +150,6 @@ class UploadCleanupCandidateFinderIT {
                 30
         );
 
-
         CvUpload uploaded =
                 uploadedUpload(
                         "uploaded.zip"
@@ -198,12 +159,6 @@ class UploadCleanupCandidateFinderIT {
                 uploaded.getId(),
                 30
         );
-
-        
-
-
-
-
 
         List<CvUpload> candidates =
                 cleanupCandidateFinder
@@ -226,9 +181,6 @@ class UploadCleanupCandidateFinderIT {
                 oldCompleted.getId(),
                 oldPartial.getId()
         );
-
-        
-
 
         assertThat(
                 candidates
@@ -263,7 +215,6 @@ class UploadCleanupCandidateFinderIT {
                         uploaded.getId()
                 );
     }
-
 
     @Test
     void shouldRespectBatchSizeAndSelectOldestFirst() {
@@ -332,12 +283,6 @@ class UploadCleanupCandidateFinderIT {
         );
     }
 
-    
-
-
-
-
-
     private CvUpload completedUpload(
             String filename
     ) {
@@ -365,12 +310,6 @@ class UploadCleanupCandidateFinderIT {
                         upload
                 );
     }
-
-    
-
-
-
-
 
     private CvUpload completedWithErrorsUpload(
             String filename
@@ -400,12 +339,6 @@ class UploadCleanupCandidateFinderIT {
                 );
     }
 
-    
-
-
-
-
-
     private CvUpload failedUpload(
             String filename
     ) {
@@ -429,12 +362,6 @@ class UploadCleanupCandidateFinderIT {
                 );
     }
 
-    
-
-
-
-
-
     private CvUpload processingUpload(
             String filename
     ) {
@@ -456,12 +383,6 @@ class UploadCleanupCandidateFinderIT {
                 );
     }
 
-    
-
-
-
-
-
     private CvUpload uploadedUpload(
             String filename
     ) {
@@ -480,7 +401,6 @@ class UploadCleanupCandidateFinderIT {
                         upload
                 );
     }
-
 
     private void moveCompletedAtBack(
             UUID uploadId,
@@ -525,12 +445,6 @@ class UploadCleanupCandidateFinderIT {
                 1
         );
     }
-
-    
-
-
-
-
 
     private static Path createStorageRoot() {
 

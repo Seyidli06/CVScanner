@@ -15,26 +15,6 @@ import java.util.UUID;
 public interface UploadCleanupCandidateRepository
         extends Repository<CvUpload, UUID> {
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Query("""
             select upload
             from CvUpload upload

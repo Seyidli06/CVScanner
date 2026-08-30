@@ -117,12 +117,6 @@ class RateLimitingIT {
         );
     }
 
-    
-
-
-
-
-
     @Test
     void shouldReturn429WhenReadLimitIsExceeded()
             throws Exception {
@@ -244,12 +238,6 @@ class RateLimitingIT {
                 );
     }
 
-    
-
-
-
-
-
     @Test
     void shouldMaintainIndependentBucketsForDifferentUsers()
             throws Exception {
@@ -319,12 +307,6 @@ class RateLimitingIT {
                         )
                 );
     }
-
-    
-
-
-
-
 
     @Test
     void shouldKeepReadAndExportBucketsIndependent()
@@ -403,12 +385,6 @@ class RateLimitingIT {
                 );
     }
 
-    
-
-
-
-
-
     @Test
     void shouldNotConsumeRateLimitTokensForForbiddenRequest()
             throws Exception {
@@ -459,12 +435,6 @@ class RateLimitingIT {
                         )
                 );
     }
-
-    
-
-
-
-
 
     @Test
     void shouldNotRateLimitHealthEndpoint()

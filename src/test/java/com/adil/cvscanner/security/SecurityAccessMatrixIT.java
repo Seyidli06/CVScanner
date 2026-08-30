@@ -76,13 +76,6 @@ class SecurityAccessMatrixIT {
         );
     }
 
-    
-
-
-
-
-
-
     @Test
     void shouldAllowAnonymousHealthRequest()
             throws Exception {
@@ -98,13 +91,6 @@ class SecurityAccessMatrixIT {
                 );
     }
 
-    
-
-
-
-
-
-
     @Test
     void shouldRejectAnonymousMetricsRequest()
             throws Exception {
@@ -119,13 +105,6 @@ class SecurityAccessMatrixIT {
                                 .isUnauthorized()
                 );
     }
-
-    
-
-
-
-
-
 
     @Test
     void shouldRejectRecruiterFromMetrics()
@@ -145,13 +124,6 @@ class SecurityAccessMatrixIT {
                 );
     }
 
-    
-
-
-
-
-
-
     @Test
     void shouldAllowAdminToReadMetrics()
             throws Exception {
@@ -170,13 +142,6 @@ class SecurityAccessMatrixIT {
                 );
     }
 
-    
-
-
-
-
-
-
     @Test
     void shouldRejectAnonymousApplicationApiRequest()
             throws Exception {
@@ -191,13 +156,6 @@ class SecurityAccessMatrixIT {
                                 .isUnauthorized()
                 );
     }
-
-    
-
-
-
-
-
 
     @Test
     void shouldAllowRecruiterToUseApplicationApi()
@@ -217,13 +175,6 @@ class SecurityAccessMatrixIT {
                 );
     }
 
-    
-
-
-
-
-
-
     @Test
     void shouldAllowAdminToUseApplicationApi()
             throws Exception {
@@ -241,13 +192,6 @@ class SecurityAccessMatrixIT {
                                 .isOk()
                 );
     }
-
-    
-
-
-
-
-
 
     @Test
     void shouldRejectUnknownRoleFromApplicationApi()
@@ -274,13 +218,6 @@ class SecurityAccessMatrixIT {
                 );
     }
 
-    
-
-
-
-
-
-
     @Test
     void shouldDenyUnknownRouteEvenForAdmin()
             throws Exception {
@@ -298,23 +235,6 @@ class SecurityAccessMatrixIT {
                                 .isForbidden()
                 );
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @Test
     void shouldDenyUnknownApplicationRouteForRecruiter()
@@ -334,24 +254,6 @@ class SecurityAccessMatrixIT {
                 );
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Test
     void shouldDenyUnsupportedApplicationMethodForRecruiter()
             throws Exception {
@@ -369,12 +271,6 @@ class SecurityAccessMatrixIT {
                                 .isForbidden()
                 );
     }
-
-    
-
-
-
-
 
     private RequestPostProcessor recruiterUser() {
 
@@ -399,12 +295,6 @@ class SecurityAccessMatrixIT {
                         )
                 );
     }
-
-    
-
-
-
-
 
     private static Path createStorageRoot() {
 

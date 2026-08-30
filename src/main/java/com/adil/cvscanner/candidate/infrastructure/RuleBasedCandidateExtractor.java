@@ -19,16 +19,6 @@ import java.util.regex.Pattern;
 public class RuleBasedCandidateExtractor
         implements CandidateExtractor {
 
-    
-
-
-
-
-
-
-
-
-
     private static final Pattern NAME_LABEL_PATTERN =
             Pattern.compile(
                     "(?im)^\\s*(?:full\\s+name|name)"
@@ -37,20 +27,6 @@ public class RuleBasedCandidateExtractor
                             + "(?:\\s+[\\p{L}][\\p{L}'’.-]*){1,4})"
                             + "\\s*$"
             );
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
 
     private static final Pattern EXPERIENCE_PATTERN =
             Pattern.compile(
@@ -66,13 +42,6 @@ public class RuleBasedCandidateExtractor
                             + "\\b"
             );
 
-    
-
-
-
-
-
-
     private static final Pattern QUALIFIED_EXPERIENCE_PATTERN =
             Pattern.compile(
                     "(?i)\\b"
@@ -87,12 +56,6 @@ public class RuleBasedCandidateExtractor
                             + "experience"
                             + "\\b"
             );
-
-    
-
-
-
-
 
     private static final Pattern LOCATION_PATTERN =
             Pattern.compile(
@@ -113,20 +76,6 @@ public class RuleBasedCandidateExtractor
                             + "\\s*$"
             );
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
     private static final Pattern JOB_TYPE_PATTERN =
             Pattern.compile(
                     "(?im)^\\s*"
@@ -139,12 +88,6 @@ public class RuleBasedCandidateExtractor
                             + "(remote|hybrid|on[-\\s]?site)"
                             + "\\s*$"
             );
-
-    
-
-
-
-
 
     private static final Set<String> SECTION_HEADINGS =
             Set.of(
@@ -168,11 +111,6 @@ public class RuleBasedCandidateExtractor
                     "languages"
             );
 
-    
-
-
-
-
     private static final Set<String> JOB_TITLE_WORDS =
             Set.of(
                     "developer",
@@ -191,15 +129,6 @@ public class RuleBasedCandidateExtractor
                     "tester",
                     "lead"
             );
-
-    
-
-
-
-
-
-
-
 
     private static final List<String> KNOWN_SKILLS =
             List.of(
@@ -294,20 +223,9 @@ public class RuleBasedCandidateExtractor
         );
     }
 
-    
-
-
-
-
-
     private String extractFullName(
             String text
     ) {
-
-        
-
-
-
 
         Matcher explicitNameMatcher =
                 NAME_LABEL_PATTERN.matcher(
@@ -322,11 +240,6 @@ public class RuleBasedCandidateExtractor
                     explicitNameMatcher.group(1)
             );
         }
-
-        
-
-
-
 
         return text
                 .lines()
@@ -368,9 +281,6 @@ public class RuleBasedCandidateExtractor
                         Locale.ROOT
                 );
 
-        
-
-
         if (
                 SECTION_HEADINGS.contains(
                         lowerCase
@@ -378,9 +288,6 @@ public class RuleBasedCandidateExtractor
         ) {
             return false;
         }
-
-        
-
 
         if (
                 normalized.contains("@")
@@ -397,9 +304,6 @@ public class RuleBasedCandidateExtractor
             return false;
         }
 
-        
-
-
         if (
                 normalized
                         .chars()
@@ -415,21 +319,12 @@ public class RuleBasedCandidateExtractor
                         "\\s+"
                 );
 
-        
-
-
-
-
-
         if (
                 words.length < 2
                         || words.length > 5
         ) {
             return false;
         }
-
-        
-
 
         for (
                 String word : words
@@ -461,29 +356,10 @@ public class RuleBasedCandidateExtractor
             String word
     ) {
 
-        
-
-
-
-
-
-
-
-
-
-
-
-
         return word.matches(
                 "[\\p{L}][\\p{L}'’.-]*"
         );
     }
-
-    
-
-
-
-
 
     private Integer extractYearsOfExperience(
             String text
@@ -512,10 +388,6 @@ public class RuleBasedCandidateExtractor
         ) {
             return regularExperience;
         }
-
-        
-
-
 
         return Math.max(
                 regularExperience,
@@ -572,12 +444,6 @@ public class RuleBasedCandidateExtractor
         return highest;
     }
 
-    
-
-
-
-
-
     private String extractPreferredLocation(
             String text
     ) {
@@ -626,18 +492,9 @@ public class RuleBasedCandidateExtractor
                 : value;
     }
 
-    
-
-
-
-
-
     private JobType extractPreferredJobType(
             String text
     ) {
-
-        
-
 
         Matcher matcher =
                 JOB_TYPE_PATTERN.matcher(
@@ -652,18 +509,6 @@ public class RuleBasedCandidateExtractor
                     matcher.group(1)
             );
         }
-
-        
-
-
-
-
-
-
-
-
-
-
 
         for (
                 String line : text.lines().toList()
@@ -743,12 +588,6 @@ public class RuleBasedCandidateExtractor
         };
     }
 
-    
-
-
-
-
-
     private Set<String> extractSkills(
             String text
     ) {
@@ -773,10 +612,6 @@ public class RuleBasedCandidateExtractor
             }
         }
 
-        
-
-
-
         if (
                 detectedSkills.contains(
                         "Spring Boot"
@@ -796,22 +631,6 @@ public class RuleBasedCandidateExtractor
             String skill
     ) {
 
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         Pattern pattern =
                 Pattern.compile(
                         "(?iu)"
@@ -828,12 +647,6 @@ public class RuleBasedCandidateExtractor
                 )
                 .find();
     }
-
-    
-
-
-
-
 
     private String extractSourceFilename(
             Path source
@@ -863,12 +676,6 @@ public class RuleBasedCandidateExtractor
 
         return filename.toString();
     }
-
-    
-
-
-
-
 
     private String normalizeWhitespace(
             String value

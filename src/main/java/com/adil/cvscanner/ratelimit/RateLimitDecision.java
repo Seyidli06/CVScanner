@@ -57,8 +57,6 @@ public record RateLimitDecision(
         );
     }
 
-
-
     public static RateLimitDecision backendUnavailable(
             boolean failOpen
     ) {

@@ -22,16 +22,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                 "app.rate-limit.enabled=true",
                 "app.rate-limit.fail-open=false",
 
-                
-
-
                 "app.rate-limit.redis-timeout=500ms",
 
                 "app.rate-limit.key-prefix=cvscanner:test:readiness",
-
-                
-
-
 
                 "app.rate-limit.upload.capacity=5",
                 "app.rate-limit.upload.refill-tokens=5",
@@ -44,12 +37,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                 "app.rate-limit.export.capacity=10",
                 "app.rate-limit.export.refill-tokens=10",
                 "app.rate-limit.export.refill-period=1m",
-
-                
-
-
-
-
 
                 "security.jwt.issuer-uri=http://localhost/test-issuer",
                 "security.jwt.jwk-set-uri=http://localhost/test-jwks",
@@ -131,16 +118,6 @@ class RateLimitReadinessIT {
     void shouldReflectRedisAvailabilityInReadinessWhenFailClosed()
             throws Exception {
 
-        
-
-
-
-
-
-
-
-
-
         mockMvc.perform(
                         get(
                                 "/readyz"
@@ -159,20 +136,7 @@ class RateLimitReadinessIT {
                         status().isOk()
                 );
 
-        
-
-
-
-
-
         REDIS.stop();
-
-        
-
-
-
-
-
 
         mockMvc.perform(
                         get(

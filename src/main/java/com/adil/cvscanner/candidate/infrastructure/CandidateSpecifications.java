@@ -15,12 +15,6 @@ public final class CandidateSpecifications {
     private CandidateSpecifications() {
     }
 
-    
-
-
-
-
-
     public static Specification<Candidate> from(
             CandidateSearchCriteria criteria
     ) {
@@ -94,27 +88,10 @@ public final class CandidateSpecifications {
             );
         }
 
-        
-
-
-
-
-
-
-
-
-
-
         return Specification.allOf(
                 specifications
         );
     }
-
-    
-
-
-
-
 
     private static Specification<Candidate>
     hasUploadId(
@@ -136,27 +113,6 @@ public final class CandidateSpecifications {
                         uploadId
                 );
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     private static Specification<Candidate>
     hasSkill(
@@ -182,10 +138,6 @@ public final class CandidateSpecifications {
                             JoinType.INNER
                     );
 
-            
-
-
-
             query.distinct(
                     true
             );
@@ -198,18 +150,6 @@ public final class CandidateSpecifications {
             );
         };
     }
-
-    
-
-
-
-
-
-
-
-
-
-
 
     private static Specification<Candidate>
     hasLocation(
@@ -238,12 +178,6 @@ public final class CandidateSpecifications {
                 );
     }
 
-    
-
-
-
-
-
     private static Specification<Candidate>
     hasJobType(
             com.adil.cvscanner.candidate.domain.JobType jobType
@@ -262,12 +196,6 @@ public final class CandidateSpecifications {
                 );
     }
 
-    
-
-
-
-
-
     private static Specification<Candidate>
     experienceAtLeast(
             int minExperience
@@ -285,8 +213,6 @@ public final class CandidateSpecifications {
                         minExperience
                 );
     }
-
-
 
     private static Specification<Candidate>
     experienceAtMost(

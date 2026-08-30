@@ -59,12 +59,6 @@ public class RateLimitService {
                 );
     }
 
-    
-
-
-
-
-
     public RateLimitDecision consume(
             RateLimitPolicy policy,
             String principal
@@ -92,17 +86,6 @@ public class RateLimitService {
                 );
 
         try {
-
-            
-
-
-
-
-
-
-
-
-
 
             LettuceBasedProxyManager<String>
                     proxyManager =
@@ -149,11 +132,6 @@ public class RateLimitService {
                 RuntimeException exception
         ) {
 
-            
-
-
-
-
             LOGGER.warn(
                     "RATE_LIMIT_BACKEND_UNAVAILABLE policy={} failOpen={} errorType={}",
                     policy,
@@ -169,12 +147,6 @@ public class RateLimitService {
                     );
         }
     }
-
-    
-
-
-
-
 
     private BucketConfiguration createBucketConfiguration(
             RateLimitPolicy policy
@@ -221,12 +193,6 @@ public class RateLimitService {
         };
     }
 
-    
-
-
-
-
-
     private String createBucketKey(
             RateLimitPolicy policy,
             String principal
@@ -240,12 +206,6 @@ public class RateLimitService {
                 principal
         );
     }
-
-    
-
-
-
-
 
     private String hashPrincipal(
             String principal

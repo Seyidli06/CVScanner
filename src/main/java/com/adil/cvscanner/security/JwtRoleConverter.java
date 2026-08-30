@@ -66,10 +66,6 @@ public class JwtRoleConverter
                                         Locale.ROOT
                                 )
                 )
-                
-
-
-
 
                 .filter(
                         role ->

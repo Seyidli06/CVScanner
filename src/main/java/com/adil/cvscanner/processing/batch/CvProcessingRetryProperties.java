@@ -14,10 +14,8 @@ import java.time.Duration;
 )
 public record CvProcessingRetryProperties(
 
-
         @Min(0)
         long maxRetries,
-
 
         @NotNull
         Duration delay

@@ -35,36 +35,10 @@ public class CvUploadWorkflowService {
             MultipartFile file
     ) {
 
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         CvUpload upload =
                 cvUploadService.upload(
                         file
                 );
-
-        
-
-
-
-
 
         try {
 
@@ -76,44 +50,13 @@ public class CvUploadWorkflowService {
                 CvProcessingLaunchException launchException
         ) {
 
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
             markFailedPreservingOriginalException(
                     upload,
                     launchException
             );
 
-            
-
-
-
             throw launchException;
         }
-
-        
-
-
-
-
-
-
-
-
-
-
-
 
         return UploadResponse.from(
                 upload

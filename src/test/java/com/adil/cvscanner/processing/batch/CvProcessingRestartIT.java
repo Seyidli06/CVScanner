@@ -87,57 +87,9 @@ class CvProcessingRestartIT {
         restartProbeWriter.reset();
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Test
     void shouldRestartFailedJobFromLastCommittedCheckpoint()
             throws Exception {
-
-        
-
-
-
-
 
         JobExecution launchedExecution =
                 jobOperator.start(
@@ -149,11 +101,6 @@ class CvProcessingRestartIT {
                 waitForJobCompletion(
                         launchedExecution.getId()
                 );
-
-        
-
-
-
 
         assertThat(
                 failedExecution.getStatus()
@@ -172,17 +119,6 @@ class CvProcessingRestartIT {
                 BatchStatus.FAILED
         );
 
-        
-
-
-
-
-
-
-
-
-
-
         assertThat(
                 restartProbeWriter
                         .getSuccessfullyWrittenFiles()
@@ -190,12 +126,6 @@ class CvProcessingRestartIT {
                 "01.pdf",
                 "02.pdf"
         );
-
-        
-
-
-
-
 
         assertThat(
                 restartProbeWriter
@@ -211,28 +141,10 @@ class CvProcessingRestartIT {
                 )
         );
 
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         JobExecution restartedExecution =
                 jobOperator.restart(
                         failedExecution
                 );
-
-        
-
 
         assertThat(
                 restartedExecution.getId()
@@ -240,16 +152,6 @@ class CvProcessingRestartIT {
                 failedExecution.getId()
         );
 
-        
-
-
-
-
-
-
-
-
-
         assertThat(
                 restartedExecution
                         .getJobInstance()
@@ -260,10 +162,6 @@ class CvProcessingRestartIT {
                         .getId()
         );
 
-        
-
-
-
         assertThat(
                 restartedExecution
                         .getJobParameters()
@@ -271,12 +169,6 @@ class CvProcessingRestartIT {
                 failedExecution
                         .getJobParameters()
         );
-
-        
-
-
-
-
 
         JobExecution completedExecution =
                 waitForJobCompletion(
@@ -300,18 +192,6 @@ class CvProcessingRestartIT {
                 BatchStatus.COMPLETED
         );
 
-        
-
-
-
-
-
-
-
-
-
-
-
         assertThat(
                 restartedStepExecution
                         .getReadCount()
@@ -326,12 +206,6 @@ class CvProcessingRestartIT {
                 3
         );
 
-        
-
-
-
-
-
         assertThat(
                 restartProbeWriter
                         .getSuccessfullyWrittenFiles()
@@ -342,17 +216,6 @@ class CvProcessingRestartIT {
                 "04.pdf",
                 "05.pdf"
         );
-
-        
-
-
-
-
-
-
-
-
-
 
         assertThat(
                 countOccurrences(
@@ -373,22 +236,6 @@ class CvProcessingRestartIT {
         ).isEqualTo(
                 1
         );
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         assertThat(
                 restartProbeWriter
@@ -412,20 +259,7 @@ class CvProcessingRestartIT {
         );
     }
 
-    
-
-
-
-
-
     private JobParameters uniqueJobParameters() {
-
-        
-
-
-
-
-
 
         return new JobParametersBuilder()
                 .addString(
@@ -435,12 +269,6 @@ class CvProcessingRestartIT {
                 )
                 .toJobParameters();
     }
-
-    
-
-
-
-
 
     private JobExecution waitForJobCompletion(
             long executionId
@@ -488,12 +316,6 @@ class CvProcessingRestartIT {
         );
     }
 
-    
-
-
-
-
-
     private StepExecution findStepExecution(
             JobExecution jobExecution
     ) {
@@ -518,12 +340,6 @@ class CvProcessingRestartIT {
                 );
     }
 
-    
-
-
-
-
-
     private long countOccurrences(
             List<String> files,
             String filename
@@ -537,28 +353,10 @@ class CvProcessingRestartIT {
                 .count();
     }
 
-    
-
-
-
-
-
     @TestConfiguration(
             proxyBeanMethods = false
     )
     static class RestartTestConfiguration {
-
-        
-
-
-
-
-
-
-
-
-
-
 
         @Bean("cvProcessingRestartTestReader")
         @StepScope
@@ -585,17 +383,6 @@ class CvProcessingRestartIT {
             );
         }
 
-        
-
-
-
-
-
-
-
-
-
-
         @Bean("cvProcessingRestartTestProcessor")
         ItemProcessor<Path, Path>
         cvProcessingRestartTestProcessor() {
@@ -603,23 +390,11 @@ class CvProcessingRestartIT {
             return path -> path;
         }
 
-        
-
-
-
-
-
         @Bean
         RestartProbeWriter restartProbeWriter() {
 
             return new RestartProbeWriter();
         }
-
-        
-
-
-
-
 
         @Bean("cvProcessingRestartTestStep")
         Step cvProcessingRestartTestStep(
@@ -660,22 +435,8 @@ class CvProcessingRestartIT {
                             writer
                     )
 
-                    
-
-
-
-
-
-
-
                     .build();
         }
-
-        
-
-
-
-
 
         @Bean("cvProcessingRestartTestJob")
         Job cvProcessingRestartTestJob(
@@ -697,45 +458,17 @@ class CvProcessingRestartIT {
         }
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     static class RestartProbeWriter
             implements ItemWriter<Path> {
-
-        
-
 
         private final AtomicBoolean failOnce =
                 new AtomicBoolean(
                         true
                 );
 
-        
-
-
-
-
         private final List<List<String>>
                 invokedChunks =
                 new ArrayList<>();
-
-        
-
-
 
         private final List<String>
                 successfullyWrittenFiles =
@@ -758,20 +491,11 @@ class CvProcessingRestartIT {
                             )
                             .toList();
 
-            
-
-
-
             invokedChunks.add(
                     List.copyOf(
                             filenames
                     )
             );
-
-            
-
-
-
 
             if (
                     filenames.contains(
@@ -787,10 +511,6 @@ class CvProcessingRestartIT {
                         "Simulated writer failure after first committed chunk"
                 );
             }
-
-            
-
-
 
             successfullyWrittenFiles
                     .addAll(

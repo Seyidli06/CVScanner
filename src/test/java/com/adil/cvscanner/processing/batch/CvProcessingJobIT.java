@@ -151,13 +151,6 @@ class CvProcessingJobIT {
     void cleanBeforeTest()
             throws IOException {
 
-        
-
-
-
-
-
-
         processingFailureRepository.deleteAll();
 
         candidateRepository.deleteAll();
@@ -167,36 +160,9 @@ class CvProcessingJobIT {
         clearStorage();
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Test
     void shouldProcessAllCandidatesAndCompleteUpload()
             throws Exception {
-
-        
-
-
-
-
 
         CvUpload upload =
                 new CvUpload(
@@ -226,12 +192,6 @@ class CvProcessingJobIT {
                 2
         );
 
-        
-
-
-
-
-
         Path extractionDirectory =
                 uploadStorage
                         .extractionDirectory(
@@ -246,9 +206,6 @@ class CvProcessingJobIT {
         Files.createDirectories(
                 backendDirectory
         );
-
-        
-
 
         TestDocumentFactory.createDocx(
                 extractionDirectory.resolve(
@@ -265,9 +222,6 @@ class CvProcessingJobIT {
                 "Docker"
         );
 
-        
-
-
         TestDocumentFactory.createPdf(
                 backendDirectory.resolve(
                         "john.pdf"
@@ -283,21 +237,12 @@ class CvProcessingJobIT {
                 "Kafka"
         );
 
-        
-
-
         Files.writeString(
                 extractionDirectory.resolve(
                         "notes.txt"
                 ),
                 "This file must be ignored"
         );
-
-        
-
-
-
-
 
         JobExecution launchedExecution =
                 jobOperator.start(
@@ -311,22 +256,10 @@ class CvProcessingJobIT {
                 launchedExecution.getId()
         ).isPositive();
 
-        
-
-
-
-
-
         JobExecution completedExecution =
                 waitForJobCompletion(
                         launchedExecution.getId()
                 );
-
-        
-
-
-
-
 
         assertThat(
                 completedExecution.getStatus()
@@ -369,12 +302,6 @@ class CvProcessingJobIT {
                 stepExecution.getWriteSkipCount()
         ).isZero();
 
-        
-
-
-
-
-
         CvUpload completedUpload =
                 cvUploadRepository
                         .findById(
@@ -404,21 +331,9 @@ class CvProcessingJobIT {
                 completedUpload.getFailedFiles()
         ).isZero();
 
-        
-
-
-
-
-
         assertThat(
                 processingFailureRepository.count()
         ).isZero();
-
-        
-
-
-
-
 
         TransactionTemplate transactionTemplate =
                 new TransactionTemplate(
@@ -532,39 +447,9 @@ class CvProcessingJobIT {
         );
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Test
     void shouldSkipInvalidDocumentAuditFailureAndCompleteWithErrors()
             throws Exception {
-
-        
-
-
-
-
 
         CvUpload upload =
                 new CvUpload(
@@ -588,12 +473,6 @@ class CvProcessingJobIT {
                 UploadStatus.UPLOADED
         );
 
-        
-
-
-
-
-
         Path extractionDirectory =
                 uploadStorage
                         .extractionDirectory(
@@ -603,9 +482,6 @@ class CvProcessingJobIT {
         Files.createDirectories(
                 extractionDirectory
         );
-
-        
-
 
         TestDocumentFactory.createPdf(
                 extractionDirectory.resolve(
@@ -621,9 +497,6 @@ class CvProcessingJobIT {
                 "PostgreSQL"
         );
 
-        
-
-
         TestDocumentFactory.createDocx(
                 extractionDirectory.resolve(
                         "jane.docx"
@@ -638,22 +511,6 @@ class CvProcessingJobIT {
                 "Redis"
         );
 
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         Files.writeString(
                 extractionDirectory.resolve(
                         "broken.pdf"
@@ -664,12 +521,6 @@ class CvProcessingJobIT {
                 """
         );
 
-        
-
-
-
-
-
         JobExecution launchedExecution =
                 jobOperator.start(
                         cvProcessingJob,
@@ -678,28 +529,10 @@ class CvProcessingJobIT {
                         )
                 );
 
-        
-
-
-
-
-
         JobExecution completedExecution =
                 waitForJobCompletion(
                         launchedExecution.getId()
                 );
-
-        
-
-
-
-
-
-
-
-
-
-
 
         assertThat(
                 completedExecution.getStatus()
@@ -718,23 +551,11 @@ class CvProcessingJobIT {
                 BatchStatus.COMPLETED
         );
 
-        
-
-
-
-
-
-
-
         assertThat(
                 stepExecution.getReadCount()
         ).isEqualTo(
                 3
         );
-
-        
-
-
 
         assertThat(
                 stepExecution.getWriteCount()
@@ -742,18 +563,9 @@ class CvProcessingJobIT {
                 2
         );
 
-        
-
-
         assertThat(
                 stepExecution.getReadSkipCount()
         ).isZero();
-
-        
-
-
-
-
 
         assertThat(
                 stepExecution.getProcessSkipCount()
@@ -761,18 +573,9 @@ class CvProcessingJobIT {
                 1
         );
 
-        
-
-
         assertThat(
                 stepExecution.getWriteSkipCount()
         ).isZero();
-
-        
-
-
-
-
 
         List<Candidate> candidates =
                 candidateRepository
@@ -807,12 +610,6 @@ class CvProcessingJobIT {
                         "broken.pdf"
                 );
 
-        
-
-
-
-
-
         List<ProcessingFailure> failures =
                 processingFailureRepository
                         .findAll();
@@ -843,25 +640,11 @@ class CvProcessingJobIT {
                 "broken.pdf"
         );
 
-        
-
-
-
-
-
-
         assertThat(
                 failure.getErrorCode()
         ).isEqualTo(
                 "UNSUPPORTED_MEDIA_TYPE"
         );
-
-        
-
-
-
-
-
 
         assertThat(
                 failure.getErrorMessage()
@@ -874,12 +657,6 @@ class CvProcessingJobIT {
         assertThat(
                 failure.getCreatedAt()
         ).isNotNull();
-
-        
-
-
-
-
 
         CvUpload completedUpload =
                 cvUploadRepository
@@ -906,27 +683,12 @@ class CvProcessingJobIT {
                 1
         );
 
-        
-
-
-
-
-
-
-
-
         assertThat(
                 completedUpload.getStatus()
         ).isEqualTo(
                 UploadStatus.COMPLETED_WITH_ERRORS
         );
     }
-
-    
-
-
-
-
 
     private JobParameters createJobParameters(
             UUID uploadId
@@ -939,12 +701,6 @@ class CvProcessingJobIT {
                 )
                 .toJobParameters();
     }
-
-    
-
-
-
-
 
     private StepExecution findProcessingStep(
             JobExecution jobExecution
@@ -969,12 +725,6 @@ class CvProcessingJobIT {
                 );
     }
 
-    
-
-
-
-
-
     private Candidate findCandidateByFilename(
             List<Candidate> candidates,
             String filename
@@ -998,12 +748,6 @@ class CvProcessingJobIT {
                 );
     }
 
-    
-
-
-
-
-
     private JobExecution waitForJobCompletion(
             long executionId
     ) throws InterruptedException {
@@ -1020,15 +764,6 @@ class CvProcessingJobIT {
                                 deadline
                         )
         ) {
-
-            
-
-
-
-
-
-
-
 
             JobExecution currentExecution =
                     jobRepository
@@ -1059,12 +794,6 @@ class CvProcessingJobIT {
                         + " to complete"
         );
     }
-
-    
-
-
-
-
 
     private static Path createStorageRoot() {
 
@@ -1138,12 +867,6 @@ class CvProcessingJobIT {
                     );
         }
     }
-
-    
-
-
-
-
 
     @AfterAll
     static void cleanupStorage()

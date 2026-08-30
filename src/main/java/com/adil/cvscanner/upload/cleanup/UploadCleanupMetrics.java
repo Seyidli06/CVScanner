@@ -14,12 +14,6 @@ import java.util.concurrent.atomic.AtomicLong;
 @Component
 public class UploadCleanupMetrics {
 
-    
-
-
-
-
-
     public static final String RUNS =
             "cvscanner.cleanup.runs";
 
@@ -44,23 +38,11 @@ public class UploadCleanupMetrics {
     public static final String LAST_SUCCESS =
             "cvscanner.cleanup.last_success_epoch_seconds";
 
-    
-
-
-
-
-
     public static final String LOCK_ACQUIRED =
             "cvscanner.cleanup.lock.acquired";
 
     public static final String LOCK_CONTENDED =
             "cvscanner.cleanup.lock.contended";
-
-    
-
-
-
-
 
     public static final String SCHEDULER_ATTEMPTS =
             "cvscanner.cleanup.scheduler.attempts";
@@ -70,12 +52,6 @@ public class UploadCleanupMetrics {
 
     public static final String SCHEDULER_FAILURES =
             "cvscanner.cleanup.scheduler.failures";
-
-    
-
-
-
-
 
     private final Counter runs;
 
@@ -101,12 +77,6 @@ public class UploadCleanupMetrics {
 
     private final Timer duration;
 
-    
-
-
-
-
-
     private final AtomicLong lastSuccessEpochSeconds =
             new AtomicLong(
                     0
@@ -120,12 +90,6 @@ public class UploadCleanupMetrics {
                 meterRegistry,
                 "meterRegistry must not be null"
         );
-
-        
-
-
-
-
 
         this.runs =
                 Counter.builder(
@@ -216,12 +180,6 @@ public class UploadCleanupMetrics {
                         meterRegistry
                 );
 
-        
-
-
-
-
-
         this.lockAcquired =
                 Counter.builder(
                                 LOCK_ACQUIRED
@@ -243,12 +201,6 @@ public class UploadCleanupMetrics {
                         .register(
                                 meterRegistry
                         );
-
-        
-
-
-
-
 
         this.schedulerAttempts =
                 Counter.builder(
@@ -283,12 +235,6 @@ public class UploadCleanupMetrics {
                                 meterRegistry
                         );
     }
-
-    
-
-
-
-
 
     public void recordCompletedRun(
             UploadCleanupRunResult result,
@@ -330,11 +276,6 @@ public class UploadCleanupMetrics {
                 executionDuration
         );
 
-        
-
-
-
-
         if (
                 result.failed() == 0
         ) {
@@ -345,12 +286,6 @@ public class UploadCleanupMetrics {
             );
         }
     }
-
-    
-
-
-
-
 
     public void recordRunFailure(
             Duration executionDuration
@@ -367,12 +302,6 @@ public class UploadCleanupMetrics {
         );
     }
 
-    
-
-
-
-
-
     public void recordDistributedLockAcquired() {
 
         lockAcquired.increment();
@@ -382,12 +311,6 @@ public class UploadCleanupMetrics {
 
         lockContended.increment();
     }
-
-    
-
-
-
-
 
     public void recordSchedulerAttempt() {
 
@@ -403,12 +326,6 @@ public class UploadCleanupMetrics {
 
         schedulerFailures.increment();
     }
-
-    
-
-
-
-
 
     private void increment(
             Counter counter,
@@ -433,12 +350,6 @@ public class UploadCleanupMetrics {
             );
         }
     }
-
-    
-
-
-
-
 
     private void validateDuration(
             Duration executionDuration

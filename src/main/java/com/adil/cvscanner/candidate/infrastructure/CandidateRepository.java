@@ -23,12 +23,6 @@ public interface CandidateRepository
             String sourceFilename
     );
 
-    
-
-
-
-
-
     @Query("""
             select c.sourceFilename
             from Candidate c
@@ -42,8 +36,6 @@ public interface CandidateRepository
             @Param("sourceFilenames")
             Collection<String> sourceFilenames
     );
-
-
 
     @Query("""
             select distinct c

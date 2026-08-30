@@ -31,16 +31,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Testcontainers
 class UploadCleanupMetricsActuatorIT {
 
-
-
     private static final Path STORAGE_ROOT =
             createStorageRoot();
-
-    
-
-
-
-
 
     @Container
     @ServiceConnection
@@ -58,23 +50,11 @@ class UploadCleanupMetricsActuatorIT {
                             "test"
                     );
 
-    
-
-
-
-
-
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private UploadCleanupMetrics cleanupMetrics;
-
-    
-
-
-
-
 
     @DynamicPropertySource
     static void properties(
@@ -85,7 +65,6 @@ class UploadCleanupMetricsActuatorIT {
                 "app.upload.storage-root",
                 () -> STORAGE_ROOT.toString()
         );
-
 
         registry.add(
                 "app.cleanup.scheduler-enabled",
@@ -103,17 +82,9 @@ class UploadCleanupMetricsActuatorIT {
         );
     }
 
-
-
     @Test
     void shouldExposeCleanupOperationalMetricsThroughActuator()
             throws Exception {
-
-        
-
-
-
-
 
         cleanupMetrics.recordCompletedRun(
                 new UploadCleanupRunResult(
@@ -136,7 +107,6 @@ class UploadCleanupMetricsActuatorIT {
         cleanupMetrics.recordSchedulerLocalSkip();
 
         cleanupMetrics.recordSchedulerFailure();
-
 
         mockMvc.perform(
                         get(
@@ -167,12 +137,6 @@ class UploadCleanupMetricsActuatorIT {
                         )
                 );
 
-        
-
-
-
-
-
         assertCounter(
                 UploadCleanupMetrics.RUNS,
                 1.0
@@ -193,12 +157,6 @@ class UploadCleanupMetricsActuatorIT {
                 1.0
         );
 
-        
-
-
-
-
-
         assertCounter(
                 UploadCleanupMetrics.LOCK_ACQUIRED,
                 1.0
@@ -208,12 +166,6 @@ class UploadCleanupMetricsActuatorIT {
                 UploadCleanupMetrics.LOCK_CONTENDED,
                 1.0
         );
-
-        
-
-
-
-
 
         assertCounter(
                 UploadCleanupMetrics.SCHEDULER_ATTEMPTS,
@@ -230,7 +182,6 @@ class UploadCleanupMetricsActuatorIT {
                 1.0
         );
     }
-
 
     private void assertCounter(
             String metricName,
@@ -272,22 +223,6 @@ class UploadCleanupMetricsActuatorIT {
                 );
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     private RequestPostProcessor adminUser() {
 
         return user(
@@ -299,12 +234,6 @@ class UploadCleanupMetricsActuatorIT {
                         )
                 );
     }
-
-    
-
-
-
-
 
     private static Path createStorageRoot() {
 

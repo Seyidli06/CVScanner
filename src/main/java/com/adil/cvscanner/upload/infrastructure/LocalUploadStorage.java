@@ -30,12 +30,6 @@ public class LocalUploadStorage {
                         .normalize();
     }
 
-    
-
-
-
-
-
     public Path stage(
             MultipartFile file
     ) {
@@ -86,12 +80,6 @@ public class LocalUploadStorage {
         }
     }
 
-    
-
-
-
-
-
     public void delete(
             Path path
     ) {
@@ -116,16 +104,6 @@ public class LocalUploadStorage {
 
             Path parent =
                     managedPath.getParent();
-
-            
-
-
-
-
-
-
-
-
 
             if (
                     parent != null
@@ -155,12 +133,6 @@ public class LocalUploadStorage {
         }
     }
 
-    
-
-
-
-
-
     public Path uploadDirectory(
             UUID uploadId
     ) {
@@ -177,12 +149,6 @@ public class LocalUploadStorage {
                 .normalize();
     }
 
-    
-
-
-
-
-
     public Path extractionDirectory(
             UUID uploadId
     ) {
@@ -195,28 +161,6 @@ public class LocalUploadStorage {
                 )
                 .normalize();
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     public boolean deleteUploadDirectory(
             UUID uploadId
@@ -239,12 +183,6 @@ public class LocalUploadStorage {
         return existed;
     }
 
-    
-
-
-
-
-
     public void deleteRecursively(
             Path path
     ) {
@@ -256,18 +194,10 @@ public class LocalUploadStorage {
             return;
         }
 
-        
-
-
         Path managedPath =
                 requireManagedPath(
                         path
                 );
-
-        
-
-
-
 
         if (
                 Files.notExists(
@@ -322,32 +252,6 @@ public class LocalUploadStorage {
         }
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     private Path requireManagedPath(
             Path path
     ) {
@@ -381,8 +285,6 @@ public class LocalUploadStorage {
 
         return normalizedPath;
     }
-
-
 
     private Path stagingRoot() {
 

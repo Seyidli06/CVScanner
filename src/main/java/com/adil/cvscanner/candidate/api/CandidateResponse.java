@@ -31,10 +31,6 @@ public record CandidateResponse(
             Candidate candidate
     ) {
 
-        
-
-
-
         Set<String> sortedSkills =
                 new TreeSet<>(
                         String.CASE_INSENSITIVE_ORDER

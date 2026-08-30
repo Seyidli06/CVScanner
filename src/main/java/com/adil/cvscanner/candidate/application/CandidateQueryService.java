@@ -25,10 +25,6 @@ public class CandidateQueryService {
     private static final int MAX_PAGE_SIZE =
             100;
 
-    
-
-
-
     private static final Set<String> ALLOWED_SORT_FIELDS =
             Set.of(
                     "fullName",
@@ -49,12 +45,6 @@ public class CandidateQueryService {
                 candidateRepository;
     }
 
-    
-
-
-
-
-
     @Transactional(
             readOnly = true
     )
@@ -65,12 +55,6 @@ public class CandidateQueryService {
             String sortBy,
             String direction
     ) {
-
-        
-
-
-
-
 
         validatePagination(
                 page,
@@ -86,27 +70,6 @@ public class CandidateQueryService {
                 parseDirection(
                         direction
                 );
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         Sort sort =
                 Sort.by(
@@ -127,18 +90,6 @@ public class CandidateQueryService {
                         sort
                 );
 
-        
-
-
-
-
-
-
-
-
-
-
-
         Page<Candidate> candidatePage =
                 candidateRepository
                         .findAll(
@@ -147,10 +98,6 @@ public class CandidateQueryService {
                                 ),
                                 pageable
                         );
-
-        
-
-
 
         if (
                 candidatePage.isEmpty()
@@ -162,12 +109,6 @@ public class CandidateQueryService {
             );
         }
 
-        
-
-
-
-
-
         List<UUID> candidateIds =
                 candidatePage
                         .getContent()
@@ -177,55 +118,16 @@ public class CandidateQueryService {
                         )
                         .toList();
 
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         List<Candidate> hydratedCandidates =
                 candidateRepository
                         .findAllWithResponseDetailsByIdIn(
                                 candidateIds
                         );
 
-        
-
-
-
-
-
-
-
-
         Map<UUID, Candidate> hydratedById =
                 indexById(
                         hydratedCandidates
                 );
-
-        
-
-
-
-
-
-
-
-
-
-
 
         return PageResponse.from(
                 candidatePage,
@@ -238,12 +140,6 @@ public class CandidateQueryService {
                         )
         );
     }
-
-    
-
-
-
-
 
     private Map<UUID, Candidate> indexById(
             Collection<Candidate> candidates
@@ -263,12 +159,6 @@ public class CandidateQueryService {
                             candidate
                     );
 
-            
-
-
-
-
-
             if (
                     previous != null
             ) {
@@ -282,19 +172,6 @@ public class CandidateQueryService {
 
         return result;
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
 
     private Candidate requireHydratedCandidate(
             UUID candidateId,
@@ -318,12 +195,6 @@ public class CandidateQueryService {
 
         return candidate;
     }
-
-    
-
-
-
-
 
     private void validatePagination(
             int page,
@@ -359,12 +230,6 @@ public class CandidateQueryService {
         }
     }
 
-    
-
-
-
-
-
     private String validateSortField(
             String sortBy
     ) {
@@ -391,12 +256,6 @@ public class CandidateQueryService {
 
         return effectiveSortBy;
     }
-
-    
-
-
-
-
 
     private Sort.Direction parseDirection(
             String direction

@@ -37,12 +37,6 @@ class ProcessingFailureControllerIT {
     private static final Path STORAGE_ROOT =
             createStorageRoot();
 
-    
-
-
-
-
-
     @Container
     @ServiceConnection
     static PostgreSQLContainer postgres =
@@ -69,12 +63,6 @@ class ProcessingFailureControllerIT {
     private ProcessingFailureRepository
             processingFailureRepository;
 
-    
-
-
-
-
-
     @DynamicPropertySource
     static void properties(
             DynamicPropertyRegistry registry
@@ -91,35 +79,13 @@ class ProcessingFailureControllerIT {
         );
     }
 
-    
-
-
-
-
-
     @BeforeEach
     void cleanDatabase() {
-
-        
-
-
-
-
-
-
-
 
         processingFailureRepository.deleteAll();
 
         cvUploadRepository.deleteAll();
     }
-
-    
-
-
-
-
-
 
     @Test
     void shouldReturnFailuresForExistingUploadNewestFirst()
@@ -142,11 +108,6 @@ class ProcessingFailureControllerIT {
         processingFailureRepository.saveAndFlush(
                 oldFailure
         );
-
-        
-
-
-
 
         Thread.sleep(
                 30
@@ -275,13 +236,6 @@ class ProcessingFailureControllerIT {
                         ).isNotEmpty()
                 );
     }
-
-    
-
-
-
-
-
 
     @Test
     void shouldPaginateProcessingFailures()
@@ -422,13 +376,6 @@ class ProcessingFailureControllerIT {
                 );
     }
 
-    
-
-
-
-
-
-
     @Test
     void shouldReturnEmptyPageWhenUploadHasNoFailures()
             throws Exception {
@@ -507,13 +454,6 @@ class ProcessingFailureControllerIT {
                 );
     }
 
-    
-
-
-
-
-
-
     @Test
     void shouldReturn404WhenUploadDoesNotExist()
             throws Exception {
@@ -538,13 +478,6 @@ class ProcessingFailureControllerIT {
                                 .isNotFound()
                 );
     }
-
-    
-
-
-
-
-
 
     @Test
     void shouldReturn400WhenPageIsNegative()
@@ -572,13 +505,6 @@ class ProcessingFailureControllerIT {
                 );
     }
 
-    
-
-
-
-
-
-
     @Test
     void shouldReturn400WhenPageSizeExceedsMaximum()
             throws Exception {
@@ -605,18 +531,6 @@ class ProcessingFailureControllerIT {
                 );
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
     private MockHttpServletRequestBuilder recruiterGet(
             String url,
             Object... uriVariables
@@ -630,12 +544,6 @@ class ProcessingFailureControllerIT {
                         SecurityTestUsers.recruiter()
                 );
     }
-
-    
-
-
-
-
 
     private CvUpload createUpload(
             String filename,
@@ -655,12 +563,6 @@ class ProcessingFailureControllerIT {
                 upload
         );
     }
-
-    
-
-
-
-
 
     private ProcessingFailure saveFailure(
             CvUpload upload,
@@ -682,12 +584,6 @@ class ProcessingFailureControllerIT {
                         failure
                 );
     }
-
-    
-
-
-
-
 
     private static Path createStorageRoot() {
 

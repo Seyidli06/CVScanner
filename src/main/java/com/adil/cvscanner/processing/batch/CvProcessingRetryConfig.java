@@ -26,11 +26,9 @@ public class CvProcessingRetryConfig {
                         TransientDataAccessException.class
                 )
 
-
                 .maxRetries(
                         properties.maxRetries()
                 )
-
 
                 .delay(
                         properties.delay()

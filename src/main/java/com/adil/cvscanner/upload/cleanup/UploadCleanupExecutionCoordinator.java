@@ -25,12 +25,6 @@ public class UploadCleanupExecutionCoordinator {
                 cleanupService;
     }
 
-    
-
-
-
-
-
     public UploadCleanupExecutionResult tryRunOnce() {
 
         Optional<UploadCleanupRunResult> result =

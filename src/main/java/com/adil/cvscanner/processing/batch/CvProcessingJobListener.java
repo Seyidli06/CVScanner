@@ -34,25 +34,6 @@ public class CvProcessingJobListener
                 cvUploadStatusService;
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Override
     public void beforeJob(
             JobExecution jobExecution
@@ -75,11 +56,6 @@ public class CvProcessingJobListener
         );
     }
 
-    
-
-
-
-
     @Override
     public void afterJob(
             JobExecution jobExecution
@@ -97,21 +73,6 @@ public class CvProcessingJobListener
                 resolveSafeExitCode(
                         jobExecution
                 );
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         if (
                 batchStatus
@@ -133,35 +94,9 @@ public class CvProcessingJobListener
             return;
         }
 
-        
-
-
-
-
-
-
-
-
-
-
-
         cvUploadStatusService.markFailed(
                 uploadId
         );
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
 
         log.warn(
                 "CV_PROCESSING_JOB_FAILED uploadId={} jobExecutionId={} batchStatus={} exitCode={}",
@@ -171,11 +106,6 @@ public class CvProcessingJobListener
                 exitCode
         );
     }
-
-    
-
-
-
 
     private UUID requireUploadId(
             JobExecution jobExecution
@@ -208,30 +138,11 @@ public class CvProcessingJobListener
                 IllegalArgumentException exception
         ) {
 
-            
-
-
-
             throw new IllegalStateException(
                     "Required batch parameter 'uploadId' is invalid"
             );
         }
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     private String resolveSafeExitCode(
             JobExecution jobExecution

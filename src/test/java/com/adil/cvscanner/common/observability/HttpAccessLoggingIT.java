@@ -44,13 +44,6 @@ class HttpAccessLoggingIT {
     @Autowired
     private MockMvc mockMvc;
 
-    
-
-
-
-
-
-
     @Test
     void shouldLogSafeHttpMetadata(
             CapturedOutput output
@@ -105,18 +98,6 @@ class HttpAccessLoggingIT {
                 );
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
     @Test
     void shouldNotLogQueryString(
             CapturedOutput output
@@ -164,23 +145,6 @@ class HttpAccessLoggingIT {
                         "?location="
                 );
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @Test
     void shouldNotLogAuthorizationOrCookie(
@@ -240,13 +204,6 @@ class HttpAccessLoggingIT {
                 );
     }
 
-    
-
-
-
-
-
-
     @Test
     void shouldLogHttpErrorStatus(
             CapturedOutput output
@@ -295,17 +252,6 @@ class HttpAccessLoggingIT {
                 );
     }
 
-    
-
-
-
-
-
-
-
-
-
-
     @Test
     void shouldNotAccessLogHealthProbe(
             CapturedOutput output
@@ -332,17 +278,6 @@ class HttpAccessLoggingIT {
                 "path=/livez"
         );
     }
-
-    
-
-
-
-
-
-
-
-
-
 
     private String accessLogsOnly(
             String output

@@ -27,33 +27,6 @@ public class CvProcessingProgressListener
                 uploadStatusService;
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Override
     public void afterChunk(
             Chunk<CandidateDraft> chunk
@@ -72,6 +45,5 @@ public class CvProcessingProgressListener
                         chunk.size()
                 );
     }
-
 
 }

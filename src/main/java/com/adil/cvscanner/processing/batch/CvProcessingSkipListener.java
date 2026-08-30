@@ -56,45 +56,12 @@ public class CvProcessingSkipListener
                 uploadStatusService;
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Override
     public void onSkipInRead(
             Throwable throwable
     ) {
-        
+
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @Override
     public void onSkipInProcess(
@@ -128,19 +95,10 @@ public class CvProcessingSkipListener
                         errorMessage
                 );
 
-        
-
-
         processingFailureRepository
                 .saveAndFlush(
                         failure
                 );
-
-        
-
-
-
-
 
         uploadStatusService
                 .recordFailed(
@@ -148,34 +106,13 @@ public class CvProcessingSkipListener
                 );
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Override
     public void onSkipInWrite(
             CandidateDraft item,
             Throwable throwable
     ) {
-        
+
     }
-
-    
-
-
-
-
 
     private CvUpload findUpload() {
 
@@ -191,12 +128,6 @@ public class CvProcessingSkipListener
                                 )
                 );
     }
-
-    
-
-
-
-
 
     private String extractFilename(
             Path item
@@ -214,12 +145,6 @@ public class CvProcessingSkipListener
                 .getFileName()
                 .toString();
     }
-
-    
-
-
-
-
 
     private String resolveErrorCode(
             Throwable throwable
@@ -247,12 +172,6 @@ public class CvProcessingSkipListener
         return PROCESSING_FAILED;
     }
 
-    
-
-
-
-
-
     private String sanitizeErrorMessage(
             Throwable throwable
     ) {
@@ -274,10 +193,6 @@ public class CvProcessingSkipListener
                     .getClass()
                     .getSimpleName();
         }
-
-        
-
-
 
         String normalized =
                 message

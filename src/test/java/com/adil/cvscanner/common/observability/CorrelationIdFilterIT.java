@@ -23,15 +23,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Testcontainers
 class CorrelationIdFilterIT {
 
-    
-
-
-
-
-
-
-
-
     @Container
     @ServiceConnection
     static PostgreSQLContainer postgres =
@@ -50,21 +41,6 @@ class CorrelationIdFilterIT {
 
     @Autowired
     private MockMvc mockMvc;
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @Test
     void shouldPreserveValidIncomingCorrelationId()
@@ -94,17 +70,6 @@ class CorrelationIdFilterIT {
                                 )
                 );
     }
-
-    
-
-
-
-
-
-
-
-
-
 
     @Test
     void shouldGenerateCorrelationIdWhenHeaderIsMissing()
@@ -136,9 +101,6 @@ class CorrelationIdFilterIT {
                 generatedCorrelationId
         ).isNotBlank();
 
-        
-
-
         UUID parsed =
                 UUID.fromString(
                         generatedCorrelationId
@@ -150,18 +112,6 @@ class CorrelationIdFilterIT {
                 generatedCorrelationId
         );
     }
-
-    
-
-
-
-
-
-
-
-
-
-
 
     @Test
     void shouldReplaceInvalidIncomingCorrelationId()
@@ -207,19 +157,6 @@ class CorrelationIdFilterIT {
         );
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
     @Test
     void shouldReplaceTooLongCorrelationId()
             throws Exception {
@@ -261,16 +198,6 @@ class CorrelationIdFilterIT {
                 responseCorrelationId
         );
     }
-
-    
-
-
-
-
-
-
-
-
 
     @Test
     void shouldGenerateIndependentCorrelationIdsForSeparateRequests()

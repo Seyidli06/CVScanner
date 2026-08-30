@@ -40,12 +40,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 )
 class CandidateQueryPerformanceIT {
 
-    
-
-
-
-
-
     @Container
     @ServiceConnection
     static PostgreSQLContainer postgres =
@@ -76,37 +70,12 @@ class CandidateQueryPerformanceIT {
 
     private Statistics statistics;
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @BeforeEach
     void setUp() {
 
         candidateRepository.deleteAll();
 
         cvUploadRepository.deleteAll();
-
-        
-
-
 
         SessionFactory sessionFactory =
                 entityManagerFactory.unwrap(
@@ -116,19 +85,9 @@ class CandidateQueryPerformanceIT {
         statistics =
                 sessionFactory.getStatistics();
 
-        
-
-
-
         assertThat(
                 statistics.isStatisticsEnabled()
         ).isTrue();
-
-        
-
-
-
-
 
         CvUpload upload =
                 new CvUpload(
@@ -144,12 +103,6 @@ class CandidateQueryPerformanceIT {
                         upload
                 );
 
-        
-
-
-
-
-
         List<Candidate> candidates =
                 new ArrayList<>();
 
@@ -162,15 +115,6 @@ class CandidateQueryPerformanceIT {
             Candidate candidate =
                     new Candidate(
                             upload,
-
-                            
-
-
-
-
-
-
-
 
                             "Candidate %02d".formatted(
                                     index
@@ -185,12 +129,6 @@ class CandidateQueryPerformanceIT {
                             "candidate-%02d.pdf".formatted(
                                     index
                             ),
-
-                            
-
-
-
-
 
                             Set.of(
                                     "Java",
@@ -216,21 +154,6 @@ class CandidateQueryPerformanceIT {
                 30
         );
 
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         statistics.clear();
 
         assertThat(
@@ -238,25 +161,9 @@ class CandidateQueryPerformanceIT {
         ).isZero();
     }
 
-    
-
-
-
-
-
     @Test
     void shouldLoadCandidatePageWithoutNPlusOneQueries()
             throws Exception {
-
-        
-
-
-
-
-
-
-
-
 
         mockMvc.perform(
                         get(
@@ -286,10 +193,6 @@ class CandidateQueryPerformanceIT {
                         status()
                                 .isOk()
                 )
-
-                
-
-
 
                 .andExpect(
                         jsonPath(
@@ -339,23 +242,9 @@ class CandidateQueryPerformanceIT {
                         )
                 );
 
-        
-
-
-
-
-
         long preparedStatements =
                 statistics
                         .getPrepareStatementCount();
-
-        
-
-
-
-
-
-
 
         assertThat(
                 preparedStatements
@@ -366,16 +255,6 @@ class CandidateQueryPerformanceIT {
                 .isLessThanOrEqualTo(
                         4
                 );
-
-        
-
-
-
-
-
-
-
-
 
         assertThat(
                 preparedStatements

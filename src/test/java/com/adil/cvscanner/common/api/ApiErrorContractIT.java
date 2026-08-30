@@ -42,20 +42,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Testcontainers
 class ApiErrorContractIT {
 
-    
-
-
-
-
-
     private static final Path STORAGE_ROOT =
             createStorageRoot();
-
-    
-
-
-
-
 
     @Container
     @ServiceConnection
@@ -79,19 +67,8 @@ class ApiErrorContractIT {
     @Autowired
     private CvUploadRepository cvUploadRepository;
 
-    
-
-
-
-
     @MockitoBean
     private CvProcessingJobLauncher cvProcessingJobLauncher;
-
-    
-
-
-
-
 
     @DynamicPropertySource
     static void properties(
@@ -153,11 +130,6 @@ class ApiErrorContractIT {
                 () -> "0ms"
         );
 
-        
-
-
-
-
         registry.add(
                 "server.error.include-message",
                 () -> "never"
@@ -174,12 +146,6 @@ class ApiErrorContractIT {
         );
     }
 
-    
-
-
-
-
-
     @BeforeEach
     void setUp() {
 
@@ -189,13 +155,6 @@ class ApiErrorContractIT {
 
         cvUploadRepository.deleteAll();
     }
-
-    
-
-
-
-
-
 
     @Test
     void shouldReturnStandardErrorForInvalidCandidateQuery()
@@ -279,13 +238,6 @@ class ApiErrorContractIT {
                 );
     }
 
-    
-
-
-
-
-
-
     @Test
     void shouldReturnStandardErrorForMalformedUuid()
             throws Exception {
@@ -359,13 +311,6 @@ class ApiErrorContractIT {
                 );
     }
 
-    
-
-
-
-
-
-
     @Test
     void shouldReturnStandardErrorForInvalidJobType()
             throws Exception {
@@ -427,13 +372,6 @@ class ApiErrorContractIT {
                         ).doesNotExist()
                 );
     }
-
-    
-
-
-
-
-
 
     @Test
     void shouldReturnStandard404ForUnknownUpload()
@@ -509,13 +447,6 @@ class ApiErrorContractIT {
                 );
     }
 
-    
-
-
-
-
-
-
     @Test
     void shouldReturnStandardErrorForInvalidFailureQuery()
             throws Exception {
@@ -588,21 +519,6 @@ class ApiErrorContractIT {
                         ).doesNotExist()
                 );
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @Test
     void shouldHideInternalDetailsForProcessingLaunchFailure()
@@ -716,8 +632,6 @@ class ApiErrorContractIT {
                 );
     }
 
-
-
     private static byte[] createZip(
             String entryName,
             byte[] content
@@ -752,8 +666,6 @@ class ApiErrorContractIT {
         return output.toByteArray();
     }
 
-
-
     private static byte[] minimalPdfBytes() {
 
         String content = """
@@ -774,12 +686,6 @@ class ApiErrorContractIT {
                 StandardCharsets.US_ASCII
         );
     }
-
-    
-
-
-
-
 
     private static Path createStorageRoot() {
 

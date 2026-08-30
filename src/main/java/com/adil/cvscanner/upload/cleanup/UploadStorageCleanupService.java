@@ -52,23 +52,7 @@ public class UploadStorageCleanupService {
                 cleanupMetrics;
     }
 
-    
-
-
-
-
-
     public UploadCleanupRunResult runOnce() {
-
-        
-
-
-
-
-
-
-
-
 
         long startedAtNanos =
                 System.nanoTime();
@@ -97,23 +81,11 @@ public class UploadStorageCleanupService {
 
                 try {
 
-                    
-
-
-
-
-
                     boolean storageExisted =
                             uploadStorage
                                     .deleteUploadDirectory(
                                             uploadId
                                     );
-
-                    
-
-
-
-
 
                     UploadStorageCleanupRecord record =
                             new UploadStorageCleanupRecord(
@@ -155,15 +127,6 @@ public class UploadStorageCleanupService {
 
                     failed++;
 
-                    
-
-
-
-
-
-
-
-
                     LOGGER.warn(
                             "UPLOAD_STORAGE_CLEANUP_FAILED "
                                     +
@@ -186,12 +149,6 @@ public class UploadStorageCleanupService {
                             failed
                     );
 
-            
-
-
-
-
-
             cleanupMetrics
                     .recordCompletedRun(
                             result,
@@ -206,10 +163,6 @@ public class UploadStorageCleanupService {
                 RuntimeException exception
         ) {
 
-            
-
-
-
             cleanupMetrics
                     .recordRunFailure(
                             elapsedSince(
@@ -221,12 +174,6 @@ public class UploadStorageCleanupService {
         }
     }
 
-    
-
-
-
-
-
     private Duration elapsedSince(
             long startedAtNanos
     ) {
@@ -234,13 +181,6 @@ public class UploadStorageCleanupService {
         long elapsedNanos =
                 System.nanoTime()
                         - startedAtNanos;
-
-        
-
-
-
-
-
 
         if (
                 elapsedNanos < 0

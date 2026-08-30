@@ -58,12 +58,6 @@ class CandidateItemWriterIT {
     @BeforeEach
     void cleanDatabase() {
 
-        
-
-
-
-
-
         candidateRepository.deleteAll();
 
         cvUploadRepository.deleteAll();
@@ -73,12 +67,6 @@ class CandidateItemWriterIT {
     void shouldSkipCandidateThatAlreadyExistsForSameUpload()
             throws Exception {
 
-        
-
-
-
-
-
         CvUpload upload =
                 createUpload(
                         "candidates.zip",
@@ -87,22 +75,6 @@ class CandidateItemWriterIT {
 
         UUID uploadId =
                 upload.getId();
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         Candidate existingJohn =
                 new Candidate(
@@ -126,27 +98,12 @@ class CandidateItemWriterIT {
                 candidateRepository.count()
         ).isEqualTo(1);
 
-        
-
-
-
-
-
         CandidateItemWriter writer =
                 new CandidateItemWriter(
                         uploadId,
                         cvUploadRepository,
                         candidateRepository
                 );
-
-        
-
-
-
-
-
-
-
 
         CandidateDraft duplicateJohn =
                 new CandidateDraft(
@@ -181,14 +138,6 @@ class CandidateItemWriterIT {
                         newJane
                 );
 
-        
-
-
-
-
-
-
-
         TransactionTemplate transactionTemplate =
                 new TransactionTemplate(
                         transactionManager
@@ -212,19 +161,6 @@ class CandidateItemWriterIT {
                 }
         );
 
-        
-
-
-
-
-
-
-
-
-
-
-
-
         List<Candidate> candidates =
                 candidateRepository
                         .findAllByUpload_Id(
@@ -245,9 +181,6 @@ class CandidateItemWriterIT {
                         "john.pdf",
                         "jane.docx"
                 );
-
-        
-
 
         Candidate john =
                 candidates
@@ -272,14 +205,6 @@ class CandidateItemWriterIT {
         ).isEqualTo(
                 5
         );
-
-        
-
-
-
-
-
-
 
         assertThat(
                 candidates
@@ -318,13 +243,6 @@ class CandidateItemWriterIT {
                         cvUploadRepository,
                         candidateRepository
                 );
-
-        
-
-
-
-
-
 
         CandidateDraft first =
                 new CandidateDraft(
@@ -385,10 +303,6 @@ class CandidateItemWriterIT {
                                 upload.getId()
                         );
 
-        
-
-
-
         assertThat(
                 candidates
         ).hasSize(1);
@@ -400,9 +314,6 @@ class CandidateItemWriterIT {
                 "john.pdf"
         );
 
-        
-
-
         assertThat(
                 candidates.getFirst()
                         .getFullName()
@@ -413,15 +324,6 @@ class CandidateItemWriterIT {
 
     @Test
     void shouldAllowSameSourceFilenameForDifferentUploads() {
-
-        
-
-
-
-
-
-
-
 
         CvUpload firstUpload =
                 createUpload(
@@ -491,17 +393,6 @@ class CandidateItemWriterIT {
     @Test
     void shouldRejectDuplicateAtDatabaseLevel() {
 
-        
-
-
-
-
-
-
-
-
-
-
         CvUpload upload =
                 createUpload(
                         "db-constraint.zip",
@@ -537,14 +428,6 @@ class CandidateItemWriterIT {
                                 "Kafka"
                         )
                 );
-
-        
-
-
-
-
-
-
 
         assertThatThrownBy(
                 () ->

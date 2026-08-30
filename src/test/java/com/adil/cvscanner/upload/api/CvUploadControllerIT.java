@@ -48,24 +48,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Testcontainers
 class CvUploadControllerIT {
 
-    
-
-
-
-
-
-
-
-
-
     private static final Path STORAGE_ROOT =
             createStorageRoot();
-
-    
-
-
-
-
 
     @Container
     @ServiceConnection
@@ -89,41 +73,8 @@ class CvUploadControllerIT {
     @Autowired
     private CvUploadRepository cvUploadRepository;
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @MockitoBean
     private CvProcessingJobLauncher cvProcessingJobLauncher;
-
-    
-
-
-
-
 
     @DynamicPropertySource
     static void properties(
@@ -186,61 +137,17 @@ class CvUploadControllerIT {
         );
     }
 
-    
-
-
-
-
-
     @BeforeEach
     void setUp() throws IOException {
-
-        
-
-
-
 
         reset(
                 cvProcessingJobLauncher
         );
 
-        
-
-
-
         cvUploadRepository.deleteAll();
-
-        
-
-
-
 
         clearStorageRoot();
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @Test
     void shouldAcceptValidZipAndReturn202()
@@ -259,12 +166,6 @@ class CvUploadControllerIT {
                         "application/zip",
                         zipBytes
                 );
-
-        
-
-
-
-
 
         mockMvc.perform(
                         multipart(
@@ -301,12 +202,6 @@ class CvUploadControllerIT {
                         )
                 );
 
-        
-
-
-
-
-
         List<CvUpload> uploads =
                 cvUploadRepository.findAll();
 
@@ -331,14 +226,6 @@ class CvUploadControllerIT {
                 UploadStatus.UPLOADED
         );
 
-        
-
-
-
-
-
-
-
         assertThat(
                 upload.getTotalFiles()
         ).isEqualTo(
@@ -353,20 +240,11 @@ class CvUploadControllerIT {
                 upload.getFailedFiles()
         ).isZero();
 
-        
-
-
-
-
         verify(
                 cvProcessingJobLauncher
         ).launch(
                 upload.getId()
         );
-
-        
-
-
 
         assertThat(
                 regularFileExists(
@@ -374,13 +252,6 @@ class CvUploadControllerIT {
                 )
         ).isTrue();
     }
-
-    
-
-
-
-
-
 
     @Test
     void shouldRejectInvalidZipWith400()
@@ -417,38 +288,10 @@ class CvUploadControllerIT {
                 cvUploadRepository.count()
         ).isZero();
 
-        
-
-
-
-
         org.mockito.Mockito.verifyNoInteractions(
                 cvProcessingJobLauncher
         );
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @Test
     void shouldRejectZipSlipArchiveWith400()
@@ -492,13 +335,6 @@ class CvUploadControllerIT {
                 cvProcessingJobLauncher
         );
 
-        
-
-
-
-
-
-
         assertThat(
                 regularFileExists(
                         "evil.pdf"
@@ -506,47 +342,9 @@ class CvUploadControllerIT {
         ).isFalse();
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Test
     void shouldReturn500AndMarkUploadFailedWhenJobLaunchFails()
             throws Exception {
-
-        
-
-
-
-
-
-
-
-
 
         CvProcessingLaunchException launchException =
                 mock(
@@ -578,14 +376,6 @@ class CvUploadControllerIT {
                         "application/zip",
                         zipBytes
                 );
-
-        
-
-
-
-
-
-
 
         mockMvc.perform(
                         multipart(
@@ -643,12 +433,6 @@ class CvUploadControllerIT {
                         ).isNotEmpty()
                 );
 
-        
-
-
-
-
-
         List<CvUpload> uploads =
                 cvUploadRepository.findAll();
 
@@ -691,15 +475,6 @@ class CvUploadControllerIT {
                 failedUpload.getCompletedAt()
         ).isNotNull();
 
-        
-
-
-
-
-
-
-
-
         assertThat(
                 regularFileExists(
                         "launch-failure.pdf"
@@ -712,12 +487,6 @@ class CvUploadControllerIT {
                 failedUpload.getId()
         );
     }
-
-    
-
-
-
-
 
     private static byte[] createZip(
             String entryName,
@@ -753,19 +522,6 @@ class CvUploadControllerIT {
         return output.toByteArray();
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
     private static byte[] minimalPdfBytes() {
 
         String content = """
@@ -786,12 +542,6 @@ class CvUploadControllerIT {
                 StandardCharsets.US_ASCII
         );
     }
-
-    
-
-
-
-
 
     private static boolean regularFileExists(
             String filename
@@ -820,12 +570,6 @@ class CvUploadControllerIT {
                     );
         }
     }
-
-    
-
-
-
-
 
     private static void clearStorageRoot()
             throws IOException {
@@ -885,12 +629,6 @@ class CvUploadControllerIT {
             );
         }
     }
-
-    
-
-
-
-
 
     private static Path createStorageRoot() {
 

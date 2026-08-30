@@ -76,12 +76,6 @@ class CvUploadLiveProgressIT {
     private static final Path STORAGE_ROOT =
             createStorageRoot();
 
-    
-
-
-
-
-
     @Container
     @ServiceConnection
     static PostgreSQLContainer postgres =
@@ -117,12 +111,6 @@ class CvUploadLiveProgressIT {
     @Autowired
     private BlockingProgressProcessor
             blockingProgressProcessor;
-
-    
-
-
-
-
 
     @DynamicPropertySource
     static void properties(
@@ -193,32 +181,9 @@ class CvUploadLiveProgressIT {
         blockingProgressProcessor.reset();
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Test
     void shouldExposeCommittedProgressWhileJobIsStillRunning()
             throws Exception {
-
-        
-
-
-
-
 
         CvUpload upload =
                 new CvUpload(
@@ -242,12 +207,6 @@ class CvUploadLiveProgressIT {
                 UploadStatus.UPLOADED
         );
 
-        
-
-
-
-
-
         JobExecution launchedExecution =
                 jobOperator.start(
                         liveProgressTestJob,
@@ -259,19 +218,6 @@ class CvUploadLiveProgressIT {
         assertThat(
                 launchedExecution.getId()
         ).isPositive();
-
-        
-
-
-
-
-
-
-
-
-
-
-
 
         boolean secondChunkStarted =
                 blockingProgressProcessor
@@ -287,12 +233,6 @@ class CvUploadLiveProgressIT {
                         "Second chunk did not start within timeout"
                 )
                 .isTrue();
-
-        
-
-
-
-
 
         CvUpload processingUpload =
                 cvUploadRepository
@@ -313,10 +253,6 @@ class CvUploadLiveProgressIT {
                 4
         );
 
-        
-
-
-
         assertThat(
                 processingUpload.getProcessedFiles()
         ).isEqualTo(
@@ -330,12 +266,6 @@ class CvUploadLiveProgressIT {
         assertThat(
                 processingUpload.getCompletedAt()
         ).isNull();
-
-        
-
-
-
-
 
         mockMvc.perform(
                         get(
@@ -393,25 +323,8 @@ class CvUploadLiveProgressIT {
                         )
                 );
 
-        
-
-
-
-
-
-
-
-
-
-
         blockingProgressProcessor
                 .release();
-
-        
-
-
-
-
 
         JobExecution completedExecution =
                 waitForJobCompletion(
@@ -447,12 +360,6 @@ class CvUploadLiveProgressIT {
                 4
         );
 
-        
-
-
-
-
-
         CvUpload completedUpload =
                 cvUploadRepository
                         .findById(
@@ -485,12 +392,6 @@ class CvUploadLiveProgressIT {
         assertThat(
                 completedUpload.getCompletedAt()
         ).isNotNull();
-
-        
-
-
-
-
 
         mockMvc.perform(
                         get(
@@ -540,12 +441,6 @@ class CvUploadLiveProgressIT {
                 );
     }
 
-    
-
-
-
-
-
     private JobParameters createJobParameters(
             UUID uploadId
     ) {
@@ -557,12 +452,6 @@ class CvUploadLiveProgressIT {
                 )
                 .toJobParameters();
     }
-
-    
-
-
-
-
 
     private JobExecution waitForJobCompletion(
             long executionId
@@ -603,10 +492,6 @@ class CvUploadLiveProgressIT {
             );
         }
 
-        
-
-
-
         blockingProgressProcessor
                 .release();
 
@@ -615,12 +500,6 @@ class CvUploadLiveProgressIT {
                         + executionId
         );
     }
-
-    
-
-
-
-
 
     private StepExecution findStepExecution(
             JobExecution jobExecution
@@ -646,12 +525,6 @@ class CvUploadLiveProgressIT {
                 );
     }
 
-    
-
-
-
-
-
     private static Path createStorageRoot() {
 
         try {
@@ -670,28 +543,10 @@ class CvUploadLiveProgressIT {
         }
     }
 
-    
-
-
-
-
-
     @TestConfiguration(
             proxyBeanMethods = false
     )
     static class LiveProgressTestConfiguration {
-
-        
-
-
-
-
-
-
-
-
-
-
 
         @Bean("liveProgressTestReader")
         @StepScope
@@ -715,12 +570,6 @@ class CvUploadLiveProgressIT {
             );
         }
 
-        
-
-
-
-
-
         @Bean
         BlockingProgressProcessor
         blockingProgressProcessor() {
@@ -728,39 +577,14 @@ class CvUploadLiveProgressIT {
             return new BlockingProgressProcessor();
         }
 
-        
-
-
-
-
-
-
-
-
-
-
-
         @Bean("liveProgressTestWriter")
         ItemWriter<CandidateDraft>
         liveProgressTestWriter() {
 
             return chunk -> {
-                
+
             };
         }
-
-        
-
-
-
-
-
-
-
-
-
-
-
 
         @Bean("liveProgressTestListener")
         @StepScope
@@ -779,14 +603,6 @@ class CvUploadLiveProgressIT {
                     uploadStatusService
             );
         }
-
-        
-
-
-
-
-
-
 
         @Bean("liveProgressTestStep")
         Step liveProgressTestStep(
@@ -827,18 +643,6 @@ class CvUploadLiveProgressIT {
                     .build();
         }
 
-        
-
-
-
-
-
-
-
-
-
-
-
         @Bean("liveProgressTestJob")
         Job liveProgressTestJob(
                 JobRepository jobRepository,
@@ -861,19 +665,6 @@ class CvUploadLiveProgressIT {
                     .build();
         }
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
 
     static class BlockingProgressProcessor
             implements ItemProcessor<Path, CandidateDraft> {
@@ -901,11 +692,6 @@ class CvUploadLiveProgressIT {
             int invocation =
                     processedInvocations
                             .incrementAndGet();
-
-            
-
-
-
 
             if (
                     invocation == 3

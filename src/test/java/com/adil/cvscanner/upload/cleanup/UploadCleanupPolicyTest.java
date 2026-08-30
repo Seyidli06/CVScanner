@@ -55,36 +55,15 @@ class UploadCleanupPolicyTest {
                 );
     }
 
-    
-
-
-
-
-
-
     @Test
     void shouldNotCleanupRecentlyCompletedUpload() {
 
         CvUpload upload =
                 completedUpload();
 
-        
-
-
-
-
-
-
-
-
-
         assertThat(
                 upload.getCompletedAt()
         ).isNotNull();
-
-        
-
-
 
         assertThat(
                 policy.isEligibleForCleanup(
@@ -92,13 +71,6 @@ class UploadCleanupPolicyTest {
                 )
         ).isFalse();
     }
-
-    
-
-
-
-
-
 
     @Test
     void shouldNotCleanupUploadedState() {
@@ -118,13 +90,6 @@ class UploadCleanupPolicyTest {
                 )
         ).isFalse();
     }
-
-    
-
-
-
-
-
 
     @Test
     void shouldNotCleanupProcessingState() {
@@ -146,15 +111,6 @@ class UploadCleanupPolicyTest {
                 )
         ).isFalse();
     }
-
-    
-
-
-
-
-
-
-
 
     @Test
     void shouldNotCleanupFailedUpload() {
@@ -178,16 +134,6 @@ class UploadCleanupPolicyTest {
                 )
         ).isFalse();
     }
-
-    
-
-
-
-
-
-
-
-
 
     @Test
     void shouldRespectRetentionForCompletedWithErrors() {
@@ -217,13 +163,6 @@ class UploadCleanupPolicyTest {
         ).isFalse();
     }
 
-    
-
-
-
-
-
-
     @Test
     void shouldNotCleanupAnythingWhenDisabled() {
 
@@ -240,12 +179,6 @@ class UploadCleanupPolicyTest {
                 )
         ).isFalse();
     }
-
-    
-
-
-
-
 
     private CvUpload completedUpload() {
 

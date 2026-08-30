@@ -53,12 +53,6 @@ class CvProcessingJobListenerTest {
         );
     }
 
-    
-
-
-
-
-
     @Test
     void shouldMarkProcessingAndLogSafeStartMetadata(
             CapturedOutput output
@@ -114,12 +108,6 @@ class CvProcessingJobListenerTest {
                         "batchStatus=STARTING"
                 );
     }
-
-    
-
-
-
-
 
     @Test
     void shouldCompleteUploadAndLogSuccessfulJob(
@@ -192,20 +180,6 @@ class CvProcessingJobListenerTest {
                         "exitCode=COMPLETED"
                 );
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
 
     @Test
     void shouldFailUploadWithoutLoggingExitDescription(
@@ -289,10 +263,6 @@ class CvProcessingJobListenerTest {
                         "exitCode=FAILED"
                 )
 
-                
-
-
-
                 .doesNotContain(
                         "VERY_SECRET_PERSON"
                 )
@@ -303,12 +273,6 @@ class CvProcessingJobListenerTest {
                         "VERY_SECRET_CV_TEXT"
                 );
     }
-
-    
-
-
-
-
 
     @Test
     void shouldRejectJobWithoutUploadId() {
@@ -335,12 +299,6 @@ class CvProcessingJobListenerTest {
                         "Required batch parameter 'uploadId' is missing"
                 );
     }
-
-    
-
-
-
-
 
     @Test
     void shouldRejectInvalidUploadIdWithoutEchoingValue() {

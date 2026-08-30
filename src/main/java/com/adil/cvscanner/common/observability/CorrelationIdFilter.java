@@ -18,53 +18,11 @@ import java.util.regex.Pattern;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class CorrelationIdFilter extends OncePerRequestFilter {
 
-    
-
-
-
-
-
-
-
-
-
-
     public static final String CORRELATION_ID_HEADER =
             "X-Correlation-ID";
 
-    
-
-
-
-
-
-
-
-
-
-
     public static final String MDC_CORRELATION_ID_KEY =
             "correlationId";
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     private static final Pattern VALID_CORRELATION_ID =
             Pattern.compile(
@@ -85,26 +43,10 @@ public class CorrelationIdFilter extends OncePerRequestFilter {
                         )
                 );
 
-        
-
-
-
-
-
-
-
         response.setHeader(
                 CORRELATION_ID_HEADER,
                 correlationId
         );
-
-        
-
-
-
-
-
-
 
         MDC.put(
                 MDC_CORRELATION_ID_KEY,
@@ -119,25 +61,6 @@ public class CorrelationIdFilter extends OncePerRequestFilter {
             );
 
         } finally {
-
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
             MDC.remove(
                     MDC_CORRELATION_ID_KEY

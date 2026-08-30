@@ -51,15 +51,6 @@ public class RateLimitRedisHealthIndicator
     @Override
     public Health health() {
 
-        
-
-
-
-
-
-
-
-
         if (
                 !properties.isEnabled()
         ) {
@@ -69,15 +60,6 @@ public class RateLimitRedisHealthIndicator
                     .build();
         }
 
-        
-
-
-
-
-
-
-
-
         if (
                 properties.isFailOpen()
         ) {
@@ -86,21 +68,6 @@ public class RateLimitRedisHealthIndicator
                     .up()
                     .build();
         }
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         try {
 
@@ -141,11 +108,6 @@ public class RateLimitRedisHealthIndicator
         } catch (
                 RuntimeException exception
         ) {
-
-            
-
-
-
 
             LOGGER.warn(
                     "RATE_LIMIT_REDIS_HEALTH_CHECK_FAILED errorType={}",

@@ -47,54 +47,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 )
 class JwtResourceServerIT {
 
-    
-
-
-
-
-
     private static final String ISSUER =
             "https://issuer.cvscanner.test";
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     private static final KeyPair KEY_PAIR =
             generateKeyPair();
 
-    
-
-
-
     private static final KeyPair ATTACKER_KEY_PAIR =
             generateKeyPair();
 
-    
-
-
-
-
-
     private static final Path STORAGE_ROOT =
             createStorageRoot();
-
-    
-
-
-
-
 
     @Container
     @ServiceConnection
@@ -114,12 +77,6 @@ class JwtResourceServerIT {
 
     @Autowired
     private MockMvc mockMvc;
-
-    
-
-
-
-
 
     @DynamicPropertySource
     static void properties(
@@ -146,22 +103,10 @@ class JwtResourceServerIT {
                 () -> "health,metrics"
         );
 
-        
-
-
-
         registry.add(
                 "security.jwt.issuer-uri",
                 () -> ISSUER
         );
-
-        
-
-
-
-
-
-
 
         registry.add(
                 "security.jwt.jwk-set-uri",
@@ -173,14 +118,6 @@ class JwtResourceServerIT {
                 () -> "roles"
         );
     }
-
-    
-
-
-
-
-
-
 
     @Test
     void shouldAllowAnonymousHealthRequest()
@@ -196,14 +133,6 @@ class JwtResourceServerIT {
                 );
     }
 
-    
-
-
-
-
-
-
-
     @Test
     void shouldReturnUnauthorizedWhenBearerTokenIsMissing()
             throws Exception {
@@ -217,14 +146,6 @@ class JwtResourceServerIT {
                         status().isUnauthorized()
                 );
     }
-
-    
-
-
-
-
-
-
 
     @Test
     void shouldAllowValidAdminJwt()
@@ -258,14 +179,6 @@ class JwtResourceServerIT {
                 );
     }
 
-    
-
-
-
-
-
-
-
     @Test
     void shouldReturnForbiddenForRecruiterOnAdminEndpoint()
             throws Exception {
@@ -297,14 +210,6 @@ class JwtResourceServerIT {
                         status().isForbidden()
                 );
     }
-
-    
-
-
-
-
-
-
 
     @Test
     void shouldRejectUnknownRoleFromAdminEndpoint()
@@ -338,14 +243,6 @@ class JwtResourceServerIT {
                 );
     }
 
-    
-
-
-
-
-
-
-
     @Test
     void shouldRejectTokenWithWrongIssuer()
             throws Exception {
@@ -378,24 +275,9 @@ class JwtResourceServerIT {
                 );
     }
 
-    
-
-
-
-
-
-
-
     @Test
     void shouldRejectTokenSignedByUnknownKey()
             throws Exception {
-
-        
-
-
-
-
-
 
         String token =
                 createToken(
@@ -425,14 +307,6 @@ class JwtResourceServerIT {
                 );
     }
 
-    
-
-
-
-
-
-
-
     @Test
     void shouldRejectExpiredToken()
             throws Exception {
@@ -445,10 +319,6 @@ class JwtResourceServerIT {
                         List.of(
                                 SecurityRoles.ADMIN
                         ),
-
-                        
-
-
 
                         Instant.now()
                                 .minusSeconds(
@@ -469,24 +339,6 @@ class JwtResourceServerIT {
                         status().isUnauthorized()
                 );
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @TestConfiguration
     static class TestJwtConfiguration {
@@ -514,12 +366,6 @@ class JwtResourceServerIT {
             return decoder;
         }
     }
-
-    
-
-
-
-
 
     private static String createToken(
             KeyPair signingKeyPair,
@@ -603,12 +449,6 @@ class JwtResourceServerIT {
         }
     }
 
-    
-
-
-
-
-
     private static KeyPair generateKeyPair() {
 
         try {
@@ -635,12 +475,6 @@ class JwtResourceServerIT {
             );
         }
     }
-
-    
-
-
-
-
 
     private static Path createStorageRoot() {
 

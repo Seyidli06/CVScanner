@@ -18,12 +18,6 @@ class RateLimitPolicyResolverTest {
                 new RateLimitPolicyResolver();
     }
 
-    
-
-
-
-
-
     @Test
     void shouldResolveUploadPostAsUploadPolicy() {
 
@@ -40,12 +34,6 @@ class RateLimitPolicyResolverTest {
                         RateLimitPolicy.UPLOAD
                 );
     }
-
-    
-
-
-
-
 
     @Test
     void shouldResolveCandidateSearchAsReadPolicy() {
@@ -64,12 +52,6 @@ class RateLimitPolicyResolverTest {
                 );
     }
 
-    
-
-
-
-
-
     @Test
     void shouldResolveUploadStatusAsReadPolicy() {
 
@@ -86,12 +68,6 @@ class RateLimitPolicyResolverTest {
                         RateLimitPolicy.READ
                 );
     }
-
-    
-
-
-
-
 
     @Test
     void shouldResolveProcessingFailuresAsReadPolicy() {
@@ -110,12 +86,6 @@ class RateLimitPolicyResolverTest {
                 );
     }
 
-    
-
-
-
-
-
     @Test
     void shouldResolveCsvExportAsExportPolicy() {
 
@@ -133,12 +103,6 @@ class RateLimitPolicyResolverTest {
                 );
     }
 
-    
-
-
-
-
-
     @Test
     void shouldResolveXlsxExportAsExportPolicy() {
 
@@ -155,12 +119,6 @@ class RateLimitPolicyResolverTest {
                         RateLimitPolicy.EXPORT
                 );
     }
-
-    
-
-
-
-
 
     @Test
     void shouldIgnoreHealthEndpoint() {
@@ -190,12 +148,6 @@ class RateLimitPolicyResolverTest {
         ).isEmpty();
     }
 
-    
-
-
-
-
-
     @Test
     void shouldIgnoreMetricsEndpoint() {
 
@@ -210,12 +162,6 @@ class RateLimitPolicyResolverTest {
         ).isEmpty();
     }
 
-    
-
-
-
-
-
     @Test
     void shouldIgnoreUnknownApplicationRoute() {
 
@@ -229,12 +175,6 @@ class RateLimitPolicyResolverTest {
                 result
         ).isEmpty();
     }
-
-    
-
-
-
-
 
     @Test
     void shouldIgnoreUnsupportedCandidatePost() {
@@ -263,12 +203,6 @@ class RateLimitPolicyResolverTest {
                 result
         ).isEmpty();
     }
-
-    
-
-
-
-
 
     @Test
     void shouldNotTreatNestedUnknownUploadRouteAsRead() {

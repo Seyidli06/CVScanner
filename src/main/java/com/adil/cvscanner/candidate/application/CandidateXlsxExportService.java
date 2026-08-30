@@ -19,11 +19,6 @@ import java.util.stream.Collectors;
 @Service
 public class CandidateXlsxExportService {
 
-    
-
-
-
-
     private static final int ROW_ACCESS_WINDOW_SIZE =
             100;
 
@@ -41,12 +36,6 @@ public class CandidateXlsxExportService {
                 candidateExportQueryService;
     }
 
-    
-
-
-
-
-
     public void validateRequest(
             CandidateSearchCriteria criteria,
             String sortBy,
@@ -60,12 +49,6 @@ public class CandidateXlsxExportService {
                         direction
                 );
     }
-
-    
-
-
-
-
 
     @Transactional(
             readOnly = true,
@@ -88,12 +71,6 @@ public class CandidateXlsxExportService {
                 new SXSSFWorkbook(
                         ROW_ACCESS_WINDOW_SIZE
                 );
-
-        
-
-
-
-
 
         workbook.setCompressTempFiles(
                 true
@@ -173,10 +150,6 @@ public class CandidateXlsxExportService {
                     break;
                 }
 
-                
-
-
-
                 candidateExportQueryService
                         .clearPersistenceContext();
 
@@ -195,10 +168,6 @@ public class CandidateXlsxExportService {
                 }
             }
 
-            
-
-
-
             workbook.write(
                     outputStream
             );
@@ -207,48 +176,20 @@ public class CandidateXlsxExportService {
 
         } finally {
 
-            
-
-
-
-
             workbook.close();
-
-            
-
-
-
-
-
-
-
 
             workbook.dispose();
         }
     }
 
-    
-
-
-
-
-
     private void configureSheet(
             Sheet sheet
     ) {
-
-        
-
 
         sheet.createFreezePane(
                 0,
                 1
         );
-
-        
-
-
-
 
         sheet.setAutoFilter(
                 new CellRangeAddress(
@@ -258,13 +199,6 @@ public class CandidateXlsxExportService {
                         7
                 )
         );
-
-        
-
-
-
-
-
 
         sheet.setColumnWidth(
                 0,
@@ -307,12 +241,6 @@ public class CandidateXlsxExportService {
         );
     }
 
-    
-
-
-
-
-
     private CellStyle createHeaderStyle(
             SXSSFWorkbook workbook
     ) {
@@ -333,12 +261,6 @@ public class CandidateXlsxExportService {
 
         return style;
     }
-
-    
-
-
-
-
 
     private void createHeaderRow(
             Sheet sheet,
@@ -383,12 +305,6 @@ public class CandidateXlsxExportService {
         }
     }
 
-    
-
-
-
-
-
     private void createCandidateRow(
             Sheet sheet,
             int rowIndex,
@@ -421,11 +337,6 @@ public class CandidateXlsxExportService {
                 2,
                 candidate.fullName()
         );
-
-        
-
-
-
 
         if (
                 candidate.yearsOfExperience()
@@ -482,30 +393,6 @@ public class CandidateXlsxExportService {
                 candidate.sourceFilename()
         );
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     private void writeStringCell(
             Row row,

@@ -19,12 +19,6 @@ public class CvUploadStatusService {
                 cvUploadRepository;
     }
 
-    
-
-
-
-
-
     @Transactional
     public void markProcessing(
             UUID uploadId
@@ -41,22 +35,6 @@ public class CvUploadStatusService {
                 upload
         );
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @Transactional
     public void recordProcessed(
@@ -87,16 +65,6 @@ public class CvUploadStatusService {
         );
     }
 
-    
-
-
-
-
-
-
-
-
-
     @Transactional
     public void recordFailed(
             UUID uploadId
@@ -114,17 +82,6 @@ public class CvUploadStatusService {
         );
     }
 
-    
-
-
-
-
-
-
-
-
-
-
     @Transactional
     public void complete(
             UUID uploadId
@@ -135,27 +92,12 @@ public class CvUploadStatusService {
                         uploadId
                 );
 
-        
-
-
-
-
-
-
-
-
         upload.complete();
 
         cvUploadRepository.saveAndFlush(
                 upload
         );
     }
-
-    
-
-
-
-
 
     @Transactional
     public void markFailed(
@@ -173,8 +115,6 @@ public class CvUploadStatusService {
                 upload
         );
     }
-
-
 
     private CvUpload findUpload(
             UUID uploadId

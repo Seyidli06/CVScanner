@@ -79,13 +79,6 @@ class CandidateRepositoryIT {
         assertThat(candidateId)
                 .isNotNull();
 
-        
-
-
-
-
-
-
         entityManager.clear();
 
         Candidate found =

@@ -52,22 +52,11 @@ public class CandidateExportQueryService {
                 candidateRepository;
     }
 
-    
-
-
-
-
-
     public void validateRequest(
             CandidateSearchCriteria criteria,
             String sortBy,
             String direction
     ) {
-
-        
-
-
-
 
         validateSortField(
                 sortBy
@@ -77,12 +66,6 @@ public class CandidateExportQueryService {
                 direction
         );
     }
-
-    
-
-
-
-
 
     public List<CandidateExportRow> readBatch(
             CandidateSearchCriteria criteria,
@@ -136,12 +119,6 @@ public class CandidateExportQueryService {
                         Candidate.class
                 );
 
-        
-
-
-
-
-
         Specification<Candidate> specification =
                 CandidateSpecifications.from(
                         criteria
@@ -166,20 +143,6 @@ public class CandidateExportQueryService {
         query.select(
                 root
         );
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
 
         List<Order> orders =
                 new ArrayList<>();
@@ -242,20 +205,6 @@ public class CandidateExportQueryService {
             return List.of();
         }
 
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
         List<UUID> candidateIds =
                 candidates
                         .stream()
@@ -282,14 +231,6 @@ public class CandidateExportQueryService {
                     candidate
             );
         }
-
-        
-
-
-
-
-
-
 
         List<CandidateExportRow> result =
                 new ArrayList<>(
@@ -326,25 +267,10 @@ public class CandidateExportQueryService {
         );
     }
 
-    
-
-
-
-
-
-
-
-
     public void clearPersistenceContext() {
 
         entityManager.clear();
     }
-
-    
-
-
-
-
 
     private CandidateExportRow toExportRow(
             Candidate candidate
@@ -372,12 +298,6 @@ public class CandidateExportQueryService {
                 candidate.getSourceFilename()
         );
     }
-
-    
-
-
-
-
 
     private void validateSortField(
             String sortBy

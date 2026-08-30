@@ -72,9 +72,6 @@ public class GlobalApiExceptionHandler {
             CvProcessingLaunchException exception,
             HttpServletRequest request
     ) {
-        
-
-
 
         return build(
                 HttpStatus.INTERNAL_SERVER_ERROR,

@@ -30,25 +30,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 )
 class ReadinessIsolationIT {
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Container
     @ServiceConnection
     static PostgreSQLContainer postgres =
@@ -72,57 +53,15 @@ class ReadinessIsolationIT {
     private ControllableDatabaseHealthIndicator
             databaseHealthIndicator;
 
-    
-
-
-
-
-
     @BeforeEach
     void setUp() {
-
-        
-
-
 
         databaseHealthIndicator.markUp();
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Test
     void shouldRemoveApplicationFromReadinessWithoutFailingLiveness()
             throws Exception {
-
-        
-
-
-
-
-
-
 
         mockMvc.perform(
                         get(
@@ -158,30 +97,7 @@ class ReadinessIsolationIT {
                         )
                 );
 
-        
-
-
-
-
-
         databaseHealthIndicator.markDown();
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         mockMvc.perform(
                         get(
@@ -217,29 +133,6 @@ class ReadinessIsolationIT {
                         )
                 );
 
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         mockMvc.perform(
                         get(
                                 "/actuator/health/readiness"
@@ -274,19 +167,7 @@ class ReadinessIsolationIT {
                         )
                 );
 
-        
-
-
-
-
-
         databaseHealthIndicator.markUp();
-
-        
-
-
-
-
 
         mockMvc.perform(
                         get(
@@ -322,34 +203,6 @@ class ReadinessIsolationIT {
                         )
                 );
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @TestConfiguration(
             proxyBeanMethods = false
@@ -363,12 +216,6 @@ class ReadinessIsolationIT {
             return new ControllableDatabaseHealthIndicator();
         }
     }
-
-    
-
-
-
-
 
     static class ControllableDatabaseHealthIndicator
             implements HealthIndicator {

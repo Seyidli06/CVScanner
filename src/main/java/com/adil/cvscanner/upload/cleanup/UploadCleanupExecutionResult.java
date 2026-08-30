@@ -5,12 +5,6 @@ public record UploadCleanupExecutionResult(
         UploadCleanupRunResult cleanupResult
 ) {
 
-    
-
-
-
-
-
     public static UploadCleanupExecutionResult skipped() {
 
         return new UploadCleanupExecutionResult(
@@ -18,12 +12,6 @@ public record UploadCleanupExecutionResult(
                 null
         );
     }
-
-    
-
-
-
-
 
     public static UploadCleanupExecutionResult executed(
             UploadCleanupRunResult result

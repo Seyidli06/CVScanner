@@ -16,19 +16,6 @@ public class UploadCleanupPolicy {
 
     private final Clock clock;
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
     @Autowired
     public UploadCleanupPolicy(
             UploadCleanupProperties properties
@@ -39,21 +26,6 @@ public class UploadCleanupPolicy {
                 Clock.systemUTC()
         );
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     UploadCleanupPolicy(
             UploadCleanupProperties properties,
@@ -73,12 +45,6 @@ public class UploadCleanupPolicy {
                 );
     }
 
-    
-
-
-
-
-
     public boolean isEligibleForCleanup(
             CvUpload upload
     ) {
@@ -88,45 +54,12 @@ public class UploadCleanupPolicy {
                 "upload must not be null"
         );
 
-        
-
-
-
-
-
         if (
                 !properties.isEnabled()
         ) {
 
             return false;
         }
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         if (
                 !isCleanupEligibleStatus(
@@ -136,20 +69,6 @@ public class UploadCleanupPolicy {
 
             return false;
         }
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
 
         OffsetDateTime completedAt =
                 upload.getCompletedAt();
@@ -161,24 +80,6 @@ public class UploadCleanupPolicy {
             return false;
         }
 
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         OffsetDateTime cutoff =
                 OffsetDateTime
                         .now(
@@ -189,21 +90,10 @@ public class UploadCleanupPolicy {
                                         .getCompletedRetention()
                         );
 
-        
-
-
-
-
         return !completedAt.isAfter(
                 cutoff
         );
     }
-
-    
-
-
-
-
 
     private boolean isCleanupEligibleStatus(
             UploadStatus status

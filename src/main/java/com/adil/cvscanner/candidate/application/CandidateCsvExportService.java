@@ -26,12 +26,6 @@ public class CandidateCsvExportService {
                 candidateExportQueryService;
     }
 
-    
-
-
-
-
-
     public void validateRequest(
             CandidateSearchCriteria criteria,
             String sortBy,
@@ -45,12 +39,6 @@ public class CandidateCsvExportService {
                         direction
                 );
     }
-
-    
-
-
-
-
 
     @Transactional(
             readOnly = true,
@@ -76,9 +64,6 @@ public class CandidateCsvExportService {
                                 StandardCharsets.UTF_8
                         )
                 );
-
-        
-
 
         writer.write(
                 '\uFEFF'
@@ -159,12 +144,6 @@ public class CandidateCsvExportService {
         writer.flush();
     }
 
-    
-
-
-
-
-
     private void writeHeader(
             BufferedWriter writer
     ) throws IOException {
@@ -183,12 +162,6 @@ public class CandidateCsvExportService {
                 )
         );
     }
-
-    
-
-
-
-
 
     private void writeRow(
             BufferedWriter writer,
@@ -232,12 +205,6 @@ public class CandidateCsvExportService {
                 )
         );
     }
-
-    
-
-
-
-
 
     private void writeCsvCells(
             BufferedWriter writer,
@@ -291,9 +258,6 @@ public class CandidateCsvExportService {
                 +
                 "\"";
     }
-
-    
-
 
     private String protectSpreadsheetFormula(
             String value

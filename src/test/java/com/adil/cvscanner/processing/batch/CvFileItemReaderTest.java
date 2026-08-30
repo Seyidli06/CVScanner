@@ -23,9 +23,6 @@ class CvFileItemReaderTest {
         ExecutionContext executionContext =
                 new ExecutionContext();
 
-        
-
-
         CvFileItemReader firstReader =
                 new CvFileItemReader(
                         files
@@ -47,21 +44,11 @@ class CvFileItemReaderTest {
                 Path.of("cv2.docx")
         );
 
-        
-
-
-
         firstReader.update(
                 executionContext
         );
 
         firstReader.close();
-
-        
-
-
-
-
 
         CvFileItemReader restartedReader =
                 new CvFileItemReader(
@@ -72,17 +59,11 @@ class CvFileItemReaderTest {
                 executionContext
         );
 
-        
-
-
         assertThat(
                 restartedReader.read()
         ).isEqualTo(
                 Path.of("cv3.pdf")
         );
-
-        
-
 
         assertThat(
                 restartedReader.read()

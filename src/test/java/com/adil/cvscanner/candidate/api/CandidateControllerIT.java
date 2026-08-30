@@ -914,11 +914,6 @@ class CandidateControllerIT {
                 );
     }
 
-    
-
-
-
-
     private MockHttpServletRequestBuilder recruiterGet(
             String url
     ) {

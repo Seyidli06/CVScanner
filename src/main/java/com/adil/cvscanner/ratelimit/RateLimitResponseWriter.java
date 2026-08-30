@@ -38,12 +38,6 @@ public class RateLimitResponseWriter {
                 );
     }
 
-    
-
-
-
-
-
     public void writeRateLimitExceeded(
             HttpServletRequest request,
             HttpServletResponse response,
@@ -83,12 +77,6 @@ public class RateLimitResponseWriter {
         );
     }
 
-    
-
-
-
-
-
     public void writeBackendUnavailable(
             HttpServletRequest request,
             HttpServletResponse response
@@ -102,12 +90,6 @@ public class RateLimitResponseWriter {
                 BACKEND_UNAVAILABLE_MESSAGE
         );
     }
-
-    
-
-
-
-
 
     private void writeError(
             HttpServletRequest request,
@@ -142,21 +124,6 @@ public class RateLimitResponseWriter {
                 body
         );
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     private long toRetryAfterSeconds(
             Duration duration

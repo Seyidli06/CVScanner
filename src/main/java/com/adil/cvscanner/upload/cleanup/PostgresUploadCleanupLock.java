@@ -14,12 +14,6 @@ import java.util.function.Supplier;
 @Component
 public class PostgresUploadCleanupLock {
 
-    
-
-
-
-
-
     private static final long LOCK_KEY =
             0x435653434C45414EL;
 
@@ -55,12 +49,6 @@ public class PostgresUploadCleanupLock {
                 );
     }
 
-    
-
-
-
-
-
     public <T> Optional<T> tryExecute(
             Supplier<T> action
     ) {
@@ -79,12 +67,6 @@ public class PostgresUploadCleanupLock {
                     tryAcquire(
                             connection
                     );
-
-            
-
-
-
-
 
             if (
                     !acquired
@@ -147,11 +129,6 @@ public class PostgresUploadCleanupLock {
                         RuntimeException releaseFailure
                 ) {
 
-                    
-
-
-
-
                     if (
                             actionRuntimeFailure != null
                     ) {
@@ -187,12 +164,6 @@ public class PostgresUploadCleanupLock {
             );
         }
     }
-
-    
-
-
-
-
 
     private boolean tryAcquire(
             Connection connection
@@ -239,12 +210,6 @@ public class PostgresUploadCleanupLock {
             );
         }
     }
-
-    
-
-
-
-
 
     private void release(
             Connection connection

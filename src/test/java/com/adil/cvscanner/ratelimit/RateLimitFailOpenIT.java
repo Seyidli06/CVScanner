@@ -25,9 +25,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         properties = {
                 "app.rate-limit.enabled=true",
 
-                
-
-
                 "app.rate-limit.fail-open=true",
 
                 "app.rate-limit.redis-timeout=100ms",
@@ -125,11 +122,6 @@ class RateLimitFailOpenIT {
     void shouldAllowRequestWhenRedisIsUnavailableAndFailOpenIsTrue()
             throws Exception {
 
-        
-
-
-
-
         REDIS.stop();
 
         mockMvc.perform(
@@ -148,14 +140,10 @@ class RateLimitFailOpenIT {
                                                 )
                                 )
                 )
-                
-
-
 
                 .andExpect(
                         status().isOk()
                 )
-
 
                 .andExpect(
                         header().doesNotExist(
