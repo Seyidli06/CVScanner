@@ -31,12 +31,6 @@ import java.util.UUID;
 @Configuration
 public class CvProcessingJobConfig {
 
-    private static final int CHUNK_SIZE =
-            10;
-
-    private static final long SKIP_LIMIT =
-            50;
-
     @Bean
     @StepScope
     public CvFileItemReader cvFileReader(
@@ -44,11 +38,8 @@ public class CvProcessingJobConfig {
             String uploadId,
             CvFileDiscoveryService discoveryService
     ) {
-
         UUID parsedUploadId =
-                parseUploadId(
-                        uploadId
-                );
+                parseUploadId(uploadId);
 
         return new CvFileItemReader(
                 discoveryService.findCvFiles(
@@ -58,14 +49,11 @@ public class CvProcessingJobConfig {
     }
 
     @Bean
-    public ItemProcessor<Path, CandidateDraft>
-    cvCandidateProcessor(
+    public ItemProcessor<Path, CandidateDraft> cvCandidateProcessor(
             DocumentTextExtractor documentTextExtractor,
             CandidateExtractor candidateExtractor
     ) {
-
         return path -> {
-
             ParsedDocument parsedDocument =
                     documentTextExtractor.extract(
                             path
@@ -85,11 +73,8 @@ public class CvProcessingJobConfig {
             CvUploadRepository cvUploadRepository,
             CandidateRepository candidateRepository
     ) {
-
         UUID parsedUploadId =
-                parseUploadId(
-                        uploadId
-                );
+                parseUploadId(uploadId);
 
         return new CandidateItemWriter(
                 parsedUploadId,
@@ -100,17 +85,13 @@ public class CvProcessingJobConfig {
 
     @Bean
     @StepScope
-    public CvProcessingProgressListener
-    cvProcessingProgressListener(
+    public CvProcessingProgressListener cvProcessingProgressListener(
             @Value("#{jobParameters['uploadId']}")
             String uploadId,
             CvUploadStatusService uploadStatusService
     ) {
-
         UUID parsedUploadId =
-                parseUploadId(
-                        uploadId
-                );
+                parseUploadId(uploadId);
 
         return new CvProcessingProgressListener(
                 parsedUploadId,
@@ -120,20 +101,15 @@ public class CvProcessingJobConfig {
 
     @Bean
     @StepScope
-    public CvProcessingSkipListener
-    cvProcessingSkipListener(
+    public CvProcessingSkipListener cvProcessingSkipListener(
             @Value("#{jobParameters['uploadId']}")
             String uploadId,
             CvUploadRepository cvUploadRepository,
-            ProcessingFailureRepository
-                    processingFailureRepository,
+            ProcessingFailureRepository processingFailureRepository,
             CvUploadStatusService uploadStatusService
     ) {
-
         UUID parsedUploadId =
-                parseUploadId(
-                        uploadId
-                );
+                parseUploadId(uploadId);
 
         return new CvProcessingSkipListener(
                 parsedUploadId,
@@ -148,63 +124,51 @@ public class CvProcessingJobConfig {
             JobRepository jobRepository,
             PlatformTransactionManager transactionManager,
             CvFileItemReader cvFileReader,
-            ItemProcessor<Path, CandidateDraft>
-                    cvCandidateProcessor,
+            ItemProcessor<Path, CandidateDraft> cvCandidateProcessor,
             CandidateItemWriter candidateWriter,
-            CvProcessingProgressListener
-                    cvProcessingProgressListener,
-            CvProcessingSkipListener
-                    cvProcessingSkipListener,
+            CvProcessingProgressListener cvProcessingProgressListener,
+            CvProcessingSkipListener cvProcessingSkipListener,
             @Qualifier("cvProcessingRetryPolicy")
-            RetryPolicy cvProcessingRetryPolicy
+            RetryPolicy cvProcessingRetryPolicy,
+            @Value("${app.batch.chunk-size}")
+            int chunkSize,
+            @Value("${app.batch.skip-limit}")
+            long skipLimit
     ) {
-
-        return new ChunkOrientedStepBuilder
-                <Path, CandidateDraft>(
+        return new ChunkOrientedStepBuilder<Path, CandidateDraft>(
                 "processCvFilesStep",
                 jobRepository,
-                CHUNK_SIZE
+                chunkSize
         )
-
                 .transactionManager(
                         transactionManager
                 )
-
                 .reader(
                         cvFileReader
                 )
-
                 .processor(
                         cvCandidateProcessor
                 )
-
                 .writer(
                         candidateWriter
                 )
-
                 .listener(
                         cvProcessingProgressListener
                 )
-
                 .faultTolerant()
-
                 .skip(
                         DocumentParsingException.class,
                         CandidateExtractionException.class
                 )
-
                 .skipLimit(
-                        SKIP_LIMIT
+                        skipLimit
                 )
-
                 .skipListener(
                         cvProcessingSkipListener
                 )
-
                 .retryPolicy(
                         cvProcessingRetryPolicy
                 )
-
                 .build();
     }
 
@@ -212,10 +176,8 @@ public class CvProcessingJobConfig {
     public Job cvProcessingJob(
             JobRepository jobRepository,
             Step processCvFilesStep,
-            CvProcessingJobListener
-                    cvProcessingJobListener
+            CvProcessingJobListener cvProcessingJobListener
     ) {
-
         return new JobBuilder(
                 "cvProcessingJob",
                 jobRepository
@@ -232,27 +194,20 @@ public class CvProcessingJobConfig {
     private UUID parseUploadId(
             String uploadId
     ) {
-
         if (
                 uploadId == null
                         || uploadId.isBlank()
         ) {
-
             throw new IllegalArgumentException(
                     "Missing uploadId job parameter"
             );
         }
 
         try {
-
             return UUID.fromString(
                     uploadId
             );
-
-        } catch (
-                IllegalArgumentException exception
-        ) {
-
+        } catch (IllegalArgumentException exception) {
             throw new IllegalArgumentException(
                     "Invalid uploadId job parameter: "
                             + uploadId,

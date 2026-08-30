@@ -37,6 +37,9 @@ app:
     max-text-length: 1000000
 
   batch:
+    chunk-size: ${CVSCANNER_BATCH_CHUNK_SIZE:10}
+    skip-limit: ${CVSCANNER_BATCH_SKIP_LIMIT:50}
+
     core-pool-size: 2
     max-pool-size: 4
     queue-capacity: 100
