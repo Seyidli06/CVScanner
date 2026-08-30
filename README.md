@@ -1,132 +1,161 @@
 # CVScanner
 
-Production-oriented CV ingestion, processing, search, export and operational management backend built with **Java 21** and **Spring Boot 4**.
+[![CI](https://github.com/Seyidli06/CVScanner/actions/workflows/ci.yml/badge.svg)](https://github.com/Seyidli06/CVScanner/actions/workflows/ci.yml)
 
-CVScanner accepts CV archives, processes candidate documents asynchronously, persists structured candidate information in PostgreSQL, exposes searchable candidate APIs, supports CSV/XLSX exports, provides distributed Redis-backed rate limiting, and includes production-oriented health checks, cleanup jobs, security controls and release verification tooling.
+Production-oriented backend for **bulk CV ingestion, parsing, candidate extraction, search and export**, built with **Java 21** and **Spring Boot 4**.
+
+CVScanner accepts ZIP archives containing PDF/DOCX resumes, processes them asynchronously with Spring Batch, extracts structured candidate information, persists results in PostgreSQL, exposes searchable REST APIs, supports CSV/XLSX exports, and includes production-oriented security, distributed rate limiting, observability, cleanup, Docker deployment and CI verification.
 
 ---
 
 ## Table of Contents
 
 - [Overview](#overview)
-- [Core Features](#core-features)
+- [Key Features](#key-features)
 - [Architecture](#architecture)
 - [Technology Stack](#technology-stack)
 - [Project Structure](#project-structure)
-- [Application Flow](#application-flow)
+- [Processing Flow](#processing-flow)
+- [REST API](#rest-api)
+- [API Documentation](#api-documentation)
 - [Security](#security)
 - [Rate Limiting](#rate-limiting)
 - [Batch Processing](#batch-processing)
-- [Upload Storage Cleanup](#upload-storage-cleanup)
-- [Candidate Search and Export](#candidate-search-and-export)
+- [Upload Safety](#upload-safety)
+- [Storage Cleanup](#storage-cleanup)
 - [Health and Observability](#health-and-observability)
 - [Configuration Profiles](#configuration-profiles)
 - [Local Development](#local-development)
+- [Testing](#testing)
+- [Continuous Integration](#continuous-integration)
 - [Docker](#docker)
 - [Production Deployment](#production-deployment)
 - [Environment Variables](#environment-variables)
-- [Testing](#testing)
-- [Release Gate](#release-gate)
 - [Database Migrations](#database-migrations)
-- [Persistent Data](#persistent-data)
+- [Release Gate](#release-gate)
 - [Rollback](#rollback)
-- [Operational Notes](#operational-notes)
 - [Known Architectural Limitations](#known-architectural-limitations)
+- [Development Principles](#development-principles)
 
 ---
 
 # Overview
 
-CVScanner is a backend service designed for controlled ingestion and processing of CV files.
+CVScanner simulates a real-world HR automation platform where recruiters may need to process hundreds or thousands of candidate resumes without manually opening every document.
 
-The system focuses on the following workflow:
+The core workflow is:
 
 ```text
-CV Archive Upload
-        |
-        v
+ZIP Upload
+    |
+    v
 Upload Validation
-        |
-        v
-Safe Extraction
-        |
-        v
-Spring Batch Processing
-        |
-        v
-Document Parsing
-        |
-        v
-Candidate Persistence
-        |
-        +--------------------+
-        |                    |
-        v                    v
-Candidate Search        Processing Failures
-        |
-        +--------------------+
-        |                    |
-        v                    v
-    CSV Export           XLSX Export
+    |
+    v
+Safe ZIP Extraction
+    |
+    v
+Spring Batch Job
+    |
+    v
+PDF / DOCX Parsing
+    |
+    v
+Candidate Data Extraction
+    |
+    v
+PostgreSQL Persistence
+    |
+    +------------------------+
+    |                        |
+    v                        v
+Candidate Search       Processing Failures
+    |
+    +------------------------+
+    |                        |
+    v                        v
+ CSV Export             XLSX Export
 ```
 
-The application is designed with production concerns in mind:
-
-```text
-Authentication / Authorization
-            |
-            v
-       Spring Security
-            |
-            v
-       Rate Limiting
-            |
-            v
-       Business APIs
-            |
-      +-----+------+
-      |            |
-      v            v
- PostgreSQL      Redis
-      |
-      v
-Persistent business data
-```
+The project goes beyond the basic functional requirements and includes infrastructure and production-hardening concerns such as JWT authentication, distributed Redis-backed rate limiting, health checks, graceful shutdown, production profiles, persistent cleanup, Docker hardening, automated testing and GitHub Actions CI.
 
 ---
 
-# Core Features
+# Key Features
 
-CVScanner currently provides:
+## CV Processing
 
-- CV archive upload
-- ZIP extraction with safety controls
-- Asynchronous CV processing
-- Spring Batch based processing
-- Candidate persistence
-- Candidate filtering and pagination
-- Candidate CSV export
-- Candidate XLSX export
-- Processing failure tracking
-- Upload progress/status tracking
-- Batch retry and restart support
-- Persistent upload storage
-- Retention-based upload cleanup
-- Distributed cleanup locking
-- JWT authentication
+- Bulk CV upload using ZIP archives
+- PDF and DOCX document parsing
+- Apache Tika based text extraction
+- Rule-based candidate information extraction
+- Spring Batch processing pipeline
+- Asynchronous job execution
+- Retry and skip handling
+- Failed document tracking
+- Restartable batch jobs
+- Upload progress tracking
+
+## Candidate Data
+
+- Candidate persistence in PostgreSQL
+- Candidate skills
+- Years of experience
+- Job type
+- Location
+- Search and filtering
+- Pagination
+- Sorting
+- CSV export
+- XLSX export
+
+## Security
+
+- OAuth2 Resource Server
+- Bearer JWT authentication
+- JWT issuer validation
+- JWK-based signature verification
 - Role-based authorization
+- `ROLE_RECRUITER`
+- `ROLE_ADMIN`
 - Explicit endpoint allowlisting
-- Distributed Redis-backed rate limiting
-- Liveness and readiness probes
+- Default deny-all security policy
+
+## Infrastructure
+
+- PostgreSQL
+- Redis
+- Flyway
+- HikariCP
+- Docker Compose
+- Testcontainers
+- Persistent upload storage
+- Distributed rate limiting
+- Distributed cleanup locking
+
+## Production / Operations
+
+- Liveness probe
+- Readiness probe
 - Actuator metrics
 - Correlation IDs
 - HTTP access logging
-- Flyway database migrations
-- Docker development environment
-- Production Docker image
-- Hardened production Docker Compose configuration
-- Automated production smoke verification
-- Automated final release gate
+- Graceful shutdown
+- Production fail-fast configuration
+- Non-root Docker container
+- Read-only production filesystem
+- Linux capability dropping
+- Production smoke test
+- Automated release gate
+- GitHub Actions CI
+
+## API Documentation
+
+- OpenAPI 3
+- Swagger UI
+- Bearer JWT documentation
+- Swagger enabled for development/staging
+- Swagger disabled in production
 
 ---
 
@@ -135,53 +164,52 @@ CVScanner currently provides:
 High-level runtime architecture:
 
 ```text
-                       +----------------------+
-                       |      Client/API      |
-                       +----------+-----------+
-                                  |
-                                  | Bearer JWT
-                                  v
-                       +----------------------+
-                       |   Spring Security    |
-                       | JWT + RBAC + DenyAll |
-                       +----------+-----------+
-                                  |
-                                  v
-                       +----------------------+
-                       |    Rate Limiting     |
-                       |      Bucket4j        |
-                       +----------+-----------+
-                                  |
-                                  v
-              +------------------------------------------+
-              |                 CVScanner                 |
-              |                                          |
-              |  Upload API                              |
-              |  Candidate API                           |
-              |  Export API                              |
-              |  Failure API                             |
-              |  Cleanup                                 |
-              |  Spring Batch                            |
-              +------------+-----------------------------+
-                           |
-             +-------------+-------------+
-             |                           |
-             v                           v
-    +------------------+        +------------------+
-    |    PostgreSQL    |        |      Redis       |
-    |                  |        |                  |
-    | Candidates       |        | Rate-limit state |
-    | Uploads          |        +------------------+
-    | Failures         |
-    | Batch metadata   |
-    | Cleanup metadata |
-    +------------------+
-
+                           Client
+                             |
+                             | Bearer JWT
+                             v
+                 +-------------------------+
+                 |    Spring Security      |
+                 | OAuth2 Resource Server  |
+                 | JWT + RBAC              |
+                 +------------+------------+
+                              |
+                              v
+                 +-------------------------+
+                 | Distributed Rate Limit  |
+                 | Bucket4j + Redis        |
+                 +------------+------------+
+                              |
+                              v
+              +------------------------------------+
+              |             CVScanner              |
+              |                                    |
+              | Upload API                         |
+              | Candidate API                      |
+              | Export API                         |
+              | Processing Failure API             |
+              | Spring Batch                       |
+              | Cleanup Scheduler                  |
+              | Health / Metrics                   |
+              +----------+-------------------------+
+                         |
+             +-----------+------------+
+             |                        |
+             v                        v
+    +-----------------+       +-----------------+
+    |   PostgreSQL    |       |      Redis      |
+    |                 |       |                 |
+    | Candidates      |       | Rate limits     |
+    | Uploads         |       |                 |
+    | Failures        |       +-----------------+
+    | Batch metadata  |
+    | Cleanup records |
+    +--------+--------+
              |
              v
-    +-----------------------+
-    | Persistent CV Storage |
-    +-----------------------+
+    +----------------------+
+    | Persistent CV Files  |
+    +----------------------+
 ```
 
 ---
@@ -199,9 +227,10 @@ Spring Security
 Spring OAuth2 Resource Server
 Spring Batch
 Spring Boot Actuator
+Spring Validation
 ```
 
-## Persistence
+## Database
 
 ```text
 PostgreSQL 16
@@ -215,7 +244,7 @@ HikariCP
 ```text
 Redis 7
 Lettuce
-Bucket4j
+Bucket4j 8.19
 ```
 
 ## Document Processing
@@ -225,6 +254,14 @@ Apache Tika
 Apache POI
 ```
 
+## API Documentation
+
+```text
+OpenAPI 3
+springdoc-openapi
+Swagger UI
+```
+
 ## Testing
 
 ```text
@@ -232,18 +269,21 @@ JUnit 5
 Spring Boot Test
 MockMvc
 Mockito
+Spring Security Test
+Spring Batch Test
 Testcontainers
 Maven Surefire
 Maven Failsafe
 ```
 
-## Runtime / Deployment
+## Deployment
 
 ```text
 Docker
 Docker Compose
 Eclipse Temurin JRE 21
-Maven 3.9
+Maven Wrapper
+GitHub Actions
 PowerShell release tooling
 ```
 
@@ -251,10 +291,18 @@ PowerShell release tooling
 
 # Project Structure
 
-Representative structure:
+Representative project structure:
 
 ```text
 CVScanner/
+│
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+│
+├── scripts/
+│   ├── production-smoke.ps1
+│   └── release-gate.ps1
 │
 ├── src/
 │   ├── main/
@@ -281,36 +329,48 @@ CVScanner/
 │       ├── java/
 │       └── resources/
 │
-├── scripts/
-│   ├── production-smoke.ps1
-│   └── release-gate.ps1
-│
+├── .dockerignore
+├── .env.prod.example
+├── .gitignore
 ├── Dockerfile
 ├── docker-compose.yml
 ├── docker-compose.prod.yml
-├── .dockerignore
-├── .env.prod.example
+├── mvnw
+├── mvnw.cmd
 ├── pom.xml
 └── README.md
 ```
 
 ---
 
-# Application Flow
+# Processing Flow
 
 ## 1. Upload
 
-A recruiter or administrator sends a CV upload request.
+A recruiter or administrator submits a ZIP archive:
 
-```text
+```http
 POST /api/v1/uploads
 ```
 
-The application validates the request before starting asynchronous processing.
+The upload is validated before processing starts.
 
-The upload layer protects the application against unsafe or excessively large archive contents.
+---
 
-Important upload configuration includes:
+## 2. Safe Extraction
+
+The ZIP archive is extracted into controlled application storage.
+
+The extraction layer enforces limits for:
+
+```text
+Maximum archive entries
+Maximum total extracted size
+Maximum single file size
+Controlled extraction root
+```
+
+Default limits:
 
 ```yaml
 app:
@@ -323,54 +383,29 @@ app:
 
 ---
 
-## 2. Safe Extraction
+## 3. Batch Job
 
-Uploaded archives are extracted into controlled application storage.
-
-The extraction layer is designed to enforce configured limits such as:
+Spring Batch processes discovered CV files.
 
 ```text
-Maximum ZIP entries
-Maximum extracted size
-Maximum single file size
-Controlled storage root
+Reader
+  |
+  v
+Document Parser
+  |
+  v
+Candidate Extractor
+  |
+  v
+Writer
+  |
+  v
+PostgreSQL
 ```
 
-Archive extraction must never be treated as arbitrary filesystem extraction.
+Jobs are launched explicitly by application logic.
 
----
-
-## 3. Batch Processing
-
-Processing is executed asynchronously using Spring Batch.
-
-Simplified flow:
-
-```text
-Upload accepted
-      |
-      v
-Create processing job
-      |
-      v
-Read extracted CV
-      |
-      v
-Parse document
-      |
-      v
-Convert parsed information
-      |
-      v
-Persist candidate
-      |
-      +----------------------+
-      |                      |
-      v                      v
-Success                 Processing failure
-```
-
-Spring Batch automatic startup is disabled:
+Automatic execution of every Spring Batch job during startup is disabled:
 
 ```yaml
 spring:
@@ -379,37 +414,116 @@ spring:
       enabled: false
 ```
 
-Jobs are started explicitly by application logic.
+---
+
+## 4. Document Parsing
+
+Apache Tika extracts text from supported documents such as:
+
+```text
+PDF
+DOCX
+```
+
+The extracted text is passed to candidate extraction logic.
 
 ---
 
-## 4. Candidate Persistence
+## 5. Candidate Extraction
 
-Candidate data is stored in PostgreSQL.
-
-Candidate information can then be:
+The processing pipeline extracts structured candidate information such as:
 
 ```text
-searched
-filtered
-sorted
-paginated
-exported
+Full name
+Skills
+Years of experience
+Location
+Preferred job type
 ```
+
+---
+
+## 6. Persistence
+
+Candidate information is persisted using PostgreSQL and Spring Data JPA.
+
+Database schema changes are managed exclusively through Flyway migrations.
+
+---
+
+# REST API
+
+Main business endpoints:
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/v1/uploads` | Upload a ZIP archive containing CVs |
+| `GET` | `/api/v1/uploads/{id}` | Retrieve upload and processing status |
+| `GET` | `/api/v1/uploads/{id}/failures` | Retrieve CV processing failures |
+| `GET` | `/api/v1/candidates` | Search, filter and paginate candidates |
+| `GET` | `/api/v1/candidates/export.csv` | Export candidate results as CSV |
+| `GET` | `/api/v1/candidates/export.xlsx` | Export candidate results as XLSX |
+
+Business endpoints require an authenticated user with an accepted application role.
+
+---
+
+# API Documentation
+
+CVScanner provides **OpenAPI 3 documentation** through springdoc-openapi.
+
+Development Swagger UI:
+
+```text
+http://localhost:8080/swagger-ui.html
+```
+
+OpenAPI JSON:
+
+```text
+http://localhost:8080/v3/api-docs
+```
+
+Swagger includes an HTTP Bearer security scheme:
+
+```text
+bearerAuth
+```
+
+A JWT can be supplied through the Swagger **Authorize** button when testing protected API operations.
+
+---
+
+## Environment Policy
+
+Swagger is enabled by default for development and staging environments.
+
+Production disables both API documentation endpoints and Swagger UI:
+
+```yaml
+springdoc:
+  api-docs:
+    enabled: false
+
+  swagger-ui:
+    enabled: false
+```
+
+This keeps interactive documentation available to developers while avoiding an unnecessary public documentation surface in production.
 
 ---
 
 # Security
 
-CVScanner is configured as an **OAuth2 Resource Server**.
+CVScanner acts as an OAuth2 Resource Server.
 
-Clients must send a valid Bearer JWT:
+Clients authenticate using:
 
 ```http
-Authorization: Bearer <access-token>
+Authorization: Bearer <JWT>
 ```
 
-JWT verification is configured using:
+JWT validation uses:
 
 ```yaml
 security:
@@ -423,54 +537,35 @@ security:
 
 ## Roles
 
-The application currently uses:
+Currently supported application roles:
 
 ```text
 ROLE_RECRUITER
 ROLE_ADMIN
 ```
 
-Business APIs require one of the accepted application roles.
-
 ---
 
-## Explicit Endpoint Allowlist
+## Security Policy
 
-Security uses explicit endpoint authorization.
+Business endpoints are explicitly allowlisted.
 
-Allowed business operations include:
-
-```text
-POST /api/v1/uploads
-
-GET /api/v1/uploads/{id}
-
-GET /api/v1/uploads/{id}/failures
-
-GET /api/v1/candidates
-
-GET /api/v1/candidates/export.csv
-
-GET /api/v1/candidates/export.xlsx
-```
-
-After explicit rules are applied, unmatched requests are denied:
+Any unmatched request is denied:
 
 ```java
-.anyRequest().denyAll()
+.anyRequest()
+.denyAll()
 ```
 
-This is intentional.
+This means adding a new controller does not automatically expose it.
 
-New endpoints should not accidentally become publicly accessible.
-
-Whenever a new business endpoint is introduced, its authorization rule must also be explicitly reviewed.
+Every new endpoint must receive an explicit security decision.
 
 ---
 
-## Public Health Endpoints
+## Public Endpoints
 
-The following endpoints are publicly accessible for infrastructure probes:
+Infrastructure health endpoints are intentionally public:
 
 ```text
 /actuator/health
@@ -479,7 +574,19 @@ The following endpoints are publicly accessible for infrastructure probes:
 /readyz
 ```
 
-Metrics are protected and require administrator authorization:
+Swagger endpoints are available only when springdoc is enabled.
+
+---
+
+## Protected Metrics
+
+Actuator metrics require:
+
+```text
+ROLE_ADMIN
+```
+
+Endpoints:
 
 ```text
 /actuator/metrics
@@ -490,29 +597,31 @@ Metrics are protected and require administrator authorization:
 
 # Rate Limiting
 
-CVScanner uses distributed Redis-backed rate limiting.
+CVScanner uses distributed rate limiting backed by Redis.
 
-Technology:
+Components:
 
 ```text
 Bucket4j
-Redis
 Lettuce
+Redis
 ```
 
-Rate-limit keys are based on:
+Rate-limit state is shared between application instances.
+
+Keys use a hashed authenticated principal rather than storing raw usernames or JWTs.
+
+Conceptually:
 
 ```text
-policy + hashed authenticated principal
+cvscanner:rate-limit:<policy>:<principal-hash>
 ```
-
-Raw JWTs and raw principals are not used as Redis keys.
 
 ---
 
-## Policies
+## Rate Limit Policies
 
-Three policy groups are currently defined:
+Three policy categories exist:
 
 ```text
 UPLOAD
@@ -548,15 +657,15 @@ app:
 
 ---
 
-## Rate Limit Responses
+## Rate Limit Response
 
-When a request exceeds its available quota:
+When the quota is exceeded:
 
 ```http
 HTTP/1.1 429 Too Many Requests
 ```
 
-Responses can contain:
+Relevant response headers may include:
 
 ```text
 Retry-After
@@ -571,45 +680,45 @@ RATE_LIMIT_EXCEEDED
 
 ---
 
-## Redis Failure Behavior
-
-Rate limiting supports configurable backend failure behavior.
+## Redis Failure Policy
 
 ### Fail Closed
+
+Production default:
 
 ```text
 fail-open=false
 ```
 
-Redis unavailable:
+If Redis is unavailable:
 
 ```http
 HTTP/1.1 503 Service Unavailable
 ```
 
-Error code:
+Error:
 
 ```text
 RATE_LIMIT_BACKEND_UNAVAILABLE
 ```
 
-This is the production default.
+Readiness also becomes unhealthy.
 
 ### Fail Open
+
+With:
 
 ```text
 fail-open=true
 ```
 
-Requests continue when Redis is temporarily unavailable.
-
-This may be useful in environments where service availability is preferred over strict distributed rate enforcement.
+requests continue when the Redis rate-limit backend is unavailable.
 
 ---
 
 # Batch Processing
 
-Batch worker configuration:
+Default executor configuration:
 
 ```yaml
 app:
@@ -618,33 +727,68 @@ app:
     max-pool-size: 4
     queue-capacity: 100
     await-termination-seconds: 30
+```
 
+Retry configuration:
+
+```yaml
+app:
+  batch:
     retry:
       max-retries: 2
       delay: 500ms
 ```
 
-The system includes coverage for:
+The batch implementation includes coverage for:
 
 ```text
-job processing
-retry
-restart
-failure handling
-live upload progress
+Normal processing
+Retry
+Skip
+Failure persistence
+Job restart
+Progress updates
+Candidate persistence
 ```
-
-Batch lifecycle should remain explicit.
-
-Avoid enabling automatic execution of all available Spring Batch jobs during application startup.
 
 ---
 
-# Upload Storage Cleanup
+# Upload Safety
 
-CV files are stored persistently and cleaned according to retention configuration.
+Processing arbitrary ZIP archives requires defensive extraction.
 
-Default configuration:
+CVScanner limits:
+
+```text
+Archive entry count
+Total extracted size
+Individual file size
+Extraction location
+```
+
+Default values:
+
+```text
+Maximum entries:             5000
+Maximum extracted size:     1 GB
+Maximum single file size:   25 MB
+```
+
+Document parsing additionally limits extracted text length:
+
+```yaml
+app:
+  parsing:
+    max-text-length: 1000000
+```
+
+---
+
+# Storage Cleanup
+
+CV files are retained for a configured period and can later be removed by the cleanup subsystem.
+
+Defaults:
 
 ```yaml
 app:
@@ -657,60 +801,24 @@ app:
     initial-delay: PT1M
 ```
 
-Cleanup is designed to support:
+Cleanup behavior includes:
 
 ```text
-retention policy
-batch deletion
-distributed locking
-metrics
-already-deleted files
-safe repeated execution
+Retention policy
+Batch deletion
+Persistent cleanup state
+Distributed PostgreSQL locking
+Idempotent handling
+Cleanup metrics
 ```
 
-The scheduler can be enabled using environment configuration when desired.
-
----
-
-# Candidate Search and Export
-
-Candidate API:
-
-```text
-GET /api/v1/candidates
-```
-
-The API supports validated query parameters, filtering, pagination and sorting.
-
-Invalid input returns standardized client errors rather than exposing internal implementation details.
-
----
-
-## CSV Export
-
-```text
-GET /api/v1/candidates/export.csv
-```
-
-Returns candidate data in CSV format.
-
----
-
-## XLSX Export
-
-```text
-GET /api/v1/candidates/export.xlsx
-```
-
-Returns candidate data as a Microsoft Excel workbook.
-
-XLSX generation uses Apache POI.
+The scheduler is disabled by default and can be activated through configuration.
 
 ---
 
 # Health and Observability
 
-CVScanner exposes Spring Boot Actuator health information.
+CVScanner exposes infrastructure-friendly health endpoints.
 
 ---
 
@@ -720,13 +828,11 @@ CVScanner exposes Spring Boot Actuator health information.
 GET /livez
 ```
 
-Liveness answers:
+Liveness represents whether the application process itself is alive.
 
-> Is the application process alive?
+External dependencies are intentionally excluded from the liveness group.
 
-Liveness intentionally does not depend on external infrastructure such as PostgreSQL or Redis.
-
-Configured group:
+Configuration:
 
 ```yaml
 management:
@@ -746,16 +852,14 @@ management:
 GET /readyz
 ```
 
-Readiness answers:
+Readiness represents whether the application should currently receive traffic.
 
-> Can this application instance currently serve production traffic correctly?
-
-Readiness includes:
+Dependencies include:
 
 ```text
-readinessState
-database
-rate-limit Redis
+Spring readiness state
+PostgreSQL
+Rate-limit Redis
 ```
 
 Configuration:
@@ -772,13 +876,11 @@ management:
             - rateLimitRedis
 ```
 
-With production fail-closed rate limiting, Redis unavailability makes readiness fail.
-
 ---
 
-## Health Privacy
+## Health Information Privacy
 
-Detailed component health information is not exposed publicly:
+Detailed infrastructure information is not exposed:
 
 ```yaml
 management:
@@ -792,55 +894,37 @@ management:
 
 ## Metrics
 
-Actuator metrics are exposed internally through:
+Metrics are available through Spring Boot Actuator:
 
 ```text
 /actuator/metrics
 ```
 
-Metrics access requires administrator authorization.
-
-Cleanup-specific metrics are also available through Actuator.
+Access requires administrator authorization.
 
 ---
 
 ## Correlation IDs
 
-HTTP requests are assigned correlation IDs.
+Incoming HTTP requests receive correlation identifiers.
 
-They can be used to connect:
-
-```text
-incoming HTTP requests
-application logs
-processing errors
-operational incidents
-```
-
-HTTP access logs contain information such as:
+They help connect:
 
 ```text
-method
-path
-status
-duration
-correlationId
+HTTP request
+Application log
+Processing event
+Failure
+Operational incident
 ```
 
-Sensitive credentials must never be written into these logs.
+Sensitive credentials and JWT values must never be logged.
 
 ---
 
 # Configuration Profiles
 
-CVScanner provides separate Spring profiles.
-
-```text
-default/shared
-dev
-staging
-prod
-```
+CVScanner separates runtime configuration by environment.
 
 Files:
 
@@ -851,13 +935,19 @@ application-staging.yml
 application-prod.yml
 ```
 
+Profiles:
+
+```text
+dev
+staging
+prod
+```
+
 ---
 
-## Shared Configuration
+## Shared Runtime Configuration
 
-`application.yaml` contains configuration shared by all environments.
-
-Important shared runtime settings include:
+Important shared settings:
 
 ```yaml
 spring:
@@ -866,6 +956,7 @@ spring:
 
   jpa:
     open-in-view: false
+
     hibernate:
       ddl-auto: validate
 
@@ -882,129 +973,325 @@ server:
 
 ---
 
-## Development Profile
+## Development
 
-Development profile is intended for local infrastructure.
-
-Typical local dependencies:
+Typical development infrastructure:
 
 ```text
-PostgreSQL -> localhost:5435
-Redis      -> localhost:6385
-Identity Provider / Keycloak -> localhost:8180
-```
-
-Start application with:
-
-```powershell
-mvn spring-boot:run "-Dspring-boot.run.profiles=dev"
-```
-
-or configure:
-
-```text
-SPRING_PROFILES_ACTIVE=dev
+PostgreSQL     localhost:5435
+Redis          localhost:6385
+Identity       localhost:8180
+Application    localhost:8080
 ```
 
 ---
 
-## Production Profile
+## Production
 
-Production must use:
+Production uses:
 
 ```text
 SPRING_PROFILES_ACTIVE=prod
 ```
 
-The production profile intentionally requires real environment configuration.
+Production configuration intentionally requires environment-provided credentials and connection information.
 
-Production secrets must not fall back to local development credentials.
+Critical missing configuration prevents startup.
 
-Missing critical production configuration should prevent successful application startup.
-
-This fail-fast behavior is intentional.
+This fail-fast behavior avoids silently falling back to insecure development values.
 
 ---
 
 # Local Development
 
-## Prerequisites
+## Requirements
 
 Install:
 
 ```text
 Java 21
-Maven 3.9+
 Docker Desktop
 Docker Compose
 Git
 ```
 
+Maven installation is optional because the repository includes Maven Wrapper.
+
 Verify:
 
 ```powershell
 java -version
-mvn -version
 docker version
 docker compose version
 ```
 
 ---
 
-## Start Local Infrastructure
+## Start Infrastructure
 
-From the project root:
+From the repository root:
 
 ```powershell
 docker compose up -d
 ```
 
-Verify containers:
+Check:
 
 ```powershell
 docker compose ps
 ```
 
-Default development infrastructure includes PostgreSQL and Redis.
-
 ---
 
-## Start Application
+## Run CVScanner
+
+Windows:
+
+```powershell
+.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=dev"
+```
+
+Alternatively:
 
 ```powershell
 mvn spring-boot:run "-Dspring-boot.run.profiles=dev"
 ```
 
-Default application port:
+---
 
-```text
-8080
+## Health
+
+```powershell
+Invoke-WebRequest http://localhost:8080/livez
+Invoke-WebRequest http://localhost:8080/readyz
 ```
 
-If port 8080 is already occupied:
+When required dependencies are healthy:
+
+```text
+HTTP 200
+```
+
+---
+
+## Swagger
+
+```text
+http://localhost:8080/swagger-ui.html
+```
+
+---
+
+## Different Port
+
+If `8080` is already occupied:
 
 ```powershell
 $env:SERVER_PORT="8081"
 
-mvn spring-boot:run "-Dspring-boot.run.profiles=dev"
+.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=dev"
+```
+
+Then:
+
+```text
+http://localhost:8081/swagger-ui.html
+http://localhost:8081/livez
+http://localhost:8081/readyz
 ```
 
 ---
 
-## Health Check
+# Testing
+
+The project uses separate Maven test phases.
+
+---
+
+## Full Verification
+
+Run:
+
+```powershell
+.\mvnw.cmd clean verify
+```
+
+or:
+
+```powershell
+mvn clean verify
+```
+
+Current validated baseline:
 
 ```text
-http://localhost:8080/livez
-http://localhost:8080/readyz
+Tests run: 119
+Failures: 0
+Errors: 0
+Skipped: 0
+
+BUILD SUCCESS
 ```
 
-Expected:
+---
 
-```http
-HTTP/1.1 200 OK
+## Unit Tests
+
+Unit tests run through:
+
+```text
+Maven Surefire
 ```
 
-when dependencies required for readiness are healthy.
+---
+
+## Integration Tests
+
+Integration tests run through:
+
+```text
+Maven Failsafe
+```
+
+The integration suite covers areas including:
+
+```text
+PostgreSQL
+Redis
+Testcontainers
+JWT
+RBAC
+Security access matrix
+Rate limiting
+Distributed rate-limit state
+Redis failure behavior
+Liveness/readiness
+Upload handling
+ZIP extraction
+Spring Batch
+Retry
+Restart
+Candidate persistence
+Candidate search
+CSV export
+XLSX export
+Cleanup
+Metrics
+OpenAPI
+Swagger
+Error contracts
+```
+
+---
+
+## Testcontainers
+
+Infrastructure-dependent tests use real disposable containers.
+
+For example:
+
+```text
+PostgreSQLContainer
+Redis container
+```
+
+This reduces dependency on developer-machine state and allows the same integration tests to run inside GitHub Actions.
+
+---
+
+## JVM Test Isolation
+
+Integration tests use:
+
+```text
+forkCount = 1
+reuseForks = false
+```
+
+with:
+
+```text
+-Xmx512m
+-XX:MaxMetaspaceSize=256m
+```
+
+This prevents excessive native-memory accumulation across large Spring/Testcontainers test suites.
+
+Mockito is loaded explicitly as a Java agent for Java 21 compatibility.
+
+---
+
+# Continuous Integration
+
+GitHub Actions provides automated Continuous Integration.
+
+Workflow:
+
+```text
+.github/workflows/ci.yml
+```
+
+CI executes for:
+
+```text
+Pushes to main
+Pull requests targeting main
+```
+
+---
+
+## Pipeline
+
+```text
+Git Push
+   |
+   v
+Maven Verify
+   |
+   v
+Docker Build
+   |
+   v
+CI PASS
+```
+
+---
+
+## Maven Verification
+
+GitHub Actions creates a clean Ubuntu environment using Java 21 and executes:
+
+```bash
+./mvnw -B -ntp clean verify
+```
+
+This runs both unit and integration tests.
+
+Testcontainers use Docker available on the GitHub Actions runner.
+
+If verification fails, Surefire and Failsafe reports are uploaded as workflow artifacts.
+
+---
+
+## Docker Build
+
+Docker image verification executes only after Maven verification succeeds:
+
+```bash
+docker build \
+  --tag cvscanner:ci \
+  .
+```
+
+This ensures committed source code can produce the production image.
+
+---
+
+## CI Status
+
+The badge at the top of this README reflects the current state of the workflow on the `main` branch.
+
+A green badge indicates that the current committed version has passed the automated CI pipeline.
 
 ---
 
@@ -1012,23 +1299,29 @@ when dependencies required for readiness are healthy.
 
 CVScanner uses a multi-stage Docker build.
 
-Build stage:
+---
+
+## Build Stage
 
 ```text
 maven:3.9-eclipse-temurin-21
 ```
 
-Runtime stage:
+The application is compiled and packaged here.
+
+---
+
+## Runtime Stage
 
 ```text
 eclipse-temurin:21-jre-jammy
 ```
 
-The final image does not contain the full Maven build environment.
+The Maven build environment is not included in the final runtime image.
 
 ---
 
-## Build Image
+## Build
 
 ```powershell
 docker build -t cvscanner:0.0.1 .
@@ -1038,13 +1331,11 @@ docker build -t cvscanner:0.0.1 .
 
 ## Non-Root Runtime
 
-The container runs as:
+The application runs as:
 
 ```text
 cvscanner
 ```
-
-not as `root`.
 
 Verify:
 
@@ -1062,9 +1353,9 @@ cvscanner
 
 ---
 
-## Runtime Profile
+## Production Profile
 
-The production image defines:
+Docker image default:
 
 ```text
 SPRING_PROFILES_ACTIVE=prod
@@ -1072,27 +1363,27 @@ SPRING_PROFILES_ACTIVE=prod
 
 ---
 
-## Docker Healthcheck
+## Healthcheck
 
-The image checks:
+Docker checks:
 
 ```text
-/readyz
+http://127.0.0.1:8080/readyz
 ```
 
-A container only becomes healthy when the application is ready to serve traffic.
+The container becomes healthy only when the application is ready.
 
 ---
 
 # Production Deployment
 
-Production orchestration is defined in:
+Production infrastructure is defined in:
 
 ```text
 docker-compose.prod.yml
 ```
 
-Production services:
+Services:
 
 ```text
 cvscanner
@@ -1102,28 +1393,24 @@ redis
 
 ---
 
-## Production Networks
-
-Two networks are used:
+## Networks
 
 ```text
 backend
 edge
 ```
 
-`backend` is internal.
+`backend` is configured as an internal network.
 
-PostgreSQL and Redis are attached only to the internal backend network.
+PostgreSQL and Redis are not published directly to the host.
 
-They are not intended to be publicly exposed.
-
-The CVScanner service also joins the edge network because it may need access to external services such as the JWT issuer / identity provider.
+The application joins both `backend` and `edge`.
 
 ---
 
-## Production Hardening
+## Container Hardening
 
-The application container uses:
+The production application container uses:
 
 ```yaml
 read_only: true
@@ -1138,53 +1425,55 @@ security_opt:
   - no-new-privileges:true
 ```
 
-The container also runs as the dedicated non-root `cvscanner` user.
+It also runs as a dedicated non-root user.
 
 ---
 
-## Persistent Production Volumes
+## Persistent Volumes
 
-Production Compose declares persistent volumes for:
+Production persists:
 
 ```text
-PostgreSQL data
-uploaded CV files
+PostgreSQL database data
+Uploaded CV files
 ```
 
-Example conceptual mapping:
+Conceptually:
 
 ```text
+PostgreSQL
+    |
+    v
 cvscanner-postgres-data
-        |
-        v
-/var/lib/postgresql/data
 
 
+Uploads
+    |
+    v
 cvscanner-upload-data
-        |
-        v
-/app/storage/uploads
 ```
 
-Redis rate-limit data is intentionally treated as transient infrastructure state.
+Redis rate-limit state is intentionally transient.
 
 ---
 
-## Create Production Environment File
+## Production Environment
 
-Start from:
+Copy:
 
 ```text
 .env.prod.example
 ```
 
-Create:
+to:
 
 ```text
 .env.prod
 ```
 
-Do not commit this file.
+Fill in the real environment configuration.
+
+`.env.prod` must never be committed.
 
 Verify:
 
@@ -1210,11 +1499,9 @@ docker compose `
     --quiet
 ```
 
-No output indicates successful validation.
-
 ---
 
-## Start Production Stack
+## Start
 
 ```powershell
 docker compose `
@@ -1223,7 +1510,9 @@ docker compose `
     up -d
 ```
 
-Check status:
+---
+
+## Status
 
 ```powershell
 docker compose `
@@ -1234,7 +1523,7 @@ docker compose `
 
 ---
 
-## Production Logs
+## Logs
 
 ```powershell
 docker compose `
@@ -1245,7 +1534,7 @@ docker compose `
     cvscanner
 ```
 
-Follow logs:
+Follow:
 
 ```powershell
 docker compose `
@@ -1260,27 +1549,28 @@ docker compose `
 
 # Environment Variables
 
-Critical production configuration:
+Important production variables:
 
 | Variable | Purpose |
 |---|---|
-| `CVSCANNER_DB_URL` | PostgreSQL JDBC URL |
+| `CVSCANNER_IMAGE_TAG` | Docker image version |
+| `CVSCANNER_HTTP_PORT` | Host HTTP port |
+| `CVSCANNER_DB_NAME` | PostgreSQL database |
+| `CVSCANNER_DB_URL` | JDBC URL when configuring the app directly |
 | `CVSCANNER_DB_USERNAME` | PostgreSQL username |
 | `CVSCANNER_DB_PASSWORD` | PostgreSQL password |
-| `CVSCANNER_JWT_ISSUER_URI` | JWT issuer |
-| `CVSCANNER_JWT_JWK_SET_URI` | JWK endpoint |
+| `CVSCANNER_JWT_ISSUER_URI` | OAuth2/OIDC issuer |
+| `CVSCANNER_JWT_JWK_SET_URI` | JWT JWK endpoint |
 | `CVSCANNER_JWT_ROLES_CLAIM` | JWT role claim |
 | `CVSCANNER_RATE_LIMIT_REDIS_URI` | Redis connection URI |
-| `CVSCANNER_RATE_LIMIT_FAIL_OPEN` | Redis failure policy |
-| `CVSCANNER_STORAGE_ROOT` | Persistent upload storage |
-| `CVSCANNER_HTTP_PORT` | Host HTTP port |
-| `CVSCANNER_IMAGE_TAG` | Docker image version |
+| `CVSCANNER_RATE_LIMIT_FAIL_OPEN` | Rate-limit Redis failure behavior |
+| `CVSCANNER_STORAGE_ROOT` | CV storage path |
 
 ---
 
-## Database Pool
+## HikariCP
 
-Optional production Hikari configuration:
+Optional variables:
 
 ```text
 CVSCANNER_DB_MAX_POOL_SIZE
@@ -1289,7 +1579,7 @@ CVSCANNER_DB_CONNECTION_TIMEOUT_MS
 CVSCANNER_DB_VALIDATION_TIMEOUT_MS
 ```
 
-Typical production defaults:
+Production defaults:
 
 ```text
 maximum-pool-size: 10
@@ -1300,23 +1590,9 @@ validation-timeout: 3000 ms
 
 ---
 
-## Rate Limit
-
-Available configuration includes:
-
-```text
-CVSCANNER_RATE_LIMIT_ENABLED
-CVSCANNER_RATE_LIMIT_REDIS_URI
-CVSCANNER_RATE_LIMIT_REDIS_TIMEOUT
-CVSCANNER_RATE_LIMIT_KEY_PREFIX
-CVSCANNER_RATE_LIMIT_FAIL_OPEN
-```
-
-Individual policy settings can also be externally configured.
-
----
-
 ## Cleanup
+
+Available cleanup variables include:
 
 ```text
 CVSCANNER_CLEANUP_ENABLED
@@ -1329,124 +1605,104 @@ CVSCANNER_CLEANUP_INITIAL_DELAY
 
 ---
 
-# Testing
+## Rate Limiting
 
-CVScanner separates unit and integration test execution.
+Available settings include:
+
+```text
+CVSCANNER_RATE_LIMIT_ENABLED
+CVSCANNER_RATE_LIMIT_REDIS_URI
+CVSCANNER_RATE_LIMIT_REDIS_TIMEOUT
+CVSCANNER_RATE_LIMIT_KEY_PREFIX
+CVSCANNER_RATE_LIMIT_FAIL_OPEN
+```
+
+Policy-specific capacity and refill values can also be configured externally.
 
 ---
 
-## Full Verification
+# Database Migrations
 
-Run:
+Database versioning is managed with Flyway.
 
-```powershell
-mvn clean verify
-```
-
-The release-tested baseline currently completes:
+Location:
 
 ```text
-Tests run: 117
-Failures: 0
-Errors: 0
-Skipped: 0
-
-BUILD SUCCESS
+src/main/resources/db/migration
 ```
+
+Current migrations cover:
+
+```text
+CV uploads
+Candidates
+Candidate skills
+Processing failures
+Candidate source uniqueness
+Upload cleanup state
+```
+
+Flyway runs during application startup.
 
 ---
 
-## Unit Tests
+## Hibernate Policy
 
-Unit tests are executed by Maven Surefire.
+Production uses:
 
-```text
-maven-surefire-plugin
+```yaml
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
 ```
+
+Hibernate validates mappings against the schema but does not automatically mutate production database structures.
 
 ---
 
-## Integration Tests
+## Migration Rule
 
-Integration tests are executed by Maven Failsafe.
+Never edit an already deployed Flyway migration.
 
-```text
-maven-failsafe-plugin
-```
-
-Integration tests include real infrastructure through Testcontainers where required.
-
-Covered areas include:
+For new schema changes, add a new version:
 
 ```text
-PostgreSQL
-Redis
-security
-JWT
-RBAC
-rate limiting
-readiness
-upload
-batch processing
-restart
-cleanup
-candidate search
-CSV export
-XLSX export
-error contracts
+V7__description.sql
+V8__description.sql
+V9__description.sql
 ```
-
----
-
-## Test JVM Isolation
-
-Integration tests use controlled fork settings to avoid native resource accumulation across a large number of Spring/Testcontainers application contexts.
-
-The integration-test JVM is constrained with:
-
-```text
--Xmx512m
--XX:MaxMetaspaceSize=256m
-```
-
-Failsafe runs:
-
-```text
-forkCount = 1
-reuseForks = false
-```
-
-Mockito is loaded explicitly as a Java agent for Java 21 compatibility.
 
 ---
 
 # Release Gate
 
-Final release verification is automated by:
+Production release verification is automated by:
 
 ```text
 scripts/release-gate.ps1
 ```
 
-The gate validates:
+The gate checks:
 
 ```text
-required files
-production env Git protection
-Maven verification
-production Docker build
-non-root runtime user
-production Spring profile
+Required production files
+.env.prod Git protection
+Maven unit tests
+Maven integration tests
+Docker image build
+Non-root runtime
+Production Spring profile
 Docker Compose configuration
-production-like stack startup
-container health
-liveness
-readiness
+Production-like startup
+Container health
+Liveness
+Readiness
 ```
 
 ---
 
-## Execute Final Release Gate
+## Run Release Gate
 
 ```powershell
 powershell `
@@ -1457,7 +1713,7 @@ powershell `
     -Port 8080
 ```
 
-Successful release:
+Successful output:
 
 ```text
 ===============================================
@@ -1465,19 +1721,11 @@ Successful release:
 ===============================================
 ```
 
-A release should not be considered ready if this gate fails.
-
 ---
 
 # Production Smoke Test
 
-Standalone health verification is available through:
-
-```text
-scripts/production-smoke.ps1
-```
-
-Run:
+Standalone production health verification:
 
 ```powershell
 powershell `
@@ -1487,7 +1735,7 @@ powershell `
     -Port 8080
 ```
 
-It verifies:
+It checks:
 
 ```text
 /livez
@@ -1496,126 +1744,50 @@ It verifies:
 
 ---
 
-# Database Migrations
+# Graceful Shutdown
 
-Flyway manages database schema changes.
-
-Migration location:
-
-```text
-src/main/resources/db/migration
-```
-
-Flyway is enabled:
+CVScanner enables graceful shutdown:
 
 ```yaml
+server:
+  shutdown: graceful
+
 spring:
-  flyway:
-    enabled: true
-    locations: classpath:db/migration
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
 ```
 
-Hibernate schema generation is not used in production.
-
-Instead:
-
-```yaml
-spring:
-  jpa:
-    hibernate:
-      ddl-auto: validate
-```
-
-This means Hibernate validates the mapped schema but does not silently generate production database changes.
-
----
-
-## Migration Rule
-
-Existing migrations should be treated as immutable after release.
-
-Do not modify an already deployed migration.
-
-Instead add:
+Production Compose provides a larger container stop grace period:
 
 ```text
-V7__description.sql
-V8__description.sql
-...
+40 seconds
 ```
 
-depending on the current schema version.
-
----
-
-# Persistent Data
-
-There are two major categories of persistent business data.
-
-## PostgreSQL
-
-Contains application records such as:
-
-```text
-uploads
-candidates
-candidate skills
-processing failures
-cleanup metadata
-Spring Batch metadata
-```
-
-PostgreSQL data must be backed up according to the environment's recovery policy.
-
----
-
-## CV Upload Storage
-
-Uploaded/extracted CV content is stored under:
-
-```text
-/app/storage/uploads
-```
-
-in production.
-
-The production container mounts persistent storage at this path.
-
-This volume must not be removed during a normal deployment.
-
----
-
-## Redis
-
-Redis currently stores distributed rate-limit state.
-
-This state is transient.
-
-Losing Redis rate-limit buckets does not destroy candidate or upload business data.
+This gives the application time to complete shutdown work before Docker terminates the process.
 
 ---
 
 # Rollback
 
-Rollback should prefer application image rollback rather than destructive infrastructure changes.
+Application rollback should use a previously known-good Docker image.
 
-Assume:
+Example:
 
 ```text
-current image:
+Current:
 cvscanner:0.0.2
 
-previous known-good image:
+Previous:
 cvscanner:0.0.1
 ```
 
-Update the configured image tag:
+Update:
 
 ```dotenv
 CVSCANNER_IMAGE_TAG=0.0.1
 ```
 
-Then redeploy:
+Then:
 
 ```powershell
 docker compose `
@@ -1631,168 +1803,98 @@ Verify:
 /readyz
 ```
 
-and application logs.
-
 ---
 
-## Important Database Warning
+## Database Rollback Warning
 
-Application rollback and database rollback are not the same operation.
+Application rollback does not automatically mean database rollback.
 
-A newer Flyway migration may make an older application version incompatible with the current database schema.
+A newer Flyway migration may be incompatible with an older application image.
 
-Before deploying schema-changing releases:
+Before schema-changing deployments:
 
 ```text
-review migration compatibility
-take an appropriate database backup
-define rollback expectations
-verify older application compatibility when rollback is required
+Review migration compatibility
+Back up PostgreSQL
+Define rollback expectations
+Keep migrations immutable
+Prefer backward-compatible schema changes
 ```
 
-Do not manually delete Flyway migration history as a rollback mechanism.
-
----
-
-# Graceful Shutdown
-
-The application enables graceful shutdown:
-
-```yaml
-server:
-  shutdown: graceful
-
-spring:
-  lifecycle:
-    timeout-per-shutdown-phase: 30s
-```
-
-Production Compose uses a stop grace period larger than the application shutdown window.
-
-This gives active work time to terminate cleanly before Docker forcefully stops the process.
-
----
-
-# Operational Notes
-
-## If readiness returns 503
-
-Check:
-
-```text
-PostgreSQL connectivity
-Redis connectivity
-rateLimitRedis health
-application startup logs
-Flyway migration state
-```
-
-Retrieve logs:
-
-```powershell
-docker compose `
-    --env-file .\.env.prod `
-    -f .\docker-compose.prod.yml `
-    logs `
-    --tail=200 `
-    cvscanner
-```
-
----
-
-## If liveness returns 503
-
-This normally indicates a deeper application lifecycle problem rather than only an external dependency issue.
-
-Check the application process and container logs.
-
----
-
-## If PostgreSQL is unavailable
-
-With database readiness included:
-
-```text
-/readyz -> DOWN
-```
-
-The instance should not receive normal production traffic until PostgreSQL becomes healthy again.
-
----
-
-## If Redis is unavailable
-
-With:
-
-```text
-CVSCANNER_RATE_LIMIT_FAIL_OPEN=false
-```
-
-readiness becomes unhealthy because strict distributed rate limiting cannot currently be guaranteed.
-
----
-
-## If port 8080 is occupied
-
-Configure another host port:
-
-```dotenv
-CVSCANNER_HTTP_PORT=8081
-```
-
-Then run health checks against:
-
-```text
-http://localhost:8081
-```
+Never manually remove Flyway history entries as a rollback strategy.
 
 ---
 
 # Known Architectural Limitations
 
-## Local Persistent Upload Storage
+## Local Upload Storage
 
-The current production Compose architecture persists CV files using a Docker volume.
-
-This is suitable for:
+Production currently stores uploaded files in a Docker volume:
 
 ```text
-single-host
-single-application-instance
-controlled deployment
+/app/storage/uploads
 ```
 
-It is not sufficient by itself for arbitrary horizontal scaling across multiple machines.
-
-For multi-node production deployment, CV storage should move to shared durable storage such as:
+This works well for:
 
 ```text
-S3-compatible object storage
-cloud object storage
-shared filesystem designed for the deployment architecture
+Single host
+Single application replica
+Controlled deployment
 ```
+
+It is not enough for unrestricted multi-host horizontal scaling.
 
 ---
 
 ## Horizontal Scaling
 
-Redis-backed rate limiting is already distributed.
+These parts already support distributed deployment:
 
-PostgreSQL is already externally shared.
+```text
+PostgreSQL
+Redis-backed rate limiting
+```
 
-However upload files must also become shared before multiple application replicas can safely process the same persistent upload namespace.
+Uploaded CV storage does not yet provide shared multi-node storage.
+
+For multi-replica deployment, migrate CV storage to something like:
+
+```text
+Amazon S3
+MinIO
+Azure Blob Storage
+Google Cloud Storage
+Shared durable filesystem
+```
 
 ---
 
 ## Identity Provider
 
-CVScanner validates JWTs but does not itself act as the user identity provider.
+CVScanner does not implement user login itself.
 
-Authentication is expected to be handled by an external OAuth2 / OpenID Connect compatible identity system.
+It is an OAuth2 Resource Server and expects JWTs issued by an external identity provider such as:
+
+```text
+Keycloak
+Auth0
+Okta
+Azure Entra ID
+other OIDC-compatible providers
+```
 
 ---
 
-# Production Readiness Status
+## Email Notifications
+
+Email notification after batch completion was an optional requirement and is not currently implemented.
+
+It can be added later without changing the core processing architecture.
+
+---
+
+# Production Readiness
 
 The current release baseline has been validated with:
 
@@ -1801,16 +1903,20 @@ Java 21
 Spring Boot 4.1
 PostgreSQL 16
 Redis 7
-Docker Desktop
-Docker Compose
 Testcontainers
+OpenAPI / Swagger
+Docker
+Docker Compose
+GitHub Actions
 ```
 
-Final validation result:
+Verification status:
 
 ```text
 Maven verification       PASS
-117 tests                PASS
+119 tests                PASS
+OpenAPI integration      PASS
+GitHub Actions CI        PASS
 Docker image build       PASS
 Non-root runtime         PASS
 Production profile       PASS
@@ -1827,54 +1933,75 @@ Release gate             PASS
 
 When extending CVScanner:
 
-1. Add database changes through new Flyway migrations.
-2. Add authorization rules explicitly for every new endpoint.
-3. Do not expose internal Actuator details publicly.
-4. Do not log JWTs, secrets or raw credentials.
+1. Add database changes only through new Flyway migrations.
+2. Explicitly authorize every new HTTP endpoint.
+3. Keep unmatched endpoints denied by default.
+4. Never log JWTs, credentials or secrets.
 5. Keep production configuration environment-driven.
 6. Add integration tests for infrastructure-dependent behavior.
-7. Preserve readiness semantics.
-8. Keep business data out of Redis unless intentionally redesigned.
-9. Keep upload extraction constrained.
-10. Run `mvn clean verify` before release.
-11. Run the production release gate before declaring a release ready.
-
----
-
-# Build
-
-```powershell
-mvn clean package
-```
-
-Skip tests only for controlled image packaging after tests have already passed:
-
-```powershell
-mvn clean package -DskipTests
-```
-
-For release verification always use:
-
-```powershell
-mvn clean verify
-```
+7. Preserve liveness/readiness semantics.
+8. Keep archive extraction bounded and defensive.
+9. Do not store permanent business data in Redis without an explicit design decision.
+10. Prefer backward-compatible database migrations.
+11. Run `mvn clean verify` before release.
+12. Keep CI green.
+13. Run the production release gate before deploying.
 
 ---
 
 # Quick Start
 
 ```powershell
+# Clone
+git clone https://github.com/Seyidli06/CVScanner.git
+
+cd CVScanner
+
 # Start development infrastructure
 docker compose up -d
 
 # Run application
-mvn spring-boot:run "-Dspring-boot.run.profiles=dev"
+.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=dev"
+```
 
-# Liveness
-Invoke-WebRequest http://localhost:8080/livez
+Swagger:
 
-# Readiness
-Invoke-WebRequest http://localhost:8080/readyz
+```text
+http://localhost:8080/swagger-ui.html
+```
+
+Liveness:
+
+```text
+http://localhost:8080/livez
+```
+
+Readiness:
+
+```text
+http://localhost:8080/readyz
+```
+
+---
+
+# Build
+
+Package:
+
+```powershell
+.\mvnw.cmd clean package
+```
+
+Full verification:
+
+```powershell
+.\mvnw.cmd clean verify
+```
+
+Production Docker image:
+
+```powershell
+docker build -t cvscanner:0.0.1 .
 ```
 
 ---
@@ -1890,8 +2017,16 @@ powershell `
     -Port 8080
 ```
 
-Expected result:
+Expected:
 
 ```text
 RELEASE GATE PASSED
 ```
+
+---
+
+## Repository
+
+GitHub:
+
+https://github.com/Seyidli06/CVScanner
